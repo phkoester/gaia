@@ -1,0 +1,597 @@
+#!/usr/bin/env python3
+#
+# gaia-build
+#
+
+import argparse
+import gaia
+import gaia.list
+import io
+import json
+import os
+import re
+
+from gaia import log
+from gaia.shell import error, run
+from os import environ as env
+
+# Classes ---------------------------------------------------------------------------------------------------
+
+class ProjectType(gaia.enum.OrderedEnum):
+  # Use lowercase names here so they can directly match command-line arguments
+  none = 0
+  cargo = 1
+  gradle = 2
+  make = 3
+
+# Constants -------------------------------------------------------------------------------------------------
+
+# List of all commands, in alphabetical order
+COMMANDS = [
+  "build",
+  "check",
+  "clean",
+  "doc",
+  "device-test",
+  "list",
+  "pack",
+  "refresh",
+  "test",
+  "update",
+  "version",
+]
+
+# Commands by project type
+COMMANDS_BY_PROJECT_TYPE = {
+  ProjectType.cargo: ["build", "check", "clean", "doc", "pack", "test", "update", "version"],
+  ProjectType.gradle: ["build", "clean", "device-test", "list", "pack", "refresh", "test", "update", "version"],
+  ProjectType.make: ["build", "check", "clean", "doc", "pack", "test", "version"],
+  ProjectType.none: ["pack", "version"]
+}
+
+# Command dependencies
+COMMANDS_DEPS = {
+  "check": ["build"],
+  "device-test": ["build"],
+  "doc": ["build"],
+  "test": ["build"],
+}
+
+# Commands in execution order
+COMMANDS_ORDERED = [
+  "clean",
+  "refresh",
+  "update",
+  "pack",
+  "build",
+  "check",
+  "doc",
+  "test",
+  "device-test"
+  "list",
+  "version"
+]
+
+DESCRIPTION = "Process projects, execute commands or command lines."
+
+EPILOG = """If no PROJECT is given, 'all' is assumed by default.
+
+If no COMMAND is given, 'build' is assumed by default. Available COMMANDs:
+
+build
+        build all artifacts, including test artifacts
+clean
+        delete the entire build output
+check
+        perform static code analysis
+device-test
+        run tests on external devices
+doc
+        generate documentation
+list
+        list package repositories
+pack
+        increment a project's version code
+refresh
+        remove intermediate files in order to force some components to refresh
+test
+        run unit tests
+update
+        check dependencies and look for newer versions
+version
+        print project version
+
+Examples:
+
+  $ gaia-build -m         # Fire off an initial build for all projects
+  $ gaia-build -pmake     # Build all Makefile projects
+  $ gaia-build update     # Check for updates in all projects
+  $ gaia-build gaia-tag   # List Git tags for all projects
+  $ gaia-build git status # Show Git status for all projects"""
+
+USAGE = """%(prog)s [OPTION]... [PROJECT]... [COMMAND]...
+       %(prog)s [OPTION]... [PROJECT]... ARG..."""
+
+# Functions -------------------------------------------------------------------------------------------------
+
+def collectCommands(projectType: ProjectType, cmds: list[str]):
+  # Add all commands available for this project type
+  collected = []
+  byProjectType = COMMANDS_BY_PROJECT_TYPE.get(projectType)
+  if not byProjectType:
+    return []
+  log.debug(f"{cmds=}")
+  for cmd in cmds:
+    log.debug(f"{cmd=}")
+    if cmd in byProjectType:
+      # Add dependencies, if any
+      deps = COMMANDS_DEPS.get(cmd)
+      log.debug(f"{deps=}")
+      if deps:
+        collected.extend(deps)
+      # Add command
+      collected.append(cmd)
+  log.debug(f"{collected=}")
+
+  # Sort commands, eliminate duplicates
+  result = []
+  for cmd in COMMANDS_ORDERED:
+    if cmd in collected:
+      result.append(cmd)
+  log.debug(f"{result=}")
+  return result
+
+def collectGradleTargets(prj: str, target: str) -> list[str]:
+  if not args.buildType:
+    return [target]
+
+  # Loop thru project's modules
+  result = []
+  capBuildType = gaia.string.capitalize(args.buildType)
+  modules = getProjectModules(prj)
+  for module in modules:
+    if hasBuildTypes(prj, module):
+      result.append(f":{module}:{target}{capBuildType}")
+    else:
+      result.append(f":{module}:{target}")
+  return result
+
+def findRootDir() -> str:
+  # Test current and parent directories
+  dir = os.getcwd()
+  while True:
+    if testRootDir(dir):
+      return dir
+    if dir == "/":
+      break
+    dir = os.path.abspath(dir + "/..")
+
+  # Test '~/project'
+  dir = env["HOME"] + "/project"
+  if testRootDir(dir):
+    return dir
+  
+  raise RuntimeError("Cannot find root directory")
+
+def getProjectDir(prj: str) -> str:
+  return rootDir + "/" + prj
+
+def getProjectJson(prj: str) -> str:
+  dir = getProjectDir(prj)
+  path = dir + "/project.json"
+  with io.open(path, mode="r") as file:
+    o = json.load(file)
+    return o
+
+def getProjectModules(prj: str) -> list[str]:
+  result = []
+  settingsGradle = getProjectDir(prj) + "/settings.gradle"
+  if not os.path.isfile(settingsGradle):
+    error(f"File '{settingsGradle}' does not exist")
+  with io.open(settingsGradle, mode="r") as file:
+    for line in file:
+      if match := re.search(r'^\s*include\s+":(.*)".*$', line):
+        result.append(match.group(1))
+  log.debug(f"{result=}")
+  return result
+
+def getProjectType(dir: str) -> ProjectType:
+  if os.path.isfile(dir + "/Cargo.toml"):
+    return ProjectType.cargo
+  if os.path.isfile(dir + "/gradlew"):
+    return ProjectType.gradle
+  if os.path.isfile(dir + "/Makefile"):
+    return ProjectType.make
+  else:
+    return ProjectType.none
+
+def getVersionFromBuildGradle(dir: str) -> str:
+  buildGradle = dir + "/build.gradle"
+  with io.open(buildGradle, mode="r") as file:
+    for line in file:
+      if match := re.search(r'^\s*VERSION\s*=\s*"(.*)".*$', line):
+        return match.group(1)
+  raise Exception(f"No version found in file '{buildGradle}'")
+
+def hasBuildTypes(prj: str, module: str) -> bool:
+  buildGradle = getProjectDir(prj) + "/" + module + "/build.gradle"
+  with io.open(buildGradle, mode="r") as file:
+    for line in file:
+      if re.search(r'^\s*apply\s+from:\s*".*/build-android-.*".*$', line):
+        return True
+  return False
+
+def increaseVersionCode(prj: str) -> None:
+  o = getProjectJson(prj)
+  if "versionCode" in o:
+    o["versionCode"] += 1
+  else:
+    o["versionCode"] = 1
+  path = getProjectDir(prj) + "/project.json"
+  with io.open(path, mode="w") as file:
+    json.dump(o, file, ensure_ascii=False, indent=2, sort_keys=True)
+    file.write("\n")
+
+def parseCl() -> argparse.Namespace:
+  parser = argparse.ArgumentParser(
+    add_help=False,
+    description=DESCRIPTION,
+    epilog=EPILOG,
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+    prog="gaia-build",
+    usage=USAGE,
+  )
+  
+  parser.add_argument("-a", "--all", action="store_true", dest="all",
+      help="an \"all\" hint. May be used in combination with the 'refresh' command")
+  parser.add_argument("-b", "--build-type", action="store", choices=["debug", "release"], dest="buildType", type=str,
+      help="specify a build type")
+  parser.add_argument("-?", "--help", action="help",
+      help="show this help message and exit")
+  parser.add_argument("-m", "--modules", action="store_true", dest="modules",
+      help="process Gradle modules in individual Gradle runs, in the order they are declared in 'settings.gradle'. Use this option when there are missing artifacts in the local Maven repository, e.g. when building for the very first time or when artifact versions have changed")
+  parser.add_argument("-p", "--project-type", action="store", choices=ProjectType._member_names_, dest="projectType", type=str,
+      help="filter projects by project type")
+  parser.add_argument("-s", "--skip", action="store_true", dest="skip",
+      help="skip processing dependencies")
+  parser.add_argument("-v", "--verbose", action="store_true", dest="verbose",
+      help="print verbose output")
+  parser.add_argument("-w", "--warnings", action="store_true", dest="warnings",
+      help="print all warnings")
+
+  parser.add_argument("args", action="store", nargs="*", type=str)
+  
+  return parser.parse_args()
+
+def parseCommandsOrCl() -> tuple[list[str], list[str]]:
+  cmds, cl = [], []
+  if not args.args:
+    cmds = ["build"]
+  elif args.args[0] not in COMMANDS:
+    cl = args.args
+    if cl[0] == "g": 
+      cl[0] = "gaia-git"
+  else:
+    for cmd in args.args:
+      if cmd in COMMANDS:
+        if cmd not in cmds:
+          cmds.append(cmd)
+      else:
+        error(f"Invalid command: '{cmd}'", 2, False)
+  log.debug(f"{cmds=}, {cl=}")
+  return cmds, cl
+
+def parseProjects() -> list[str]:
+  result = []
+  # Consume 'args' as long as the first element matches a project or "all"
+  while True:
+    prj = args.args and args.args[0] or None
+    if not prj:
+      break
+    if prj == "all" or prj in projects:
+      result.append(prj)
+      del args.args[0]
+    else:
+      break
+  if not result:
+    result = ["all"]
+  log.debug(f"{result=}, {args.args=}")
+
+  # Resolve 'all'
+  tmp = result
+  result = []
+  for prj in tmp:
+    if prj == "all":
+      for p in sorted(projects.keys()):
+        result.append(p)
+    else:
+      result.append(prj)
+  log.debug(f"Resolved 'all', {result=}")
+
+  # Resolve dependencies
+  if not args.skip:
+    tmp = result
+    result = []
+    for prj in tmp:
+      result.extend(resolve(prj))
+    log.debug(f"Resolved dependencies, {result=}")
+
+  # Eliminate duplicates
+  gaia.list.purgeIn(result)
+  log.debug(f"Eliminated duplicates, {result=}")
+
+  return result
+
+def printSection(what: str, targets: list[str], cl: list[str] = None) -> None:
+  s = 40 * "#" + "\n# \n# " + rootDir + "\n#\n# " + what
+  if targets:
+    s+= " > " + " ".join(targets)
+    if cl:
+      s += "\n#\n# $ " + " ".join(cl)
+  else:
+    s+= " $ " + " ".join(cl)
+  s += "\n#\n" + 40 * "#"
+  print(s)
+
+def printVersion(prj: str) -> None:
+  o = getProjectJson(prj)
+  if "version" in o:
+    version = o["version"]
+    if "versionCode" in o:
+      versionCode = o["versionCode"]
+      print(f"{version} ({versionCode})")
+    else:
+      print(f"{version}")
+  else:
+    print("(No version information found.)")
+
+def refresh(prj: str) -> None:
+  raise NotImplementedError("refresh")
+
+  dir = getProjectDir(prj)
+  libraries = dir + "/.idea/libraries"
+  if os.path.isdir(libraries):
+    files = os.listdir(libraries)
+    for file in files:
+      # Android Studio refreshes 'jar' files just fine, but not 'aar' files 
+      if (args.all or file.startswith("Gradle__com_phrood_")) and not file.endswith("_jar.xml"):
+        print("Deleting " + file)
+        os.remove(libraries + "/" + file)
+
+def resolve(prj: str) -> list[str]:
+  def resolve0(prj: str, out: list[str]):
+    deps = projects[prj]
+    for dep in deps:
+      resolve0(dep, out) # Recursive call
+    if prj not in out:
+      result.append(prj)
+
+  result = []
+  resolve0(prj, result)
+  return result
+
+def runCargo(prj: str, cmds: list[str]) -> None:
+  # Print section
+  printSection(prj, cmds)
+
+  # Run commands
+  for cmd in cmds:
+    cl = ["cargo"]
+    clLen = len(cl)
+    
+    if cmd == "build":
+      cl.append("build")
+    elif cmd == "check":
+      cl.append("clippy")
+    elif cmd == "clean":
+      cl.append("clean")
+    elif cmd == "doc":
+      cl.append("doc")
+    elif cmd == "pack":
+      increaseVersionCode(prj)
+    elif cmd == "test":
+      cl.append("test")
+    elif cmd == "update":
+      cl.append("update")
+    elif cmd == "version":
+      printVersion(prj)
+
+    if len(cl) > clLen:
+      if args.buildType == "release":
+        cl.append("--release")
+      log.debug(f"{cl=}")
+      runCl(prj, cl)
+
+def runCl(prj: str, cl: list[str]) -> None:
+  dir = getProjectDir(prj)
+  os.chdir(dir)
+  run(cl, check=True)
+
+def runGradle(prj: str, cmds: list[str]) -> None:
+  raise NotImplementedError("runGradle")
+
+  sectionTargets = []
+  targets = []
+
+  # Add Gradle targets in the order they shall be executed
+  if "list" in cmds:
+    sectionTargets.append("listRepositories")
+    targets.append("listRepositories")
+  if "update" in cmds:
+    sectionTargets.append("checkDependencies")
+    targets.append("checkDependencies")
+  if "clean" in cmds:
+    sectionTargets.append("clean")
+    targets.append("clean")
+  # @todo 'assemble' was removed
+  if "assemble" in cmds:
+    sectionTargets.append("assemble")
+    targets.extend(collectGradleTargets(prj, "assemble"))
+  if "test" in cmds:
+    sectionTargets.append("test")
+    targets.extend(collectGradleTargets(prj, "test"))
+  if "device-test" in cmds:
+    sectionTargets.append("connectedAndroidTest")
+    targets.append("connectedAndroidTest")
+  if "build" in cmds:
+    sectionTargets.append("build")
+    targets.extend(collectGradleTargets(prj, "build"))
+  if "pack" in cmds:
+    sectionTargets.append("pack")
+    targets.append("pack")
+  if "refresh" in cmds:
+    sectionTargets.append("refresh")
+    # No Gradle target to add here
+  if "version" in cmds:
+    sectionTargets.append("version")
+    # No Gradle target to add here
+
+  if not sectionTargets:
+    return # Nothing to do
+
+  cl = []
+  if targets:
+    cl = ["./gradlew", "--console=plain"] # "--watch-fs"
+    if args.verbose:
+      cl.append("-is") # Info, stack trace
+    if "checkDependencies" in targets:
+      cl.append("-q") # Quiet
+    if args.warnings:
+      cl.extend(["--stacktrace", "--warning-mode=all"])
+  dir = getProjectDir(prj)
+  if not args.modules:
+    # Run Gradle only once    
+    cl.extend(targets)
+    printSection(prj, sectionTargets, cl)
+    if cl:
+      runCl(prj, cl)
+    if "refresh" in cmds:
+      refresh(prj)
+    if "version" in cmds:
+      printVersion(prj)
+  elif cl:
+    # Run Gradle for each module
+    modules = getProjectModules(prj)
+    for module in modules:
+      moduleCl = cl.copy()
+      for target in targets:
+        moduleCl.append(module + ":" + target)
+      printSection(prj + ":" + module, targets, moduleCl)
+      runCl(prj, moduleCl)
+
+def runMake(prj: str, cmds: list[str]) -> None:
+  # Print section
+  printSection(prj, cmds)
+
+  # Run commands
+  for cmd in cmds:
+    cl = ["make"]
+    gaiaMakeFlags = env.get("GAIA_MAKE_FLAGS")
+    if gaiaMakeFlags:
+      cl.extend(gaiaMakeFlags.split())
+    clLen = len(cl)
+
+    if cmd == "build":
+      cl.append("build")
+    elif cmd == "check":
+      cl.append("check")
+    elif cmd == "clean":
+      cl.append("clean")
+    elif cmd == "doc":
+      cl.append("doc")
+    elif cmd == "pack":
+      increaseVersionCode(prj)
+    elif cmd == "test":
+      cl.append("test")
+    elif cmd == "version":
+      printVersion(prj)
+
+    if len(cl) > clLen:
+      if args.buildType:
+        cl.append(f"GAIA_BUILD_TYPE={args.buildType}")
+      log.debug(f"{cl=}")
+      runCl(prj, cl)
+
+def runNone(prj: str, cmds: list[str]) -> None:
+  log.debug(f"{prj=}, {cmds=}")
+
+  # Filter by accepted commands
+  cmds = gaia.list.filter(cmds, ["pack", "version"])
+  if len(cmds) == 0:
+    return
+  printSection(prj, cmds)
+
+  # Run commands
+  for cmd in cmds:
+    if cmd == "pack":
+      increaseVersionCode(prj)
+    elif cmd == "version":
+      printVersion(prj)
+
+def testRootDir(dir: str) -> bool:
+  if not os.path.isdir(dir):
+    return False
+  for file in os.listdir(dir):
+    subdir = dir + "/" + file
+    if os.path.isdir(subdir):
+      if os.path.isfile(subdir + "/project.json"):
+        return True
+  return False
+
+# Main ------------------------------------------------------------------------------------------------------
+
+# Parse command line
+args = parseCl()
+log.debug(f"{args=}")
+
+# Find root dir
+rootDir = findRootDir()
+log.debug(f"{rootDir=}")
+
+# Collect projects and their dependencies from 'project.json'
+projects = {}
+for prj in os.listdir(rootDir):
+  subdir = rootDir + "/" + prj
+  if os.path.isfile(subdir + "/project.json"):
+    projects[prj] = []
+    o = getProjectJson(prj)
+    if "dependencies" in o:
+      projects[prj] = o["dependencies"]
+log.debug(f"{projects=}")
+
+# Find out what to do (commands or command line)
+prjs = parseProjects()
+log.debug(f"{prjs=}")
+cmds, cl = parseCommandsOrCl()
+runCmds = len(cmds) > 0
+log.debug(f"{cmds=}, {cl=}")
+
+# Process projects
+for prj in prjs:
+  dir = getProjectDir(prj)
+  projectType = getProjectType(dir)
+  log.debug(f"{projectType=}")
+  # If applicable, consider project-type filter
+  if args.projectType and args.projectType != projectType.name:
+    continue
+  if runCmds:
+    prjCmds = collectCommands(projectType, cmds)
+    log.debug(f"{prj=}, {cmds=}")
+    if len(prjCmds) > 0:
+      # Execute commands, call appropriate runner
+      if projectType == ProjectType.cargo:
+        runCargo(prj, prjCmds)
+      elif projectType == ProjectType.gradle:
+        runGradle(prj, prjCmds)
+      elif projectType == ProjectType.make:
+        runMake(prj, prjCmds)
+      else:
+        runNone(prj, prjCmds)
+  else:
+    # Execute command line
+    printSection(prj, None, cl)
+    runCl(prj, cl)
+
+print("Done.")
+
+# EOF

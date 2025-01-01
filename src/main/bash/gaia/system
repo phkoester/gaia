@@ -1,0 +1,19 @@
+#
+# system
+#
+# System functions.
+#
+
+system-time-ms() {
+  echo $(($(date +%s%N) / 1000000))
+}
+
+system-time-us() {
+  echo $(($(date +%s%N) / 1000))
+}
+
+system-time-ns() {
+  echo $(date +%s%N)
+}
+
+# EOF

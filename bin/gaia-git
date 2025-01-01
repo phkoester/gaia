@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+#
+# gaia-git
+#
+
+source "$GAIA_DIR/src/main/bash/gaia/init" || exit 2
+
+set -e
+
+if [[ $1 == "" ]]; then
+  exec git status
+elif [[ $1 == acp ]]; then
+  # 'acp' = add, commit, push
+  shift
+  eval $(cl-get-options m: "$@")
+  if [[ ! $m ]]; then
+    shell-error -e2 Missing option: \'-m\'
+  fi
+  git add .
+  git commit -m"$m"
+  exec git push 
+else
+  exec git "$@"
+fi
+
+# EOF

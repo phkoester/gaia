@@ -1,0 +1,18 @@
+#
+# arg
+#
+# Argument utilities.
+#
+
+# Usage: arg-count [ARG]...
+arg-count() {
+  echo $#
+}
+
+# Usage: arg-sort [-u] [ARG]...
+arg-sort() {
+  eval $(cl-get-options-f $FUNCNAME u "$@")
+  echo "$@" | tr ' ' '\n' | sort ${u+-u} | tr '\n' ' '
+}
+
+# EOF

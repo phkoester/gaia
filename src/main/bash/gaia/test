@@ -1,0 +1,153 @@
+#
+# test
+#
+# To be included by a Bash test. A tiny but cute unit-test framework for Bash scripts.
+#
+
+source "$GAIA_DIR/src/main/bash/gaia/init" || return 2
+
+# Functions -------------------------------------------------------------------------------------------------
+
+# Usage: EXPECT-EQ LHS RHS
+EXPECT-EQ() {
+  if [[ $1 != $2 ]]; then
+    TEST_FAILED=1
+    shell-error -r1 Expected \'$1\' to be equal to \'$2\'
+  fi
+}
+
+# Usage: EXPECT-FAILURE CMD...
+EXPECT-FAILURE() {
+  "$@"
+  if [[ $? == 0 ]]; then
+    TEST_FAILED=1
+    shell-error -r1 Expected to fail: \'$@\'
+  fi
+}
+
+# Usage: EXPECT-MATCH S PATTERN...
+EXPECT-MATCH() {
+  local s=$1
+  shift 1
+
+  for pattern in "$@"; do
+    if [[ ! $s =~ $pattern ]]; then
+      TEST_FAILED=1
+      shell-error -r1 Expected \'$s\' to match pattern \'$pattern\'
+      break
+    fi
+  done
+}
+
+# Usage: EXPECT-NE LHS RHS
+EXPECT-NE() {
+  if [[ $1 == $2 ]]; then
+    TEST_FAILED=1
+    shell-error -r1 Expected \'$1\' not to be equal to \'$2\'
+  fi
+}
+
+# Usage: EXPECT-NO-MATCH S PATTERN...
+EXPECT-NO-MATCH() {
+  local s=$1
+  shift 1
+
+  for pattern in "$@"; do
+    if [[ $s =~ $pattern ]]; then
+      TEST_FAILED=1
+      shell-error -r1 Expected \'$s\' not to match pattern \'$pattern\'
+      break
+    fi
+  done
+}
+
+# Usage: EXPECT-SUCCESS CMD...
+EXPECT-SUCCESS() {
+  "$@"
+  if [[ $? != 0 ]]; then
+    TEST_FAILED=1
+    shell-error -r1 Expected to succeed: \'$@\'
+  fi
+}
+
+# Usage: RUN-ALL-TESTS [-t PATTERN]
+# Always call this function with 'RUN-ALL-TESTS "$@"'
+RUN-ALL-TESTS() {
+  # Parse command line
+
+  # Accept the '-v' option to be compatible with Python's 'unittest'
+  eval $(cl-get-options-f $FUNCNAME "t:v" "$@")
+
+  # Collect test functions
+
+  local all_funcs=$(declare -f | grep '^TEST-.* \(\)$' | sed -E 's/ \(\)//')
+  local funcs
+  if [[ $t ]]; then
+    # We have the '-t' option to filter tests by pattern
+    funcs=""
+    for func in $all_funcs; do
+      local name=${func:5} # Strip the 'TEST-'
+      if [[ $name =~ $t ]]; then
+        funcs="$funcs $func"
+      fi
+    done
+  else
+    funcs=$all_funcs
+  fi
+
+  # No, this ain't GoogleTest ...
+  
+  local GRN="" RED="" OFF=""
+  if [[ -t 1 ]]; then
+    GRN=$GAIA_COLOR_GREEN
+    RED=$GAIA_COLOR_RED
+    OFF=$GAIA_COLOR_OFF
+  fi
+
+  # Print header
+
+  local num_tests=$(echo "$funcs" | wc -w)
+  echo -e "$GRN[==========]$OFF Running $(string-amount $num_tests test tests)"
+  
+  # Run test functions
+
+  local num_failed_tests=0
+  local total_t=0
+  for func in $funcs; do
+    local name=${func:5} # Strip the 'TEST-'
+    echo -e "$GRN[ RUN      ]$OFF $name"
+    
+    TEST_FAILED=
+    local t1=$(system-time-ms)
+    eval $func
+    local t2=$(system-time-ms)
+    local t
+    ((t = t2 - t1))
+    ((total_t += t))
+    
+    if [[ $TEST_FAILED ]]; then
+      ((++num_failed_tests))
+      echo -e "$RED[  FAILED  ]$OFF $name ($t ms)"
+    else
+      echo -e "$GRN[       OK ]$OFF $name ($t ms)"
+    fi
+  done
+
+  # Print footer, exit
+
+  echo -e "$GRN[==========]$OFF $(string-amount $num_tests test tests) ($total_t ms total)"
+
+  local num_passed_tests=$(($num_tests - $num_failed_tests))
+  if [[ $num_passed_tests > 0 ]]; then
+    echo -e "$GRN[  PASSED  ]$OFF $(string-amount $num_passed_tests test tests)"
+  fi
+  if [[ $num_failed_tests > 0 ]]; then
+    echo -e "$RED[  FAILED  ]$OFF $(string-amount $num_failed_tests test tests)"
+    echo
+    echo "$num_failed_tests FAILED $(string-amount $num_failed_tests TEST TESTS)"
+    exit 1
+  fi
+  exit 0
+}
+
+# EOF

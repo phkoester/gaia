@@ -1,0 +1,63 @@
+#
+# string
+#
+# String functions.
+#
+
+# Usage: string-amount N SINGULAR PLURAL
+string-amount() {
+  # Don't parse the command line here, this should be fast ...
+  if [[ $1 == 1 ]]; then
+    echo $1 $2
+  else
+    echo $1 $3
+  fi
+}
+
+# Usage: string-begins-with S SUB
+string-begins-with() {
+  eval $(cl-get-options-f $FUNCNAME "" "$@")
+  eval $(cl-get-args-f $FUNCNAME S SUB)
+  [[ ${#sub} == 0 || x"${s:0:${#sub}}" == x"$sub" ]]
+}
+
+# Usage: string-ends-with S SUB
+string-ends-with() {
+  eval $(cl-get-options-f $FUNCNAME "" "$@")
+  eval $(cl-get-args-f $FUNCNAME S SUB)
+  [[ ${#sub} == 0 || x"${s: -${#sub}}" == x"$sub" ]]
+}
+
+# Usage: string-remove-leading S SUB
+string-remove-leading() {
+  eval $(cl-get-options-f $FUNCNAME "" "$@")
+  eval $(cl-get-args-f $FUNCNAME S SUB)
+
+  if string-begins-with "$s" "$sub"; then
+    s=${s:${#sub}}
+  fi
+  echo $s
+}
+
+# Usage: string-remove-trailing S SUB
+string-remove-trailing() {
+  eval $(cl-get-options-f $FUNCNAME "" "$@")
+  eval $(cl-get-args-f $FUNCNAME S SUB)
+
+  if string-ends-with "$s" "$sub"; then
+    s=${s:0:${#s} - ${#sub}}
+  fi
+  echo $s
+}
+
+# Usage: string-repeat S N
+string-repeat() {
+  eval $(cl-get-options-f $FUNCNAME "" "$@")
+  eval $(cl-get-args-f $FUNCNAME S N)
+
+  for ((i = 0; i < $n; ++i)); do
+    echo -n $s
+  done
+}
+
+# EOF

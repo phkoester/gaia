@@ -1,0 +1,10 @@
+#
+# aliases
+#
+# Some Gaia aliases.
+#
+
+alias gaia-cls='echo -en "\ec\e[3J"'
+alias gaia-init='source "$GAIA_DIR/src/main/bash/gaia/init"'
+
+# EOF

@@ -1,0 +1,13 @@
+#
+# file
+#
+# File functions.
+#
+
+# Usage: file-edit [FILE]...
+file-edit() {
+  [[ ! $GAIA_EDITOR ]] && { shell-error-f -r1 $FUNCNAME Variable \'GAIA_EDITOR\' is not set; return 1; }
+  "$GAIA_EDITOR" "$@"
+}
+
+# EOF

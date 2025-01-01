@@ -1,0 +1,85 @@
+#
+# path
+#
+# Path functions.
+#
+
+# Usage: path-append [-n] [-q] VAR DIR
+path-append() {
+  eval $(cl-get-options-f $FUNCNAME nq "$@")
+  eval $(cl-get-args-f $FUNCNAME VAR DIR)
+  if [[ ! $n && ! -d $dir ]]; then
+    if [[ $q ]]; then
+      return;
+    else
+      shell-error-f -r1 $FUNCNAME Directory does not exist: \'$dir\'
+      return 1
+    fi
+  fi
+  path-remove "$var" "$dir"
+  local path
+  eval "path=\$$var"
+  if [[ ! $path ]]; then
+    eval "$var=\$dir"
+  else
+    eval "$var=\$$var:\$dir"
+  fi
+}
+
+# Usage: path-list VAR
+path-list() {
+  eval $(cl-get-options-f $FUNCNAME "" "$@")
+  eval $(cl-get-args-f $FUNCNAME VAR)
+  local IFS=:
+  local dirs
+  eval "dirs=(\$$var)"
+  local d; for d in "${dirs[@]}"; do
+    echo $d
+  done
+}
+
+# Usage: path-prepend [-n] [-q] VAR DIR
+path-prepend() {
+  eval $(cl-get-options-f $FUNCNAME nq "$@")
+  eval $(cl-get-args-f $FUNCNAME VAR DIR)
+  if [[ ! $n && ! -d $dir ]]; then
+    if [[ $q ]]; then
+      return
+    else
+      shell-error-f -r1 $FUNCNAME Directory does not exist: \'$dir\'
+      return 1
+    fi
+  fi
+  path-remove "$var" "$dir"
+  local path
+  eval "path=\$$var"
+  if [[ ! $path ]]; then
+    eval "$var=\$dir"
+  else
+    eval "$var=\$dir:\$$var"
+  fi
+}
+
+# Usage: path-remove VAR DIR
+path-remove() {
+  eval $(cl-get-options-f $FUNCNAME "" "$@")
+  eval $(cl-get-args-f $FUNCNAME VAR DIR)
+  local IFS=:
+  local dirs
+  eval "dirs=(\$$var)"
+  local new_dirs=()
+  local d; for d in "${dirs[@]}"; do
+    [[ $d != $dir ]] && new_dirs+=("$d")
+  done
+  local new_path
+  for d in "${new_dirs[@]}"; do
+    if [[ ! $new_path ]]; then
+      new_path=$d
+    else
+      new_path=$new_path:$d
+    fi
+  done
+  eval "$var=\$new_path"
+}
+
+# EOF

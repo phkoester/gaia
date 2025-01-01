@@ -1,0 +1,17 @@
+#
+# wsl
+#
+# WSL functions.
+#
+
+[[ ! $GAIA_WSL ]] && return
+
+# Usage: wsl-open
+wsl-open() {
+  eval $(cl-get-options-f $FUNCNAME "" "$@")
+  eval $(cl-get-args-f $FUNCNAME FILE)
+
+  explorer.exe $(wslpath -aw "$file")
+}
+
+# EOF

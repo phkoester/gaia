@@ -1,0 +1,87 @@
+#
+# init
+#
+# Gaia initialization script.
+#
+# To be included by '.bashrc' or executable shell scripts.
+#
+
+dir__=$(dirname "$BASH_SOURCE")
+
+# Check prerequisites ---------------------------------------------------------------------------------------
+
+if [[ ! $GAIA_DIR ]]; then
+  echo init: Error: Environment variable \'GAIA_DIR\' not set > /dev/stderr
+  return 2
+fi
+if [[ ! -d $GAIA_DIR ]]; then
+  echo init: Error: Directory \'$GAIA_DIR\' does not exist > /dev/stderr
+  return 2
+fi
+
+# Detect build and target platform --------------------------------------------------------------------------
+
+source "$dir__/init-platform" || return 2
+
+# Detect Gaia version ---------------------------------------------------------------------------------------
+
+export GAIA_VERSION=$(cat "$GAIA_DIR/project.json" | \
+    grep -w version | sed -E 's/\s*"version": "(.*)",/\1/')
+
+if [[ ! $GAIA_VERSION =~ [0-9]+\.[0-9]+\.[0-9]+ ]]; then
+  echo init: Error: Found no valid version in \'$GAIA_DIR/project.json\' > /dev/stderr
+  return 2
+fi
+
+export GAIA_VERSION_CODE=$(cat "$GAIA_DIR/project.json" | \
+    grep -w versionCode | sed -E 's/\s*"versionCode": (.*)/\1/')
+
+if [[ ! $GAIA_VERSION_CODE =~ [0-9]+ ]]; then
+  echo init: Error: Found no valid version code in \'$GAIA_DIR/project.json\' > /dev/stderr
+  return 2
+fi
+
+# Environment -----------------------------------------------------------------------------------------------
+
+export GAIA_COLOR_GREEN='\033[0;32m'
+export GAIA_COLOR_RED='\033[0;31m'
+export GAIA_COLOR_OFF='\033[0m'
+
+GAIA_EDITOR=${GAIA_EDITOR:-nano}
+export GAIA_EDITOR
+
+j__=$(($(nproc) / 3 * 2))
+l__=$(nproc)
+export GAIA_MAKE_FLAGS="-j$j__ -l$l__"
+
+export PYTHONUTF8=1
+
+# Aliases and functions -------------------------------------------------------------------------------------
+
+source "$dir__/aliases" || return 2
+source "$dir__/functions" || return 2
+
+# Paths -----------------------------------------------------------------------------------------------------
+
+path-append PATH "$GAIA_DIR/bin"
+export PATH
+
+path-append PYTHONPATH "$GAIA_DIR/src/main/python"
+export PYTHONPATH
+
+# Say hello -------------------------------------------------------------------------------------------------
+
+if shell-is-interactive && shell-is-login && [[ ! $GAIA_REINIT ]]; then
+  fence__=$(string-repeat \# $(($COLUMNS - 1)))
+
+  echo $fence__
+  echo \#
+  echo \# This is Gaia $GAIA_VERSION \($GAIA_VERSION_CODE\)
+  echo \#  
+  echo \# "Current host platform  : $GAIA_HOST"
+  echo \# "Current target platform: $GAIA_TARGET"
+  echo \#
+  echo $fence__
+fi
+
+# EOF
