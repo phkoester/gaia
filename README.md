@@ -15,7 +15,7 @@ Clone from <https://github.com/yhirose/cpp-unicodelib.git>.
 
 ### Gaia
 
-Clone from `git@bitbucket.org:pkoester/gaia.git`.
+Clone from `git@github.com:phkoester/gaia.git` (SSH) or `https://github.com/phkoester/gaia.git` (HTTPS).
 
 Export these variables:
 
