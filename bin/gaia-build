@@ -106,7 +106,6 @@ Examples:
   $ gaia-build -m         # Fire off an initial build for all projects
   $ gaia-build -pmake     # Build all Makefile projects
   $ gaia-build update     # Check for updates in all projects
-  $ gaia-build gaia-tag   # List Git tags for all projects
   $ gaia-build git status # Show Git status for all projects"""
 
 USAGE = """%(prog)s [OPTION]... [PROJECT]... [COMMAND]...
