@@ -27,6 +27,7 @@ The following packages are needed by Gaia. On some systems such as Ubuntu, they 
 * `libboost-all-dev`
 * `lldb`
 * `llvm`
+* `nano`
 * `openjdk-21-jre-headless` (needed by `doxygen`)
 * `python3-pip`
 * `rustup`
@@ -84,8 +85,6 @@ In your `~/.bashrc`, export these variables:
 | `GAIA_DOXYGEN`            | No        | Example: `~/download/doxygen-1.12.0/bin/doxygen`
 | `GAIA_EDITOR`             | No        | Example: `nano` (default)
 | `GAIA_GTEST_DIR`          | Yes       | Example: `~/project/googletest`
-| `GAIA_RUSTC_TOOLCHAIN`    | Yes       | Example: `/rustc/f6e511eec7342f59a25f7c0534f1dbea00d01b14`
-| `GAIA_RUSTUP_TOOLCHAIN`   | Yes       | Example: `stable-x86_64-unknown-linux-gnu`
 
 After that, to initialize Gaia, place this line in `~/.bashrc`:
 

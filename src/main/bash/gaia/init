@@ -19,9 +19,10 @@ if [[ ! -d $GAIA_DIR ]]; then
   return 2
 fi
 
-# Detect build and target platform --------------------------------------------------------------------------
+# Call other intialization scripts --------------------------------------------------------------------------
 
 source "$dir__/init-platform" || return 2
+source "$dir__/init-rust" || return 2
 
 # Detect Gaia version ---------------------------------------------------------------------------------------
 
@@ -29,7 +30,7 @@ export GAIA_VERSION=$(cat "$GAIA_DIR/project.json" | \
     grep -w version | sed -E 's/\s*"version": "(.*)",/\1/')
 
 if [[ ! $GAIA_VERSION =~ [0-9]+\.[0-9]+\.[0-9]+ ]]; then
-  echo init: Error: Found no valid version in \'$GAIA_DIR/project.json\' > /dev/stderr
+  echo init: Error: Cannot find valid version in \'$GAIA_DIR/project.json\' > /dev/stderr
   return 2
 fi
 
@@ -37,7 +38,7 @@ export GAIA_VERSION_CODE=$(cat "$GAIA_DIR/project.json" | \
     grep -w versionCode | sed -E 's/\s*"versionCode": (.*)/\1/')
 
 if [[ ! $GAIA_VERSION_CODE =~ [0-9]+ ]]; then
-  echo init: Error: Found no valid version code in \'$GAIA_DIR/project.json\' > /dev/stderr
+  echo init: Error: Cannot find valid version code in \'$GAIA_DIR/project.json\' > /dev/stderr
   return 2
 fi
 
@@ -53,6 +54,15 @@ export GAIA_EDITOR
 j__=$(($(nproc) / 3 * 2))
 l__=$(nproc)
 export GAIA_MAKE_FLAGS="-j$j__ -l$l__"
+
+if [[ $HOME ]]; then
+  export GAIA_USER_HOME=$HOME
+elif [[ $USERPROFILE ]]; then
+  export GAIA_USER_HOME=$USERPROFILE
+else
+  echo init: Error: Cannot determine \'GAIA_USER_HOME\' > /dev/stderr
+  return 2
+fi
 
 export PYTHONUTF8=1
 

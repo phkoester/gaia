@@ -1,0 +1,15 @@
+#
+# init-rust
+#
+# Sets environment variables related to Rust.
+#
+
+unset GAIA_RUSTC_TOOLCHAIN
+unset GAIA_RUSTUP_TOOLCHAIN
+
+if which rustc > /dev/null; then
+  export GAIA_RUSTC_TOOLCHAIN=/rustc/$(rustc --version -v | grep ^commit-hash: | awk '{print $2}')
+  export GAIA_RUSTUP_TOOLCHAIN=stable-$(rustc --version -v | grep ^host: | awk '{print $2}')
+fi
+
+# EOF
