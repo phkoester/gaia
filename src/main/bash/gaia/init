@@ -56,11 +56,11 @@ l__=$(nproc)
 export GAIA_MAKE_FLAGS="-j$j__ -l$l__"
 
 if [[ $HOME ]]; then
-  export GAIA_USER_HOME=$HOME
+  export GAIA_USER_DIR=$HOME
 elif [[ $USERPROFILE ]]; then
-  export GAIA_USER_HOME=$USERPROFILE
+  export GAIA_USER_DIR=$USERPROFILE
 else
-  echo init: Error: Cannot determine \'GAIA_USER_HOME\' > /dev/stderr
+  echo init: Error: Cannot determine \'GAIA_USER_DIR\' > /dev/stderr
   return 2
 fi
 
