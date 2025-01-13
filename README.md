@@ -13,59 +13,11 @@ is where the name comes from: Gaia is supposed to be the building ground of ever
 
 ## Installation
 
-### System Packages
-
-The following packages are needed by Gaia. On some systems such as Ubuntu, they may be installed using
-`sudo apt install`.
-
-* `clang`
-* `cmake`
-* `cppcheck`
-* `doxygen`
-* `g++`
-* `graphviz` (needed by `doxygen`)
-* `libboost-all-dev`
-* `lldb`
-* `llvm`
-* `nano`
-* `openjdk-21-jre-headless` (needed by `doxygen`)
-* `python3-pip`
-* `rustup`
-* `texlive-latex-base`  (needed by `doxygen`)
-
-In addition, these packages are recommended:
-
-* `build-essential gdb`
-* `gedit`
-* `grcov`
-* `meld`
-* `ripgrep`
-* `valgrind`
-
-### Boost
-
-If you want to use a particular Boost version, download it from <https://www.boost.org/users/download/>.
-
-Make sure `GAIA_BOOST_DIR` points to the downloaded version of Boost.
-
-### cpp-unicodelib
-
-Clone from <https://github.com/yhirose/cpp-unicodelib.git>.
-
-### GoogleTest
-
-Clone from `https://github.com/google/googletest.git`.
-
-To build the libraries, use the script `gaia-make-gtest` for the current platform.
-
-### Rust
-
-After installing the `rustup`package, say `rustup default stable` and `rustup update`.
-
-Install additional packages using `cargo install`
-
-* `cargo-msrv`
-* `create-tauri-app`
+- [C++](doc/install-c++.md)
+- [Rust](doc/install-rust.md)
+- [Visual Studio Code](doc/install-vs-code.md)
+- [Windows Development](doc/install-win.md)
+- [WSL/Ubuntu Development](doc/install-win-wsl-ubuntu.md)
 
 ### Gaia
 
@@ -74,7 +26,7 @@ Clone from `git@github.com:phkoester/gaia.git` (SSH) or <https://github.com/phko
 In your `~/.bashrc`, export these variables:
 
 | Variable                  | Required? | Description
-| ------------------------- | --------- | -----------
+| :------------------------ | :-------- | :----------
 | `GAIA_BOOST_DIR`          | No        | Absolute path to Boost. If not set, the system's default Boost version is used
 | `GAIA_BUILD_TYPE`         | No        | Values: `debug` (default), `release`
 | `GAIA_CPP_UNICODELIB_DIR` | Yes       | Example: `~/project/cpp-unicodelib`
@@ -92,51 +44,13 @@ After that, to initialize Gaia, place this line in `~/.bashrc`:
 source "$GAIA_DIR/src/main/bash/gaia/init"
 ```
 
-### Visual Studio Code
-
-The following extensions are recommended:
-
-* Local
-  * Microsoft: C/C++ Themes
-  * Microsoft: WSL
-* WSL
-  * GitHub: GitHub Copilot
-  * GitKraken: GitLens --- Git supercharged
-  * LLVM: clangd
-  * LLVM: LLDB DAP
-    * Executable-path: `/bin/lldb-dap-18`
-  * Microsoft: Makefile Tools
-  * Microsoft: Pylance
-  * Microsoft: Python
-  * Microsoft: Python Debugger
-  * The Rust Programming Language: rust-analyzer
-
-### WSL
-
-If you experience problems with `wslg` on WSL/Ubuntu, try the following:
-
-```bash
-git clone https://github.com/viruscamp/wslg-links.git
-cd wslg-links
-sudo cp wslg-tmp-x11.service /usr/lib/systemd/system/
-sudo cp wslg-runtime-dir.service /usr/lib/systemd/user/
-sudo systemctl --global disable pulseaudio.socket
-sudo systemctl enable wslg-tmp-x11
-sudo systemctl --global enable wslg-runtime-dir
-sudo add-apt-repository ppa:oibaf/graphics-drivers
-sudo apt update
-sudo apt upgrade
-```
-
-Use `gedit` to verify all is well.
-
 ## License
 
 Licensed under either of
 
-* Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or
+- Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or
   http://www.apache.org/licenses/LICENSE-2.0)
-* MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
+- MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
 
 at your option.
 
