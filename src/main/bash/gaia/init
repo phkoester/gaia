@@ -81,7 +81,7 @@ export PYTHONPATH
 
 # Say hello -------------------------------------------------------------------------------------------------
 
-if shell-is-interactive && shell-is-login && [[ ! $GAIA_REINIT ]]; then
+if shell-is-interactive && [[ $SHLVL == 1 ]] && [[ ! $GAIA_REINIT ]]; then
   fence__=$(string-repeat \# $(($COLUMNS - 1)))
 
   echo $fence__
