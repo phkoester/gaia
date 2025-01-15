@@ -70,7 +70,7 @@ def error(msg: str, exitStatus: int = 1, stackTrace=True) -> None:
   @param stackTrace if @true, prints the current stack trace to @c sys.stderr
   """
 
-  sys.stderr.write(f"{_name}: Error: {msg}\n")
+  sys.stderr.write(f"{_name}: error: {msg}\n")
   if stackTrace:
     printStackTrace()
   if exitStatus != 0:
@@ -116,7 +116,7 @@ def warn(msg: str) -> None:
   @param msg the warning message
   """
 
-  sys.stderr.write(f"{_name}: Warning: {msg}\n")
+  sys.stderr.write(f"{_name}: warning: {msg}\n")
 
 # Main ------------------------------------------------------------------------------------------------------
 

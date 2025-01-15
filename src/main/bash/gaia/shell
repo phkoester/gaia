@@ -14,7 +14,7 @@
 shell-error() {
   eval $(cl-get-options-f $FUNCNAME "e:nr:" "$@")
   
-  echo $(basename -- $0): Error: $@ > /dev/stderr
+  echo $(basename -- $0): error: $@ > /dev/stderr
   [[ ! $n ]] && shell-print-stack-trace
 
   if [[ $e ]]; then
@@ -35,7 +35,7 @@ shell-error-f() {
   eval $(cl-get-options-f $FUNCNAME "e:nr:" "$@")
   eval $(cl-get-args-f $FUNCNAME FUNC_NAME)
   
-  echo $(basename -- $0): Error: In function \'$func_name\': $@ > /dev/stderr
+  echo $(basename -- $0): error: In function \'$func_name\': $@ > /dev/stderr
   [[ ! $n ]] && shell-print-stack-trace
   
   if [[ $e ]]; then

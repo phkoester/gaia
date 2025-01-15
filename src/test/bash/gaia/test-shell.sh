@@ -10,7 +10,7 @@ source "$GAIA_DIR/src/main/bash/gaia/test"
 TEST-shell-error() {
   output=$(shell-error -r0 oops 2>&1)
   EXPECT-EQ $? 0
-  EXPECT-MATCH "$output" "test-shell.sh: Error: oops"
+  EXPECT-MATCH "$output" "test-shell.sh: error: oops"
 
   shell-error -r2 $FUNCNAME oops 2> /dev/null
   EXPECT-EQ $? 2
@@ -25,7 +25,7 @@ TEST-shell-error() {
 TEST-shell-error-f() {
   output=$(shell-error-f -r0 $FUNCNAME oops 2>&1)
   EXPECT-EQ $? 0
-  EXPECT-MATCH "$output" "test-shell.sh: Error: In function 'TEST-shell-error-f': oops"
+  EXPECT-MATCH "$output" "test-shell.sh: error: In function 'TEST-shell-error-f': oops"
 
   shell-error-f -r2 $FUNCNAME oops 2> /dev/null
   EXPECT-EQ $? 2

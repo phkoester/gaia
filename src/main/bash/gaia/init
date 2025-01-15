@@ -11,11 +11,11 @@ dir__=$(dirname "$BASH_SOURCE")
 # Check prerequisites ---------------------------------------------------------------------------------------
 
 if [[ ! $GAIA_DIR ]]; then
-  echo init: Error: Environment variable \'GAIA_DIR\' not set > /dev/stderr
+  echo init: error: Environment variable \'GAIA_DIR\' not set > /dev/stderr
   return 2
 fi
 if [[ ! -d $GAIA_DIR ]]; then
-  echo init: Error: Directory \'$GAIA_DIR\' does not exist > /dev/stderr
+  echo init: error: Directory \'$GAIA_DIR\' does not exist > /dev/stderr
   return 2
 fi
 
@@ -30,7 +30,7 @@ export GAIA_VERSION=$(cat "$GAIA_DIR/project.json" | \
     grep -w version | sed -E 's/\s*"version": "(.*)",/\1/')
 
 if [[ ! $GAIA_VERSION =~ [0-9]+\.[0-9]+\.[0-9]+ ]]; then
-  echo init: Error: Cannot find valid version in \'$GAIA_DIR/project.json\' > /dev/stderr
+  echo init: error: Cannot find valid version in \'$GAIA_DIR/project.json\' > /dev/stderr
   return 2
 fi
 
@@ -38,7 +38,7 @@ export GAIA_VERSION_CODE=$(cat "$GAIA_DIR/project.json" | \
     grep -w versionCode | sed -E 's/\s*"versionCode": (.*)/\1/')
 
 if [[ ! $GAIA_VERSION_CODE =~ [0-9]+ ]]; then
-  echo init: Error: Cannot find valid version code in \'$GAIA_DIR/project.json\' > /dev/stderr
+  echo init: error: Cannot find valid version code in \'$GAIA_DIR/project.json\' > /dev/stderr
   return 2
 fi
 
@@ -60,7 +60,7 @@ if [[ $HOME ]]; then
 elif [[ $USERPROFILE ]]; then
   export GAIA_USER_DIR=$USERPROFILE
 else
-  echo init: Error: Cannot determine \'GAIA_USER_DIR\' > /dev/stderr
+  echo init: error: Cannot determine \'GAIA_USER_DIR\' > /dev/stderr
   return 2
 fi
 
