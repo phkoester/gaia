@@ -3,8 +3,7 @@
 Gaia is an experimental collection of Bash scripts, Python scripts, and Makefiles that help to build projects
 in a Bash shell.
 
-Supported project types are Bash, Python, C++, and Rust. There used to be some Android support, but it's
-deprecated now.
+Supported project types are Bash, Python, C++, and Rust.
 
 I decided to make this repository public on GitHub, since all `phkoester` repositories depend on Gaia. This
 is where the name comes from: Gaia is supposed to be the building ground of everything.
@@ -17,7 +16,7 @@ is where the name comes from: Gaia is supposed to be the building ground of ever
 - [Rust](doc/install-rust.md)
 - [Visual Studio Code](doc/install-vs-code.md)
 - [Windows Development](doc/install-win.md)
-- [WSL/Ubuntu Development](doc/install-win-wsl-ubuntu.md)
+- [Windows/WSL/Ubuntu Development](doc/install-win-wsl-ubuntu.md)
 
 ### Gaia
 

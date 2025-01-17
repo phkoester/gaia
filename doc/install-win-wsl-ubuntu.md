@@ -5,9 +5,22 @@
 - wsl --list online
 - Install Ubuntu LTS distro
 
+## Ubuntu
+
+- Copy to ~/.ssh
+- Copy to ~/.cargo/credentials.toml
+- Copy to ~/.gitconfig
+- Copy to ~/.bashrc
+- Locale
+  - sudo locale-gen en_US.UTF-8
+  - sudo dpkg-reconfigure locales
+- Google Drive: sudo mount -t drvfs G: /mnt/g
+
 ## WSLg
 
-- gedit must open immediately
+- Some old note
+  - ln -sf /mnt/wslg/runtime-dir/wayland-* $XDG_RUNTIME_DIR/ # Stil needed???
+- gedit must open immediately, File Open dialog must work
   - Check if this is really needed ...
     - git clone https://github.com/viruscamp/wslg-links.git
     - cd wslg-links
