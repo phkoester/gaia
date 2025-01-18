@@ -1,4 +1,4 @@
-# Windows / WSL / Ubuntu
+# Install Windows/WSL/Ubuntu Development
 
 - Activate WSL feature
 - Install Windows Subsystem for Linux (WSL) 2: https://docs.microsoft.com/en-us/windows/wsl/install
@@ -33,15 +33,3 @@
     - sudo add-apt-repository ppa:oibaf/graphics-drivers
     - sudo apt update
     - sudo apt upgrade
-
-## Tauri
-
-- https://v2.tauri.app/start/prerequisites/
-- sudo apt install libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
-- export WEBKIT_DISABLE_DMABUF_RENDERER=1 # For Tauri/WSL
-- cargo install create-tauri-app
-  - cargo create-tauri-app
-  - cargo tauri dev (test)
-- Check what is required
-  - cargo install trunk
-  - cargo install tauri-cli

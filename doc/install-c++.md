@@ -1,4 +1,4 @@
-# C++
+# Install C++
 
 * `clang`
 * `cmake`
