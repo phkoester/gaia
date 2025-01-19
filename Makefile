@@ -14,16 +14,13 @@ buildMain:
 buildTest: buildMain
 	@$(call printInfo,$@)
 	@+$(MAKE) $(MAKE_FLAGS) -f src/test/Makefile build
-	@echo Done.
 
 test: buildMain
 	@$(call printInfo,$@)
 	@+$(MAKE) $(MAKE_FLAGS) -f src/test/Makefile test
-	@echo Done.
 
 tests: buildMain
 	@$(call printInfo,$@)
 	@+$(MAKE) $(MAKE_FLAGS) -f src/test/Makefile tests
-	@echo Done.
 
 # EOF

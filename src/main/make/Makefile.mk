@@ -246,7 +246,6 @@ check: compile_commands.json
 	@$(call printInfo,$@)
 	@mkdir -p $(BUILD_DIR)/cppcheck
 	@cppcheck $(CPPCHECK_FLAGS)
-	@echo Done.
 endif
 
 .PHONY: check
@@ -256,7 +255,6 @@ endif
 clean:
 	@$(call printInfo,$@)
 	@rm -rf $(BUILD_DIR)
-	@echo Done.
 
 cxxDefines:
 	@$(call printInfo,$@)
@@ -277,7 +275,6 @@ info:
 	@echo
 	@echo Current Gaia settings:
 	@printenv | grep ^GAIA_ | grep -v ^GAIA_COLOR | sort | sed 's/^/  /'
-	@echo Done.
 
 .PHONY: all build buildMain buildTest clean cxxDefines cxxIncludes doc docMain docTest info test tests
 

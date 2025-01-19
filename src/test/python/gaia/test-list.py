@@ -10,9 +10,9 @@ from gaia.list import *
 # Tests -----------------------------------------------------------------------------------------------------
 
 class TestList(unittest.TestCase):
-  def testPurgeIn(self):
+  def testDedupIn(self):
     l = [ 1, 2, 1, 2, 4, 3, 3, 4, 4, 1, 1 ]
-    purgeIn(l)
+    dedupIn(l)
     self.assertEqual(l, [1, 2, 4, 3])
 
 # Main ------------------------------------------------------------------------------------------------------

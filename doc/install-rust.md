@@ -3,6 +3,7 @@
 - rustup default stable
 - rustup toolchain install nightly
 - cargo install cargo-msrv
+- rustup +nightly component add miri
 - Copy to ~/.cargo/credentials.toml
 
 ## Tauri
