@@ -10,7 +10,7 @@
 #  -n   do not print stack trace
 #  -rN  return with status N
 #
-# If neither '-e' nor '-r' is supplied, this function exits with status 1.
+# If neither `-e` nor `-r` is supplied, this function exits with status 1.
 shell-error() {
   eval $(cl-get-options-f $FUNCNAME "e:nr:" "$@")
   
@@ -30,12 +30,12 @@ shell-error() {
 #  -n   do not print stack trace
 #  -rN  return with status N
 #
-# If neither '-e' nor '-r' is supplied, this function exits with status 1.
+# If neither `-e` nor `-r` is supplied, this function exits with status 1.
 shell-error-f() {
   eval $(cl-get-options-f $FUNCNAME "e:nr:" "$@")
   eval $(cl-get-args-f $FUNCNAME FUNC_NAME)
   
-  echo $(basename -- $0): error: In function \'$func_name\': $@ > /dev/stderr
+  echo $(basename -- $0): error: In function \`$func_name\`: $@ > /dev/stderr
   [[ ! $n ]] && shell-print-stack-trace
   
   if [[ $e ]]; then
@@ -59,7 +59,7 @@ shell-print-stack-trace() {
 
   echo Stack trace: > /dev/stderr
   local n=${#BASH_LINENO[@]}
-  # 'n - 2' skips 'main'
+  # `n - 2` skips `main`
   local i; for ((i = 0; i <= n - 2; ++i)); do
     local file=${BASH_SOURCE[i + 1]}
 

@@ -25,14 +25,14 @@ ifeq ($(GAIA_CXX_TOOLCHAIN),)
   GAIA_CXX_TOOLCHAIN=$(GAIA_DEFAULT_CXX_TOOLCHAIN)
 endif
 ifeq ($(filter $(GAIA_CXX_TOOLCHAIN),gnu llvm),)
-  $(error 'GAIA_CXX_TOOLCHAIN': Invalid value '$(GAIA_CXX_TOOLCHAIN)'; expected 'gnu' or 'llvm')
+  $(error `GAIA_CXX_TOOLCHAIN`: Invalid value `$(GAIA_CXX_TOOLCHAIN)`; expected `gnu` or `llvm`)
 endif
 
 ifeq ($(GAIA_BUILD_TYPE),)
   GAIA_BUILD_TYPE=$(GAIA_DEFAULT_BUILD_TYPE)
 endif
 ifeq ($(filter $(GAIA_BUILD_TYPE),debug release),)
-  $(error 'GAIA_BUILD_TYPE': Invalid value '$(GAIA_BUILD_TYPE)'; expected 'debug' or 'release')
+  $(error `GAIA_BUILD_TYPE`: Invalid value `$(GAIA_BUILD_TYPE)`; expected `debug` or `release`)
 endif
 
 # Constants -------------------------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ EMPTY :=
 SPACE := $(EMPTY) $(EMPTY)
 
 BUILD_DIR := target/$(GAIA_TARGET_SYSTEM)-$(GAIA_TARGET_ARCH)-$(GAIA_CXX_TOOLCHAIN)-$(GAIA_BUILD_TYPE)
-export BUILD_DIR # Used in 'Doxyfile'
+export BUILD_DIR # Used in `Doxyfile`
 CXX_STD := gnu++2b
 MAKE_FLAGS := --no-print-directory
 MAKEFILE_DEPS := \
@@ -51,7 +51,7 @@ MAKEFILE_DEPS := \
 
 # Variables -------------------------------------------------------------------------------------------------
 
-# These must be initialized once, otherwise '+=' doesn't work as expected
+# These must be initialized once, otherwise `+=` doesn't work as expected
 BUILD_DEPS :=
 FILES :=
 LIB_FILES :=
@@ -116,10 +116,10 @@ else
 endif
 
 ifeq ($(CXX),)
-  $(error 'CXX': Invalid value ''; cannot locate C++ compiler for toolchain '$(GAIA_CXX_TOOLCHAIN)')
+  $(error `CXX`: Cannot locate C++ compiler for toolchain `$(GAIA_CXX_TOOLCHAIN)`)
 endif
 ifeq ($(AR),)
-  $(error 'AR': Invalid value ''; cannot locate archiver for toolchain '$(GAIA_CXX_TOOLCHAIN)')
+  $(error `AR`: Cannot locate archiver for toolchain `$(GAIA_CXX_TOOLCHAIN)`)
 endif
 
 AR_FLAGS := -rc
@@ -195,11 +195,11 @@ ifeq ($(VERBOSE),)
   DOXYGEN_FLAGS += -q
 endif
 
-# 'compile_commands.json' -----------------------------------------------------------------------------------
+# `compile_commands.json` -----------------------------------------------------------------------------------
 
 # (empty) | 1
 COMPILE_COMMANDS :=
-ifneq ($(wildcard .compile_commands),) # Look for file '.compile_commands' in project directory
+ifneq ($(wildcard .compile_commands),) # Look for file `.compile_commands` in project directory
   COMPILE_COMMANDS := 1
 endif
 
@@ -291,15 +291,15 @@ ifneq ($(PP),)
 	@# Show preprocessor output only
 	@$(CXX) $(CXX_FLAGS) -E -P $<
 else ifeq ($(COMPILE_COMMANDS),)
-	@# No compile commands required: run 'CXX'
+	@# No compile commands required: run `CXX`
 	@$(CXX) $(CXX_FLAGS) -c -o $@ -MMD -MP -MT $@ -MF $(D_FILE) $<
 else ifeq ($(GAIA_CXX_TOOLCHAIN),gnu)
-	@# Compile commands required, toolchain 'gnu': run 'CXX', then run 'GAIA_CXX_LLVM' to create JSON
+	@# Compile commands required, toolchain `gnu`: run `CXX`, then run `GAIA_CXX_LLVM` to create JSON
 	@# file
 	@$(CXX) $(CXX_FLAGS) -c -o $@ -MMD -MP -MT $@ -MF $(D_FILE) $<
 	@$(GAIA_CXX_LLVM) $(CXX_FLAGS) -E -MM -MJ $(JSON_FILE) $< > /dev/null
 else
-	@# Compile commands required, toolchain 'llvm': run 'CXX'
+	@# Compile commands required, toolchain `llvm`: run `CXX`
 	@$(CXX) $(CXX_FLAGS) -c -o $@ -MMD -MP -MT $@ -MF $(D_FILE) -MJ $(JSON_FILE) $<
 endif
 
@@ -314,15 +314,15 @@ ifneq ($(PP),)
 	@# Show preprocessor output only
 	@$(CXX) $(CXX_FLAGS) -E -P $<
 else ifeq ($(COMPILE_COMMANDS),)
-	@# No compile commands required: run 'CXX'
+	@# No compile commands required: run `CXX`
 	@$(CXX) $(CXX_FLAGS) -c -o $@ -MMD -MP -MT $@ -MF $(D_FILE) $<
 else ifeq ($(GAIA_CXX_TOOLCHAIN),gnu)
-	@# Compile commands required, toolchain 'gnu': run 'CXX', then run 'GAIA_CXX_LLVM' to create JSON
+	@# Compile commands required, toolchain `gnu`: run `CXX`, then run `GAIA_CXX_LLVM` to create JSON
 	@# file
 	@$(CXX) $(CXX_FLAGS) -c -o $@ -MMD -MP -MT $@ -MF $(D_FILE) $<
 	@$(GAIA_CXX_LLVM) $(CXX_FLAGS) -E -MM -MJ $(JSON_FILE) $< > /dev/null
 else
-	@# Compile commands required, toolchain 'llvm': run 'CXX'
+	@# Compile commands required, toolchain `llvm`: run `CXX`
 	@$(CXX) $(CXX_FLAGS) -c -o $@ -MMD -MP -MT $@ -MF $(D_FILE) -MJ $(JSON_FILE) $<
 endif
 

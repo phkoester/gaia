@@ -2,7 +2,7 @@
 # Makefile
 #
 
-# 'build' must be the first target and build everything, including tests
+# `build` must be the first target and build everything, including tests
 build: buildTest
 
 include src/main/make/Makefile.mk

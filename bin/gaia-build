@@ -62,9 +62,9 @@ COMMANDS_ORDERED = [
 
 DESCRIPTION = "Process projects, execute commands or command lines."
 
-EPILOG = """If no PROJECT is given, 'all' is assumed by default.
+EPILOG = """If no PROJECT is given, `all` is assumed by default.
 
-If no COMMAND is given, 'build' is assumed by default. Available COMMANDs:
+If no COMMAND is given, `build` is assumed by default. Available COMMANDs:
 
 build
         build all artifacts, including test artifacts
@@ -84,8 +84,8 @@ version
 Examples:
 
   $ gaia-build -pmake     # Run default command `build` for all Makefile projects
-  $ gaia-build update     # Run command 'update' for all projects
-  $ gaia-build git status # Run command line 'git status'  for all projects"""
+  $ gaia-build update     # Run command `update` for all projects
+  $ gaia-build git status # Run command line `git status`  for all projects"""
 
 USAGE = """%(prog)s [OPTION]... [PROJECT]... [COMMAND]...
        %(prog)s [OPTION]... [PROJECT]... ARG..."""
@@ -129,7 +129,7 @@ def findRootDir() -> str:
       break
     dir = os.path.abspath(dir + "/..")
 
-  # Test '~/project'
+  # Test `~/project`
   dir = env["HOME"] + "/project"
   if testRootDir(dir):
     return dir
@@ -209,13 +209,13 @@ def parseCommandsOrCl() -> tuple[list[str], list[str]]:
         if cmd not in cmds:
           cmds.append(cmd)
       else:
-        error(f"Invalid command: '{cmd}'", 2, False)
+        error(f"Invalid command: `{cmd}`", 2, False)
   log.debug(f"{cmds=}, {cl=}")
   return cmds, cl
 
 def parseProjects() -> list[str]:
   result = []
-  # Consume 'args' as long as the first element matches a project or "all"
+  # Consume `args` as long as the first element matches a project or "all"
   while True:
     prj = args.args and args.args[0] or None
     if not prj:
@@ -229,7 +229,7 @@ def parseProjects() -> list[str]:
     result = ["all"]
   log.debug(f"{result=}, {args.args=}")
 
-  # Resolve 'all'
+  # Resolve `all``
   tmp = result
   result = []
   for prj in tmp:
@@ -238,7 +238,7 @@ def parseProjects() -> list[str]:
         result.append(p)
     else:
       result.append(prj)
-  log.debug(f"Resolved 'all', {result=}")
+  log.debug(f"Resolved `all`, {result=}")
 
   # Resolve dependencies
   if not args.skip:
@@ -389,7 +389,7 @@ log.debug(f"{args=}")
 rootDir = findRootDir()
 log.debug(f"{rootDir=}")
 
-# Collect projects and their dependencies from 'project.json'
+# Collect projects and their dependencies from `project.json`
 projects = {}
 for prj in os.listdir(rootDir):
   subdir = rootDir + "/" + prj

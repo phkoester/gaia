@@ -12,7 +12,7 @@ source "$GAIA_DIR/src/main/bash/gaia/init" || return 2
 EXPECT-EQ() {
   if [[ $1 != $2 ]]; then
     TEST_FAILED=1
-    shell-error -r1 Expected \'$1\' to be equal to \'$2\'
+    shell-error -r1 Expected \`$1\` to be equal to \`$2\`
   fi
 }
 
@@ -21,7 +21,7 @@ EXPECT-FAILURE() {
   "$@"
   if [[ $? == 0 ]]; then
     TEST_FAILED=1
-    shell-error -r1 Expected to fail: \'$@\'
+    shell-error -r1 Expected to fail: \`$@\`
   fi
 }
 
@@ -33,7 +33,7 @@ EXPECT-MATCH() {
   for pattern in "$@"; do
     if [[ ! $s =~ $pattern ]]; then
       TEST_FAILED=1
-      shell-error -r1 Expected \'$s\' to match pattern \'$pattern\'
+      shell-error -r1 Expected \`$s\` to match pattern \`$pattern\`
       break
     fi
   done
@@ -43,7 +43,7 @@ EXPECT-MATCH() {
 EXPECT-NE() {
   if [[ $1 == $2 ]]; then
     TEST_FAILED=1
-    shell-error -r1 Expected \'$1\' not to be equal to \'$2\'
+    shell-error -r1 Expected \`$1\` not to be equal to \`$2\`
   fi
 }
 
@@ -55,7 +55,7 @@ EXPECT-NO-MATCH() {
   for pattern in "$@"; do
     if [[ $s =~ $pattern ]]; then
       TEST_FAILED=1
-      shell-error -r1 Expected \'$s\' not to match pattern \'$pattern\'
+      shell-error -r1 Expected \`$s\` not to match pattern \`$pattern\`
       break
     fi
   done
@@ -66,16 +66,16 @@ EXPECT-SUCCESS() {
   "$@"
   if [[ $? != 0 ]]; then
     TEST_FAILED=1
-    shell-error -r1 Expected to succeed: \'$@\'
+    shell-error -r1 Expected to succeed: \`$@\`
   fi
 }
 
 # Usage: RUN-ALL-TESTS [-t PATTERN]
-# Always call this function with 'RUN-ALL-TESTS "$@"'
+# Always call this function with `RUN-ALL-TESTS "$@"`
 RUN-ALL-TESTS() {
   # Parse command line
 
-  # Accept the '-v' option to be compatible with Python's 'unittest'
+  # Accept the `-v` option to be compatible with Python's `unittest`
   eval $(cl-get-options-f $FUNCNAME "t:v" "$@")
 
   # Collect test functions
@@ -83,10 +83,10 @@ RUN-ALL-TESTS() {
   local all_funcs=$(declare -f | grep '^TEST-.* \(\)$' | sed -E 's/ \(\)//')
   local funcs
   if [[ $t ]]; then
-    # We have the '-t' option to filter tests by pattern
+    # We have the `-t` option to filter tests by pattern
     funcs=""
     for func in $all_funcs; do
-      local name=${func:5} # Strip the 'TEST-'
+      local name=${func:5} # Strip `TEST-`
       if [[ $name =~ $t ]]; then
         funcs="$funcs $func"
       fi
@@ -114,7 +114,7 @@ RUN-ALL-TESTS() {
   local num_failed_tests=0
   local total_t=0
   for func in $funcs; do
-    local name=${func:5} # Strip the 'TEST-'
+    local name=${func:5} # Strip `TEST-`
     echo -e "$GRN[ RUN      ]$OFF $name"
     
     TEST_FAILED=

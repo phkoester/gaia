@@ -7,7 +7,7 @@ source "$GAIA_DIR/src/main/bash/gaia/test"
 
 # Local functions -------------------------------------------------------------------------------------------
 
-# We need a helper function to test 'cl-get-options-f' and 'cl-get-args-f' in there
+# We need a helper function to test `cl-get-options-f` and `cl-get-args-f` in there
 func__() {
   OUTPUT=$(func-helper__ "$@" 2>&1)
   STATUS=$?
@@ -15,8 +15,8 @@ func__() {
   echo $OUTPUT
 }
 
-# This function works exactly in the same manner as the helper script 'test-cl-helper.sh', except that it
-# uses 'cl-get-options-f' and 'cl-get-args-f'
+# This function works exactly in the same manner as the helper script `test-cl-helper.sh`, except that it
+# uses `cl-get-options-f` and `cl-get-args-f`
 func-helper__() {
   GAIA_NO_SHELL_PRINT_STACK_TRACE=1
 
@@ -64,7 +64,7 @@ func-helper__() {
   GAIA_NO_SHELL_PRINT_STACK_TRACE=
 }
 
-# We need a helper script to test 'cl-get-options' and 'cl-get-args' in there
+# We need a helper script to test `cl-get-options` and `cl-get-args` in there
 script__() {
   OUTPUT=$(src/test/bash/gaia/test-cl-helper.sh "$@" 2>&1)
   STATUS=$?
@@ -84,11 +84,11 @@ TEST-script() {
 
 TEST-cl-get-options() {
   script__ "" "" -q > /dev/null
-  EXPECT-MATCH "$OUTPUT" "error: Invalid option: '-q'"
+  EXPECT-MATCH "$OUTPUT" "error: Invalid option: `-q`"
   EXPECT-EQ $STATUS 2
 
   script__ vf: "" -q > /dev/null
-  EXPECT-MATCH "$OUTPUT" "error: Invalid option: '-q'"
+  EXPECT-MATCH "$OUTPUT" "error: Invalid option: `-q`"
   EXPECT-EQ $STATUS 2
 
   script__ vf: "" -v -fname "a b" c > /dev/null
@@ -96,7 +96,7 @@ TEST-cl-get-options() {
   EXPECT-EQ $STATUS 0
 
   script__ vf: "" -f > /dev/null
-  EXPECT-MATCH "$OUTPUT" "error: Option '-f' requires an argument"
+  EXPECT-MATCH "$OUTPUT" "error: Option `-f` requires an argument"
   EXPECT-EQ $STATUS 2
 }
 
@@ -106,7 +106,7 @@ TEST-cl-get-args() {
   EXPECT-EQ $STATUS 0
 
   script__ "" A > /dev/null
-  EXPECT-MATCH "$OUTPUT" "error: Missing argument: 'A'"
+  EXPECT-MATCH "$OUTPUT" "error: Missing argument: `A`"
   EXPECT-EQ $STATUS 2
 }
 
@@ -120,11 +120,11 @@ TEST-func() {
 
 TEST-cl-get-options-f() {
   func__ "" "" -q > /dev/null
-  EXPECT-MATCH "$OUTPUT" "error: In function 'func-helper__': Invalid option: '-q'"
+  EXPECT-MATCH "$OUTPUT" "error: In function `func-helper__`: Invalid option: `-q`"
   EXPECT-EQ $STATUS 2
 
   func__ vf: "" -q > /dev/null
-  EXPECT-MATCH "$OUTPUT" "error: In function 'func-helper__': Invalid option: '-q'"
+  EXPECT-MATCH "$OUTPUT" "error: In function `func-helper__`: Invalid option: `-q`"
   EXPECT-EQ $STATUS 2
 
   func__ vf: "" -v -fname "a b" c > /dev/null
@@ -132,7 +132,7 @@ TEST-cl-get-options-f() {
   EXPECT-EQ $STATUS 0
 
   func__ vf: "" -f > /dev/null
-  EXPECT-MATCH "$OUTPUT" "error: In function 'func-helper__': Option '-f' requires an argument"
+  EXPECT-MATCH "$OUTPUT" "error: In function `func-helper__`: Option `-f` requires an argument"
   EXPECT-EQ $STATUS 2
 }
 
@@ -142,7 +142,7 @@ TEST-cl-get-args-f() {
   EXPECT-EQ $STATUS 0
 
   func__ "" A > /dev/null
-  EXPECT-MATCH "$OUTPUT" "error: In function 'func-helper__': Missing argument: 'A'"
+  EXPECT-MATCH "$OUTPUT" "error: In function `func-helper__`: Missing argument: `A`"
   EXPECT-EQ $STATUS 2
 }
 

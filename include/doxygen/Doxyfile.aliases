@@ -2,12 +2,12 @@
 # Doxyfile.aliases
 #
 
-# '@param' --------------------------------------------------------------------------------------------------
+# `@param` --------------------------------------------------------------------------------------------------
 
 ALIASES += param_lhs="@param lhs the left-hand side"
 ALIASES += param_rhs="@param rhs the right-hand side"
 
-# '@return' -------------------------------------------------------------------------------------------------
+# `@return` -------------------------------------------------------------------------------------------------
 
 ALIASES += return_this="@return a reference to this instance"
 
@@ -56,32 +56,32 @@ ALIASES += member_op_subscript="Subscript operator. \
 
 ALIASES += member_op_eq="Tests if this instance equals @p rhs. \
 @param rhs the right-hand side \
-@return @c true if this instance equals @p rhs, @c false otherwise"
+@return `true` if this instance equals @p rhs"
 
 ALIASES += member_op_ne="Tests if this instance does not equal @p rhs. \
 @param rhs the right-hand side \
-@return @c true if this instance does not equal @p rhs, @c false otherwise"
+@return `true` if this instance does not equal @p rhs"
 
 ALIASES += member_op_lt="Tests if this instance is less than @p rhs. \
 @param rhs the right-hand side \
-@return @c true if this instance is less than @p rhs, @c false otherwise"
+@return `true` if this instance is less than @p rhs"
 
 ALIASES += member_op_le="Tests if this instance is less than or equal to @p rhs. \
 @param rhs the right-hand side \
-@return @c true if this instance is less than or equal to @p rhs, @c false otherwise"
+@return `true` if this instance is less than or equal to @p rhs"
 
 ALIASES += member_op_gt="Tests if this instance is greater than @p rhs. \
 @param rhs the right-hand side \
-@return @c true if this instance is greater than @p rhs, @c false otherwise"
+@return `true` if this instance is greater than @p rhs"
 
 ALIASES += member_op_ge="Tests if this instance is greater than or equal to @p rhs. \
 @param rhs the right-hand side \
-@return @c true if this instance is greater than or equal to @p rhs, @c false otherwise"
+@return `true` if this instance is greater than or equal to @p rhs"
 
 ALIASES += member_op_cmp_strong_ordering="Compares this instance with @p rhs and returns a value of type \
-@c std::strong_ordering. \
+`std::strong_ordering`. \
 @param rhs the right-hand side \
-@return @c a value of type @c std::strong_ordering"
+@return a value of type `std::strong_ordering`"
 
 ALIASES += member_op_inc="Increment operator. \
 @return_this"
@@ -95,17 +95,17 @@ ALIASES += member_op_dec="Decrement operator. \
 ALIASES += member_op_dec_post="Postfix decrement operator. \
 @return a temporary copy of this instance"
 
-ALIASES += member_op_add_assign="@c += operator. \
+ALIASES += member_op_add_assign="`+=` operator. \
 @param rhs the value to add \
 @return_this"
 
-ALIASES += member_op_sub_assign="@c -= operator. \
+ALIASES += member_op_sub_assign="`-=` operator. \
 @param rhs the value to add \
 @return_this"
 
 # Member functions ------------------------------------------------------------------------------------------
 
-ALIASES += member_fn_hash="Obtains a hash value for this instance. \
+ALIASES += member_fn_hash="Returns a hash value for this instance. \
 @return a hash value"
 
 # Type definitions ------------------------------------------------------------------------------------------
@@ -119,13 +119,13 @@ ALIASES += op_eq{1}="Equality operator for \1.^^^^ \
 Tests if @p lhs equals @p rhs. \
 @param lhs the left-hand side \
 @param rhs the right-hand side \
-@return @p true if @p lhs and @p rhs equal, @c false otherwise"
+@return @p true if @p lhs and @p rhs equal"
 
 ALIASES += op_ne{1}="Inequality operator for \1.^^^^ \
 Tests if @p lhs does not equal @p rhs. \
 @param lhs the left-hand side \
 @param rhs the right-hand side \
-@return @p true if @p lhs and @p rhs do not equal, @c false otherwise"
+@return @p true if @p lhs and @p rhs do not equal"
 
 ALIASES += op_input{1}="Input operator for \1.^^^^ \
 If the parsing fails, the fail bit of the input stream @p is is set, and @p rhs is not assigned any value. \
@@ -140,39 +140,39 @@ ALIASES += op_output{1}="Output operator for \1. \
 
 # Functions -------------------------------------------------------------------------------------------------
 
-ALIASES += fn_PrintTo{1}="@c PrintTo() overload for \1, to be used by GoogleTest. \
+ALIASES += fn_PrintTo{1}="`PrintTo` overload for \1, to be used by GoogleTest. \
 @param v the value to print \
 @param os the output stream"
 
-ALIASES += fn_hash_value{1}="@c hash_value() overload for \1, to be used by Boost. \
+ALIASES += fn_hash_value{1}="`hash_value` overload for \1, to be used by Boost. \
 @param v the value to hash \
 @return a hash value"
 
-ALIASES += fn_parseRon{1}="@c parseRon() overload for \1.^^^^ \
+ALIASES += fn_parseRon{1}="`parseRon` overload for \1.^^^^ \
 If the parsing fails, the fail bit of the input stream @p is is set, and @p v is not assigned any value. \
 @param is the input stream to parse as RON (Rocket object notation) \
 @param v the value to assign to \
 @return @p is \
-@throw #rocket::except::InputFailure if @c is.fail() returns @c true \
-@throw #rocket::except::ParseFailure if @c is.eof() returns @c true or if the input cannot be parsed as a \
+@throw #rocket::except::InputFailure if `is.fail()` returns `true` \
+@throw #rocket::except::ParseFailure if `is.eof()` returns `true` or if the input cannot be parsed as a \
     value of type \1"
 
-ALIASES += fn_parseRon_precision{1}="@c parseRon() overload for \1.^^^^ \
+ALIASES += fn_parseRon_precision{1}="`parseRon` overload for \1.^^^^ \
 If the parsing fails, the fail bit of the input stream @p is is set, and @p v is not assigned any value. \
 @param is the input stream to parse as RON (Rocket object notation) \
 @param v the value to assign to \
 @param precision the floating-point precision to use \
 @return @p is \
-@throw #rocket::except::InputFailure if @c is.fail() returns @c true \
-@throw #rocket::except::ParseFailure if @c is.eof() returns @c true or if the input cannot be parsed as a \
+@throw #rocket::except::InputFailure if `is.fail()` returns `true` \
+@throw #rocket::except::ParseFailure if `is.eof()` returns `true` or if the input cannot be parsed as a \
     value of type \1"
 
-ALIASES += fn_printRon{1}="@c printRon() overload for \1. \
+ALIASES += fn_printRon{1}="`printRon` overload for \1. \
 @param os the output stream \
 @param v the value to print as RON (Rocket object notation) \
 @return @p os"
 
-ALIASES += fn_printRon_precision{1}="@c printRon() overload for \1. \
+ALIASES += fn_printRon_precision{1}="`printRon` overload for \1. \
 @param os the output stream \
 @param v the value to print as RON (Rocket object notation) \
 @param precision the floating-point precision to use \
@@ -182,10 +182,10 @@ ALIASES += fn_printRon_precision{1}="@c printRon() overload for \1. \
 
 ALIASES += enum_declare{1}="Automatic declarations for the enum \1.^^^^ \
 The macro provides the following declarations:^^ \
-- <tt>std::istream& operator>>(std::istream&, \1&)</tt>^^ \
-- <tt>std::ostream& operator<<(std::ostream&, \1)</tt>^^ \
-- <tt>std::istream& parseRon(std::istream&, \1&)</tt>^^ \
-- <tt>std::ostream& printRon(std::ostream&, \1)</tt>"
+- `std::istream& operator>>(std::istream&, \1&)`^^ \
+- `std::ostream& operator<<(std::ostream&, \1)`^^ \
+- `std::istream& parseRon(std::istream&, \1&)`^^ \
+- `std::ostream& printRon(std::ostream&, \1)`"
 
 # Specializations -------------------------------------------------------------------------------------------
 
@@ -193,10 +193,10 @@ ALIASES += spec{2}="\1 template specialization for \2."
 
 ALIASES += spec_rocket_IsContainerImpl{1}="@spec{rocket::IsContainerImpl, \1}"
 
-ALIASES += spec_std_formatter{1}="@spec{@c std::formatter, \1}"
+ALIASES += spec_std_formatter{1}="@spec{`std::formatter`, \1}"
 
-ALIASES += spec_std_hash{1}="@spec{@c std::hash, \1}"
+ALIASES += spec_std_hash{1}="@spec{`std::hash`, \1}"
 
-ALIASES += spec_std_numeric_limits{1}="@spec{@c std::numeric_limits, \1}"
+ALIASES += spec_std_numeric_limits{1}="@spec{`std::numeric_limits`, \1}"
 
 # EOF

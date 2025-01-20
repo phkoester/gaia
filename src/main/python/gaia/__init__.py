@@ -1,7 +1,7 @@
 #
 # @file __init.py__
 # 
-# Module @c gaia.
+# Module `gaia`.
 #
 
 import io
@@ -9,10 +9,10 @@ import json
 
 def hexVersion(dir: str) -> None:
   """
-  Reads the file @c project.json in the directory @p dir and prints the @c "version" value of the JSON as a
+  Reads the file `project.json` in the directory @p dir and prints the `version` value of the JSON as a
   hexadecimal string.
 
-  @param dir the directory where @c project.json resides
+  @param dir the directory where `project.json` resides
   """
   
   path = dir + "/project.json"
@@ -25,9 +25,9 @@ def hexVersion(dir: str) -> None:
 
 def version(dir: str) -> None:
   """
-  Reads the file @c project.json in the directory @p dir and prints the @c "version" value of the JSON
+  Reads the file `project.json` in the directory @p dir and prints the `version` value of the JSON.
 
-  @param dir the directory where @c project.json resides
+  @param dir the directory where `project.json` resides
   """
   
   path = dir + "/project.json"
@@ -37,9 +37,9 @@ def version(dir: str) -> None:
 
 def versionCode(dir: str) -> None:
   """
-  Reads the file @c project.json in the directory @p dir and prints the @c "versionCode" value of the JSON
+  Reads the file `project.json` in the directory @p dir and prints the `versionCode` value of the JSON.
 
-  @param dir the directory where @c project.json resides
+  @param dir the directory where `project.json` resides
   """
 
   path = dir + "/project.json"

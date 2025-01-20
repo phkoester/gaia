@@ -11,9 +11,9 @@
 # - EXTERNAL_SHARED_LIBS
 #
 
-# Include 'executable.mk' -----------------------------------------------------------------------------------
+# Include `executable.mk` -----------------------------------------------------------------------------------
 
-# Libraries in this directory must have been made by 'gaia-make-gtest'
+# Libraries in this directory must have been made by `gaia-make-gtest`
 GTEST_LIB_DIR := $(GAIA_GTEST_DIR)/target/$(GAIA_TARGET_SYSTEM)-$(GAIA_TARGET_ARCH)-$(GAIA_CXX_TOOLCHAIN)-$(GAIA_BUILD_TYPE)
 
 LIB_FILES += \

@@ -10,11 +10,11 @@ set -e
 if [[ $1 == "" ]]; then
   exec git status
 elif [[ $1 == acp ]]; then
-  # 'acp' = add, commit, push
+  # `acp` = add, commit, push
   shift
   eval $(cl-get-options m: "$@")
   if [[ ! $m ]]; then
-    shell-error -e2 Missing option: \'-m\'
+    shell-error -e2 Missing option: \`-m\`
   fi
   git add .
   git commit -m"$m"

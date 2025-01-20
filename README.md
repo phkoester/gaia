@@ -12,11 +12,11 @@ is where the name comes from: Gaia is supposed to be the building ground of ever
 
 ## Installation
 
-- [C++](doc/install-c++.md)
-- [Rust](doc/install-rust.md)
-- [Visual Studio Code](doc/install-vs-code.md)
-- [Windows Development](doc/install-win.md)
-- [Windows/WSL/Ubuntu Development](doc/install-win-wsl-ubuntu.md)
+- [Install C++](doc/install-c++.md)
+- [Install Rust](doc/install-rust.md)
+- [Install Visual Studio Code](doc/install-vs-code.md)
+- [Install Windows Development](doc/install-win.md)
+- [Install Windows/WSL/Ubuntu Development](doc/install-win-wsl-ubuntu.md)
 
 ### Gaia
 

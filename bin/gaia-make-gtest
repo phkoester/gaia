@@ -11,12 +11,12 @@ eval $(cl-get-options "" "$@")
 eval $(cl-get-args TOOLCHAIN)
 
 if [[ $toolchain != gnu && $toolchain != llvm ]]; then
-  shell-error -e2 Toolchain must be \'gnu\' or  \'llvm\'
+  shell-error -e2 Toolchain must be \`gnu\` or  \`llvm\`
 fi
 
 CXX_FLAGS="-fPIC -pthread"
 
-# 'cmake' will honor 'CXX' and 'CC'
+# `cmake` will honor `CXX` and `CC`
 
 if [[ $toolchain == gnu ]]; then
   if [[ $GAIA_CXX_GNU ]]; then
@@ -37,7 +37,7 @@ fi
 set -ex
 
 if [[ ! $GAIA_GTEST_DIR ]]; then
-  shell-error -e2 Environment variable \'GAIA_GTEST_DIR\' not defined
+  shell-error -e2 Environment variable \`GAIA_GTEST_DIR\` not defined
 fi
 cd "$GAIA_GTEST_DIR"
 mkdir -p target

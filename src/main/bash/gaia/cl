@@ -6,16 +6,16 @@
 
 # Usage: eval $(cl-get-args ARG_NAME...)
 #
-# ARG_NAME should be all uppercase, using the underscore ('_') as a word delimiter. The corresponding
+# ARG_NAME should be all uppercase, using the underscore (`_`) as a word delimiter. The corresponding
 # variable will be named in lowercase.
 cl-get-args() {
-  [[ ! ${1+x} ]] && { echo "shell-error-f -e2 $FUNCNAME Missing argument: \'ARG_NAME\'"; return 2; }
+  [[ ! ${1+x} ]] && { echo "shell-error-f -e2 $FUNCNAME Missing argument: \`ARG_NAME\`"; return 2; }
 
   local result=""
   local arg_name; for arg_name in "$@"; do
     local use_arg_name=${arg_name,,} # Lowercase
     [[ $result ]] && result="$result; "
-    result="$result[[ ! \${1+x} ]] && shell-error -e2 Missing argument: \'$arg_name\'; \
+    result="$result[[ ! \${1+x} ]] && shell-error -e2 Missing argument: \`$arg_name\`; \
         unset $use_arg_name; $use_arg_name=\$1; shift 1"
   done
   echo $result
@@ -23,18 +23,18 @@ cl-get-args() {
 
 # Usage: eval $(cl-get-args-f $FUNCNAME ARG_NAME...)
 #
-# ARG_NAME should be all uppercase, using the underscore ('_') as a word delimiter. The corresponding
+# ARG_NAME should be all uppercase, using the underscore (`_`) as a word delimiter. The corresponding
 # variable will be named in lowercase.
 cl-get-args-f() {
-  [[ ! ${1+x} ]] && { echo "shell-error-f -r2 $FUNCNAME Missing argument: \'FUNC_NAME\'; return 2"; return 2; }
+  [[ ! ${1+x} ]] && { echo "shell-error-f -r2 $FUNCNAME Missing argument: \`FUNC_NAME\`; return 2"; return 2; }
   local func_name=$1; shift 1
-  [[ ! ${1+x} ]] && { echo "shell-error-f -r2 $FUNCNAME Missing argument: \'ARG_NAME\'; return 2"; return 2; }
+  [[ ! ${1+x} ]] && { echo "shell-error-f -r2 $FUNCNAME Missing argument: \`ARG_NAME\`; return 2"; return 2; }
 
   local result=""
   local arg_name; for arg_name in "$@"; do
     local use_arg_name=${arg_name,,} # Lowercase
     [[ $result ]] && result="$result; "
-    result="$result[[ ! \${1+x} ]] && { shell-error-f -r2 \"$func_name\" Missing argument: \'$arg_name\'; return 2; }; \
+    result="$result[[ ! \${1+x} ]] && { shell-error-f -r2 \"$func_name\" Missing argument: \`$arg_name\`; return 2; }; \
         local $use_arg_name; $use_arg_name=\$1; shift 1"
   done
   echo $result
@@ -42,9 +42,9 @@ cl-get-args-f() {
 
 # Usage: eval $(cl-get-options OPT_STRING "$@")
 #
-# OPT_STRING is passed to 'getopts'. No leading ':' is allowed.
+# OPT_STRING is passed to `getopts`. No leading `:` is allowed.
 cl-get-options() {
-  [[ ! ${1+x} ]] && { echo "shell-error-f -e2 $FUNCNAME Missing argument: \'OPT_STRING\'"; return 2; }
+  [[ ! ${1+x} ]] && { echo "shell-error-f -e2 $FUNCNAME Missing argument: \`OPT_STRING\`"; return 2; }
   local opt_string=$1; shift 1
 
   # Collect options, which ones take an argument?
@@ -66,11 +66,11 @@ cl-get-options() {
 
   local result="unset ${!map[@]}"
 
-  # Parse options using 'getopts'
+  # Parse options using `getopts`
   local found=0
-  local opt; while getopts :$opt_string opt; do # Leading ':': silent mode
-    [[ $opt == \? ]] && { echo "shell-error -e2 Invalid option: \'-$OPTARG\';" return 2; }
-    [[ $opt == : ]] && { echo "shell-error -e2 Option \'-$OPTARG\' requires an argument"; return 2; }
+  local opt; while getopts :$opt_string opt; do # Leading `:`: silent mode
+    [[ $opt == \? ]] && { echo "shell-error -e2 Invalid option: \`-$OPTARG\`;" return 2; }
+    [[ $opt == : ]] && { echo "shell-error -e2 Option \`-$OPTARG\` requires an argument"; return 2; }
     local takes_arg=${map[$opt]}
     if [[ $found == 0 ]]; then
       result="$result;"
@@ -89,11 +89,11 @@ cl-get-options() {
 
 # Usage: eval $(cl-get-options-f $FUNCNAME OPT_STRING "$@")
 #
-# OPT_STRING is passed to 'getopts'. No leading ':' is allowed.
+# OPT_STRING is passed to `getopts`. No leading `:` is allowed.
 cl-get-options-f() {
-  [[ ! ${1+x} ]] && { echo "shell-error-f -r2 $FUNCNAME Missing argument: \'FUNC_NAME\'; return 2"; return 2; }
+  [[ ! ${1+x} ]] && { echo "shell-error-f -r2 $FUNCNAME Missing argument: \`FUNC_NAME\`; return 2"; return 2; }
   local func_name=$1; shift 1
-  [[ ! ${1+x} ]] && { echo "shell-error-f -r2 $FUNCNAME Missing argument: \'OPT_STRING\'; return 2"; return 2; }
+  [[ ! ${1+x} ]] && { echo "shell-error-f -r2 $FUNCNAME Missing argument: \`OPT_STRING\`; return 2"; return 2; }
   local opt_string=$1; shift 1
 
   # Collect options, which ones take an argument?
@@ -115,11 +115,11 @@ cl-get-options-f() {
 
   local result="local ${!map[@]}"
 
-  # Parse options using 'getopts'
+  # Parse options using `getopts`
   local found=0
-  local opt; while getopts :$opt_string opt; do # Leading ':': silent mode
-    [[ $opt == \? ]] && { echo "shell-error-f -r2 \"$func_name\" Invalid option: \'-$OPTARG\'; return 2"; return 2; }
-    [[ $opt == : ]] && { echo "shell-error-f -r2 \"$func_name\" Option \'-$OPTARG\' requires an argument; return 2"; return 2; }
+  local opt; while getopts :$opt_string opt; do # Leading `:`: silent mode
+    [[ $opt == \? ]] && { echo "shell-error-f -r2 \"$func_name\" Invalid option: \`-$OPTARG\`; return 2"; return 2; }
+    [[ $opt == : ]] && { echo "shell-error-f -r2 \"$func_name\" Option \`-$OPTARG\` requires an argument; return 2"; return 2; }
     local takes_arg=${map[$opt]}
     if [[ $found == 0 ]]; then
       result="$result;"

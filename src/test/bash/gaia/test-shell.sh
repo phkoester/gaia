@@ -25,7 +25,7 @@ TEST-shell-error() {
 TEST-shell-error-f() {
   output=$(shell-error-f -r0 $FUNCNAME oops 2>&1)
   EXPECT-EQ $? 0
-  EXPECT-MATCH "$output" "test-shell.sh: error: In function 'TEST-shell-error-f': oops"
+  EXPECT-MATCH "$output" "test-shell.sh: error: In function `TEST-shell-error-f`: oops"
 
   shell-error-f -r2 $FUNCNAME oops 2> /dev/null
   EXPECT-EQ $? 2

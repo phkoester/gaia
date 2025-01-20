@@ -2,7 +2,7 @@
 #
 # test-cl-helper.sh
 #
-# Helper script for 'test-cl.sh'.
+# Helper script for `test-cl.sh`.
 #
 
 GAIA_NO_SHELL_PRINT_STACK_TRACE=1

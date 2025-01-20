@@ -6,7 +6,7 @@
 
 # Usage: ssh-init
 ssh-init() {
-  local pids="$(pgrep -u $USER -x ssh-agent)" # '-x': Match exactly
+  local pids="$(pgrep -u $USER -x ssh-agent)" # `-x`: Match exactly
   local n=$(arg-count $pids)
 
   if [[ $n == 0 ]]; then

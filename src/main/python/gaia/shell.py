@@ -5,7 +5,6 @@
 #
 
 import gaia
-import inspect
 import locale
 import os
 import re
@@ -26,12 +25,12 @@ _name = os.path.basename(sys.argv[0])
 
 def _getShebang(file: str) -> list[str]:
   """
-  Looks for the file @p file in @c PATH and tries to read its shebang line.
+  Looks for the file @p file in `PATH` and tries to read its shebang line.
 
-  Upon success, returns a command line as a string list of the form <tt>['awk', '-f', 'file']</tt>.
-  Otherwise, it returns @c None
+  Upon success, returns a command line as a string list of the form `["awk", "-f", "file"]`.
+  Otherwise, it returns `None`
 
-  @return upon success, a command line as a string list, otherwise @c None
+  @return upon success, a command line as a string list, otherwise `None`
   """
   file = gaia.path.find(env.get("PATH"), file)
   if not file:
@@ -48,9 +47,9 @@ def _getShebang(file: str) -> list[str]:
 
 def _onSigint(signal, frame) -> NoReturn:
   """
-  @c SIGINT handler.
+  `SIGINT` handler.
 
-  Calls @c os._exit() rather than @c sys.exit(), enforcing a cold exit.
+  Calls `os._exit()` rather than `sys.exit()`, enforcing a cold exit.
 
   @param signal provided by the caller
   @param frame provided by the caller
@@ -63,11 +62,11 @@ def _onSigint(signal, frame) -> NoReturn:
 
 def error(msg: str, exitStatus: int = 1, stackTrace=True) -> None:
   """
-  Prints the error message @p msg to @c sys.stderr and exits if @p exitStatus is not 0.
+  Prints the error message @p msg to `sys.stderr` and exits if @p exitStatus is not 0.
 
   @param msg the error message
-  @param exitStatus if not 0, then calls @c sys.exit() with this value
-  @param stackTrace if @true, prints the current stack trace to @c sys.stderr
+  @param exitStatus if not 0, then calls `sys.exit()` with this value
+  @param stackTrace if `true`, prints the current stack trace to `sys.stderr`
   """
 
   sys.stderr.write(f"{_name}: error: {msg}\n")
@@ -78,7 +77,7 @@ def error(msg: str, exitStatus: int = 1, stackTrace=True) -> None:
 
 def printStackTrace() -> None:
   """
-  Prints the current stack trace to @c sys.stderr.
+  Prints the current stack trace to `sys.stderr`.
   """
 
   sys.stderr.write("Traceback (most recent call last):\n")
@@ -86,13 +85,13 @@ def printStackTrace() -> None:
 
 def run(*cl, input=None, timeout=None, check=False, **kwargs) -> subprocess.CompletedProcess:
   """
-  A wrapper for @c subprocess.run().
+  A wrapper for `subprocess.run()`.
   
-  @param cl see @c subprocess.run()
-  @param input see @c subprocess.run()
-  @param timeout see @c subprocess.run()
-  @param check see @c subprocess.run()
-  @param kwargs see @c subprocess.run()
+  @param cl see `subprocess.run()`
+  @param input see `subprocess.run()`
+  @param timeout see `subprocess.run()`
+  @param check see `subprocess.run()`
+  @param kwargs see `subprocess.run()`
   """
 
   log.debug(f"{cl=}")
@@ -111,7 +110,7 @@ def run(*cl, input=None, timeout=None, check=False, **kwargs) -> subprocess.Comp
 
 def warn(msg: str) -> None:
   """
-  Prints the warning message @p msg to @c sys.stderr
+  Prints the warning message @p msg to `sys.stderr`
 
   @param msg the warning message
   """
@@ -124,6 +123,6 @@ signal.signal(signal.SIGINT, _onSigint)
 
 _encoding = locale.getpreferredencoding()
 if _encoding not in ["UTF-8", "utf-8"]:
-  error(f"Preferred encoding must be 'UTF-8' or 'utf-8', but the actual value is '{_encoding}'", 2)
+  error(f"Preferred encoding must be `UTF-8` or `utf-8`, but the actual value is `{_encoding}`", 2)
 
 # EOF

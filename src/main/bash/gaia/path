@@ -12,7 +12,7 @@ path-append() {
     if [[ $q ]]; then
       return;
     else
-      shell-error-f -r1 $FUNCNAME Directory does not exist: \'$dir\'
+      shell-error-f -r1 $FUNCNAME Directory does not exist: \`$dir\`
       return 1
     fi
   fi
@@ -46,7 +46,7 @@ path-prepend() {
     if [[ $q ]]; then
       return
     else
-      shell-error-f -r1 $FUNCNAME Directory does not exist: \'$dir\'
+      shell-error-f -r1 $FUNCNAME Directory does not exist: \`$dir\`
       return 1
     fi
   fi

@@ -11,11 +11,11 @@ EXCLUDE_SYMBOLS     = internal
 GENERATE_LATEX      = NO
 GENERATE_TREEVIEW   = YES
 HAVE_DOT            = YES
-JAVADOC_AUTOBRIEF   = YES
+JAVADOC_AUTOBRIEF   = NO
 RECURSIVE           = YES
 TAB_SIZE            = 8
 USE_MATHJAX         = YES
-WARN_AS_ERROR       = NO # @todo Set this to 'FAIL_ON_WARNINGS'
+WARN_AS_ERROR       = NO # @todo Set this to `FAIL_ON_WARNINGS`
 WARN_NO_PARAMDOC    = YES
 
 # EOF

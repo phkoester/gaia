@@ -1,4 +1,4 @@
-# Microsoft Visual Studio Code
+# Install Microsoft Visual Studio Code
 
 - Copy settings.json to %APPDATA%\Code\User
 

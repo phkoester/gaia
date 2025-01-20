@@ -54,7 +54,7 @@ def parseEastAsianWidth(input: str, output: str) -> None:
         if len(codes) >= 1:
           lower = int("0x" + codes[0], 16)
         if len(codes) >= 2:
-          upper = int("0x" + codes[1], 16) + 1 # Right-open interval, hence "+ 1"
+          upper = int("0x" + codes[1], 16) + 1 # Right-open interval, hence `+ 1`
         else:
           upper = lower + 1
         
@@ -109,7 +109,7 @@ def parseEmoji(input: str, output: str) -> None:
         if len(codes) >= 1:
           lower = int("0x" + codes[0], 16)
         if len(codes) >= 2:
-          upper = int("0x" + codes[1], 16) + 1 # Right-open interval, hence "+ 1"
+          upper = int("0x" + codes[1], 16) + 1 # Right-open interval, hence `+ 1`
         else:
           upper = lower + 1
         
