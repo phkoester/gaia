@@ -10,9 +10,9 @@ source "$GAIA_DIR/src/main/bash/gaia/test"
 TEST-path-append() {
   my_path=a:b:c:bin
 
-  EXPECT-MATCH "$(path-append my_path d 2>&1)" "Directory does not exist: `d`"
+  EXPECT-MATCH "$(path-append my_path d 2>&1)" "Directory does not exist: \`d\`"
   
-  EXPECT-NO-MATCH "$(path-append -q my_path d 2>&1)" "Directory does not exist: `d`"
+  EXPECT-NO-MATCH "$(path-append -q my_path d 2>&1)" "Directory does not exist: \`d\`"
   EXPECT-EQ $my_path a:b:c:bin
 
   path-append -n my_path d
@@ -34,9 +34,9 @@ TEST-path-list() {
 TEST-path-prepend() {
   my_path=a:b:c:bin
 
-  EXPECT-MATCH "$(path-prepend my_path d 2>&1)" "Directory does not exist: `d`"
+  EXPECT-MATCH "$(path-prepend my_path d 2>&1)" "Directory does not exist: \`d\`"
   
-  EXPECT-NO-MATCH "$(path-prepend -q my_path d 2>&1)" "Directory does not exist: `d`"
+  EXPECT-NO-MATCH "$(path-prepend -q my_path d 2>&1)" "Directory does not exist: \`d\`"
   EXPECT-EQ $my_path a:b:c:bin
 
   path-prepend -n my_path d

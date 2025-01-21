@@ -1,7 +1,9 @@
 #
 # test
 #
-# To be included by a Bash test. A tiny but cute unit-test framework for Bash scripts.
+# A tiny but cute unit-test framework for Bash scripts.
+#
+# To be included by a Bash test. 
 #
 
 source "$GAIA_DIR/src/main/bash/gaia/init" || return 2
@@ -16,7 +18,7 @@ EXPECT-EQ() {
   fi
 }
 
-# Usage: EXPECT-FAILURE CMD...
+# Usage: EXPECT-FAILURE ARG...
 EXPECT-FAILURE() {
   "$@"
   if [[ $? == 0 ]]; then
@@ -61,7 +63,7 @@ EXPECT-NO-MATCH() {
   done
 }
 
-# Usage: EXPECT-SUCCESS CMD...
+# Usage: EXPECT-SUCCESS ARG...
 EXPECT-SUCCESS() {
   "$@"
   if [[ $? != 0 ]]; then
@@ -119,7 +121,7 @@ RUN-ALL-TESTS() {
     
     TEST_FAILED=
     local t1=$(system-time-ms)
-    eval $func
+    eval $func # Run the test function
     local t2=$(system-time-ms)
     local t
     ((t = t2 - t1))

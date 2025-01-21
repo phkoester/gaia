@@ -83,9 +83,9 @@ version
 
 Examples:
 
-  $ gaia-build -pmake     # Run default command `build` for all Makefile projects
-  $ gaia-build update     # Run command `update` for all projects
-  $ gaia-build git status # Run command line `git status`  for all projects"""
+  gaia-build -pmake     # Run default command `build` for all Makefile projects
+  gaia-build update     # Run command `update` for all projects
+  gaia-build git status # Run command line `git status` for all projects"""
 
 USAGE = """%(prog)s [OPTION]... [PROJECT]... [COMMAND]...
        %(prog)s [OPTION]... [PROJECT]... ARG..."""
