@@ -15,8 +15,8 @@ The standard width for text files is 110, including line breaks, so the effectiv
 
 Text lines should generally not exceed the width of 109. If they do, they should be wrapped. Wrapping may
 be omitted if it is either not feasible, as in Markdown table cells, or if wrapping would make the file less
-readable. For instance, formatted messages are often built and output in a single line of code without
-wrapping.
+readable. For instance, lengthy formatted messages are usually built and output in a single line of code
+without wrapping.
 
 Where block indenting occurs in a text file, the standard indent is 2 spaces. This is also true for Rust
 code, which by default uses an indent of 4 spaces.
@@ -27,7 +27,7 @@ offered by the formatter may be used.
 
 ## Tabs
 
-Tabs are never in use unless they are explicitly required, as in Makefiles, for example.
+Tabs are *never* in use unless they are explicitly required, as in Makefiles, for example.
 
 The standard tab width is 8.
 
@@ -37,7 +37,7 @@ For section titles in documents (like this very one), *title case* should be use
 
 When in doubt, use the [Title Case Converter](https://titlecaseconverter.com) with the "Chicago" option.
 
-For section titles in code, title capitalization is not in use.
+For section titles in code, title case is not in use.
 
 ## Styling with Markdown
 
@@ -49,22 +49,27 @@ frobnicate(x); // Do some *really* sophisticated stuff with `x`
 ```
 
 In general, anything "code-ish" may be enclosed in backticks (<code>`</code>). This includes file names,
-pieces of code, environment variables, or command-line tools. To some extent, where they don't impose too
-much noise, these backticks may even surface on the user interface:
+pieces of code, names and values of environment variables, or command-line tools. To some extent, where they
+don't impose too much noise, these backticks may even surface on the user interface:
 
 ```bash
 echo Loading file \`$file\` ...
-echo error: Invalid option \`-$opt\`
+echo error: Invalid option \`-$opt\` > /dev/stderr
 ```
 
-Some more Markdown features:
+Some basic Markdown features:
 
-| What           | Type       | Result
-| :------------- | :--------- | :-----
-| en dash        | `--`       | --
-| em dash        | `---`      | ---
-| italics        | `*text*`   | *text*
-| bold           | `**text**` | **text**
-| strike-through | `~~text~~` | ~~text~~
+| What           | Type                            | Result
+| :------------- | :------------------------------ | :-----
+| en dash        | `--`                            | --
+| em dash        | `---`                           | ---
+| code           | <code>&grave;text&grave;</code> | `text`
+| italics        | `*text*`                        | *text*
+| bold           | `**text**`                      | **text**
+| strike-through | `~~text~~`                      | ~~text~~
 
-A full documentation for CommonMark can be found [here](https://spec.commonmark.org/0.31.2/).
+Markdown isn't standardized, so not every feature will work in every environment. Rustdoc, Doxygen, Visual
+Studio Code, and GitHub---only to name a few---all use their individual Markdown parsers and renderers.
+
+A full documentation for CommonMark (used by Rustdoc) can be found
+[here](https://spec.commonmark.org/0.31.2/).

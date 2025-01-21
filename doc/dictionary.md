@@ -18,6 +18,7 @@ Prefixes such as *anti*, *meta*, or *non* need not be followed by a hyphen: *ant
 - **backslash** symbol
 - **backtick** symbol
 - **Bash** command-line tool
+- **Cargo** command-line tool
 - **code page**
 - **code point** Unicode entity
 - **command line**
@@ -36,5 +37,6 @@ Prefixes such as *anti*, *meta*, or *non* need not be followed by a hyphen: *ant
 - **run time**
 - **Rustdoc** command-line tool
 - **Rustfmt** command-line tool
+- **setup** noun
 - **struct** language item
 - **toolchain**
