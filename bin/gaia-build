@@ -4,14 +4,14 @@
 #
 
 import argparse
-import gaia
 import gaia.list
+import gaia.shell
 import io
-import json
+import json5
 import os
 
 from gaia import log
-from gaia.shell import error, run
+from gaia.shell import error
 from os import environ as env
 
 # Classes ---------------------------------------------------------------------------------------------------
@@ -143,7 +143,7 @@ def getProjectJson(prj: str) -> str:
   dir = getProjectDir(prj)
   path = dir + "/project.json"
   with io.open(path, mode="r") as file:
-    o = json.load(file)
+    o = json5.load(file)
     return o
 
 def getProjectType(dir: str) -> ProjectType:
@@ -153,18 +153,6 @@ def getProjectType(dir: str) -> ProjectType:
     return ProjectType.make
   else:
     return ProjectType.none
-
-# XXX Raus? Wofür brauchen wir versionCode?
-def increaseVersionCode(prj: str) -> None:
-  o = getProjectJson(prj)
-  if "versionCode" in o:
-    o["versionCode"] += 1
-  else:
-    o["versionCode"] = 1
-  path = getProjectDir(prj) + "/project.json"
-  with io.open(path, mode="w") as file:
-    json.dump(o, file, ensure_ascii=False, indent=2, sort_keys=True)
-    file.write("\n")
 
 def parseCl() -> argparse.Namespace:
   parser = argparse.ArgumentParser(
@@ -266,16 +254,16 @@ def printSection(what: str, targets: list[str], cl: list[str] = None) -> None:
   print(s)
 
 def printVersion(prj: str) -> None:
-  o = getProjectJson(prj)
-  if "version" in o:
-    version = o["version"]
-    if "versionCode" in o:
-      versionCode = o["versionCode"]
-      print(f"{version} ({versionCode})")
-    else:
-      print(f"{version}")
-  else:
-    print("(No version information found.)")
+  # Print version from `project.json`
+  dir = getProjectDir(prj)
+  version = gaia.getVersion(dir)
+  if not version:
+    version = "N/A"
+  print(f"version: {version}")
+  
+  # Run `gaia-git-version`
+  os.chdir(dir)
+  gaia.shell.run(["gaia-git-version"])
 
 def resolve(prj: str) -> list[str]:
   def resolve0(prj: str, out: list[str]):
@@ -322,7 +310,7 @@ def runCargo(prj: str, cmds: list[str]) -> None:
 def runCl(prj: str, cl: list[str]) -> None:
   dir = getProjectDir(prj)
   os.chdir(dir)
-  run(cl, check=True)
+  gaia.shell.run(cl, check=True)
 
 def runMake(prj: str, cmds: list[str]) -> None:
   # Print section

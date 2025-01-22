@@ -14,7 +14,7 @@
 # Include `executable.mk` -----------------------------------------------------------------------------------
 
 # Libraries in this directory must have been made by `gaia-make-gtest`
-GTEST_LIB_DIR := $(GAIA_GTEST_DIR)/target/$(GAIA_TARGET_SYSTEM)-$(GAIA_TARGET_ARCH)-$(GAIA_CXX_TOOLCHAIN)-$(GAIA_BUILD_TYPE)
+GTEST_LIB_DIR := $(GAIA_GTEST_DIR)/target/$(GAIA_TARGET)-$(GAIA_CXX_TOOLCHAIN)-$(GAIA_BUILD_TYPE)
 
 LIB_FILES += \
     ../rocket/$(BUILD_DIR)/librocket-gtest.a \

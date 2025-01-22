@@ -13,7 +13,7 @@ be used. It makes use of unstable Rustfmt features, so the Rust nightly toolchai
 
 ### Rustfmt in Visual Studio Code
 
-In Code, Alt+Shift+F formats the current Rust-source file.
+In Code, Alt+Shift+F formats the current Rust source file.
 
 To enable the unstable features, `settings.json` needs the following entry:
 
@@ -24,7 +24,14 @@ To enable the unstable features, `settings.json` needs the following entry:
 ## Lints
 
 The `Cargo.toml` file from the `meadows` project serves as a reference. It contains the lint settings to be
-used by `rustc` and Clippy.
+used by `rustc` and Clippy. It makes use of unstable Clippy features, so the Rust nightly toolchain is
+required.
+
+For a full Clippy run, execute the following command:
+
+```bash
+cargo +nightly clippy --all-features --all-targets
+```
 
 ## Source-File Sections
 
@@ -36,11 +43,11 @@ For example, if you define a struct `MyStruct`, you can place it in a section of
 // `MyStruct` -----------------------------------------------------------------------------------------------
 
 struct MyStruct {
-  // ...
+  ...
 }
 
 impl MyStruct {
-  // ...
+  ...
 }
 ```
 
@@ -49,9 +56,9 @@ A collection of functions may be placed in a section called "Functions":
 ```rust
 // Functions ------------------------------------------------------------------------------------------------
 
-fn first_function() { /* ... */ }
+fn first_function() { ... }
 
-fn second_function() { /* ... */ }
+fn second_function() { ... }
 ```
 
 Unit tests always come at the end of a source file, in a unique "Tests" section. To group the tests, the
@@ -67,15 +74,15 @@ mod tests {
   // `MyStruct` ---------------------------------------------------------------------------------------------
 
   #[test]
-  fn test_my_struct() { /* ... */ }
+  fn test_my_struct() { ... }
 
   // Functions ----------------------------------------------------------------------------------------------
 
   #[test]
-  fn test_first_function() { /* ... */ }
+  fn test_first_function() { ... }
   
   #[test]
-  fn test_second_function() { /* ... */ }
+  fn test_second_function() { ... }
 }
 ```
 
@@ -108,8 +115,8 @@ pub fn frobnicate(x: i32) {
 References to code items should be set in a monospaced font, so use backticks in the link description:
 
 ```rust
-/// The function takes a [`String`] and presumably does something with it.
-pub fn take(val: String) { /* ... */ }
+/// Takes a [`String`] and presumably does something with it.
+pub fn take(val: String) { ... }
 ```
 
 ### Documentation Sections
@@ -120,6 +127,11 @@ Common sections in doc comments include, in this order:
 - `# Errors`
 - `# Panics`
 - `# Examples`
+
+### Features
+
+Feature names, e.g. **`no_std`**, should be set bold and monospaced. You achieve this by typing
+<code>\*\*&grave;name&grave;\*\*</code>.
 
 ### Known Issues with Rustfmt
 

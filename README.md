@@ -10,13 +10,28 @@ is where the name comes from: Gaia is supposed to be the building ground of ever
 
 **NOTE:** For the time being, it is not recommended for public use. Use it at your own risk.
 
+## General Documents
+
+- [Text-File Guidelines](doc/text_file_guidelines.md)
+- [C++ Guidelines](doc/c++_guidelines.md)
+- [Rust Guidelines](doc/rust-guidelines.md)
+- [Dictionary](doc/dictionary.md)
+
 ## Installation
 
-- [Install C++](doc/install-c++.md)
-- [Install Rust](doc/install-rust.md)
-- [Install Visual Studio Code](doc/install-vs-code.md)
 - [Install Windows Development](doc/install-win.md)
 - [Install Windows/WSL/Ubuntu Development](doc/install-win-wsl-ubuntu.md)
+
+### Prerequisites
+
+Python is required for some Gaia scripts and Makefiles, along with the packages `json5`, `semver`, and
+`toml`.
+
+In Ubuntu, run:
+
+```bash
+sudo apt install python3 python3-json5 python3-semver python3-toml
+```
 
 ### Gaia
 
@@ -24,7 +39,7 @@ Clone from `git@github.com:phkoester/gaia.git` (SSH) or <https://github.com/phko
 
 In your `~/.bashrc`, export these variables:
 
-| Variable                  | Required? | Description
+| Environment Variable      | Required? | Description
 | :------------------------ | :-------- | :----------
 | `GAIA_BOOST_DIR`          | No        | Absolute path to Boost. If not set, the system's default Boost version is used
 | `GAIA_BUILD_TYPE`         | No        | Values: `debug` (default), `release`

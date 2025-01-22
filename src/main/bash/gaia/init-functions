@@ -1,0 +1,18 @@
+#
+# init-functions
+#
+# Gaia Bash function library.
+#
+
+[[ ! -d $dir__ ]] && return 1
+
+source "$dir__/function/arg"    || return 2
+source "$dir__/function/cl"     || return 2
+source "$dir__/function/path"   || return 2
+source "$dir__/function/shell"  || return 2
+source "$dir__/function/ssh"    || return 2
+source "$dir__/function/string" || return 2
+source "$dir__/function/system" || return 2
+source "$dir__/function/wsl"    || return 2
+
+# EOF

@@ -14,7 +14,7 @@ For example, if you define a struct `MyStruct`, you can place it in a section of
 // `MyStruct` -----------------------------------------------------------------------------------------------
 
 struct MyStruct {
-  // ...
+  ...
 };
 ```
 
@@ -23,9 +23,9 @@ A collection of functions may be placed in a section called "Functions":
 ```c++
 // Functions ------------------------------------------------------------------------------------------------
 
-void first_function() { /* ... */ }
+void first_function() { ... }
 
-void second_function() { /* ... */ }
+void second_function() { ... }
 ```
 
 Section headings may appear at different levels. Do not use title case:
@@ -58,6 +58,33 @@ void
 frobnicate(T x) {
   Frobnicator::of(x).run();
 }
+```
+
+When documenting a function, all template parameters, parameters, return values, and noteworthy exceptions
+need to be documented, in this order:
+
+```c++
+/**
+ * Returns `true` if the component @p comp is visible.
+ *
+ * Additional documentation goes here.
+ *
+ * @tparam C the component type
+ * @param comp the component
+ * @return `true` if the component is visible
+ * @throw #rocket::except::InvalidState if the component isn't attached yet
+ * @throw #mygui::InvalidThread if the current thread is not the GUI thread
+ *
+ * ## Examples
+ *
+ * ```
+ * Component& comp = WindowManager::byId<Component>(42);
+ * assert(visible(comp));
+ * ```
+ */
+template<typename C>
+bool
+visible(const C& comp) { ... }
 ```
 
 ### References

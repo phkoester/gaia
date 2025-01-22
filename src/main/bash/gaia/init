@@ -1,7 +1,7 @@
 #
 # init
 #
-# Gaia initialization script.
+# This is the central Gaia initialization script.
 #
 # To be included by `.bashrc` or executable shell scripts.
 #
@@ -21,7 +21,8 @@ fi
 
 # Call other intialization scripts --------------------------------------------------------------------------
 
-source "$dir__/init-platform" || return 2
+source "$dir__/init-host-triple" || return 2
+source "$dir__/init-target-triple" || return 2
 source "$dir__/init-rust" || return 2
 
 # Detect Gaia version ---------------------------------------------------------------------------------------
@@ -34,22 +35,15 @@ if [[ ! $GAIA_VERSION =~ [0-9]+\.[0-9]+\.[0-9]+ ]]; then
   return 2
 fi
 
-export GAIA_VERSION_CODE=$(cat "$GAIA_DIR/project.json" | \
-    grep -w versionCode | sed -E 's/\s*"versionCode": (.*)/\1/')
-
-if [[ ! $GAIA_VERSION_CODE =~ [0-9]+ ]]; then
-  echo init: error: Cannot find valid version code in \`$GAIA_DIR/project.json\` > /dev/stderr
-  return 2
-fi
-
 # Environment -----------------------------------------------------------------------------------------------
 
 export GAIA_COLOR_GREEN='\033[0;32m'
 export GAIA_COLOR_RED='\033[0;31m'
 export GAIA_COLOR_OFF='\033[0m'
 
-GAIA_EDITOR=${GAIA_EDITOR:-nano}
-export GAIA_EDITOR
+export GAIA_BUILD_TYPE=${GAIA_BUILD_TYPE:-debug}
+export GAIA_CXX_TOOLCHAIN=${GAIA_CXX_TOOLCHAIN:-llvm}
+export GAIA_EDITOR=${GAIA_EDITOR:-nano}
 
 j__=$(($(nproc) / 3 * 2))
 l__=$(nproc)
@@ -64,12 +58,15 @@ else
   return 2
 fi
 
+[[ -d /mnt/wsl ]] && export GAIA_WSL=1
+[[ -d /mnt/wslg ]] && export GAIA_WSLG=1
+
 export PYTHONUTF8=1
 
 # Aliases and functions -------------------------------------------------------------------------------------
 
-source "$dir__/aliases" || return 2
-source "$dir__/functions" || return 2
+source "$dir__/init-aliases" || return 2
+source "$dir__/init-functions" || return 2
 
 # Paths -----------------------------------------------------------------------------------------------------
 
@@ -82,16 +79,15 @@ export PYTHONPATH
 # Say hello -------------------------------------------------------------------------------------------------
 
 if shell-is-interactive && [[ $SHLVL == 1 ]] && [[ ! $GAIA_REINIT ]]; then
-  fence__=$(string-repeat \# $(($COLUMNS - 1)))
+  ruler__=$(string-repeat \# $(($COLUMNS - 1)))
 
-  echo $fence__
+  echo $ruler__
   echo \#
-  echo \# This is Gaia $GAIA_VERSION \($GAIA_VERSION_CODE\)
+  echo \# This is Gaia $GAIA_VERSION
   echo \#  
-  echo \# "Current host platform  : $GAIA_HOST"
-  echo \# "Current target platform: $GAIA_TARGET"
+  echo \# "Detected host: $GAIA_HOST"
   echo \#
-  echo $fence__
+  echo $ruler__
 fi
 
 # EOF

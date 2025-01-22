@@ -1,0 +1,45 @@
+#
+# init-target-triple
+#
+# Selects the default target triple for the current host triple and sets Gaia environment variables
+# accordingly. These are
+#
+# - GAIA_TARGET_ARCH
+# - GAIA_TARGET_VENDOR
+# - GAIA_TARGET_OS
+# - GAIA_TARGET_ABI
+# - GAIA_TARGET (combines all of the above) 
+#
+# Host triple              | Default target triple
+# ------------------------ | ---------------------
+# `x86_64-pc-linux-gnu`    | `x86_64-unknown-linux-gnu`
+# `x86_64-pc-windows-msvc` | `x86_64-pc-windows-msvc`
+#
+
+# Select default target triple ------------------------------------------------------------------------------
+
+unset GAIA_TARGET_ARCH GAIA_TARGET_VENDOR GAIA_TARGET_OS GAIA_TARGET_ABI GAIA_TARGET
+export GAIA_TARGET_ARCH GAIA_TARGET_VENDOR GAIA_TARGET_OS GAIA_TARGET_ABI GAIA_TARGET
+
+if [[ $GAIA_HOST == x86_64-pc-linux-gnu ]]; then
+  # `x86_64-pc-linux-gnu`
+
+  GAIA_TARGET_ARCH=x86_64
+  GAIA_TARGET_VENDOR=unknown
+  GAIA_TARGET_OS=linux
+  GAIA_TARGET_ABI=gnu
+elif [[ $GAIA_HOST == x86_64-pc-windows-msvc ]]; then
+  # `x86_64-pc-windows-msvc`
+
+  GAIA_TARGET_ARCH=x86_64
+  GAIA_TARGET_VENDOR=pc
+  GAIA_TARGET_OS=windows
+  GAIA_TARGET_ABI=msvc
+else
+  echo init-target-triple: error: Unsupported host triple: \`$GAIA_HOST\` > /dev/stderr
+  return 2
+fi
+
+GAIA_TARGET=$GAIA_TARGET_ARCH-$GAIA_TARGET_VENDOR-$GAIA_TARGET_OS-$GAIA_TARGET_ABI
+
+# EOF

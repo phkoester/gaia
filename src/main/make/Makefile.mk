@@ -18,19 +18,13 @@
 # Check prerequisites ---------------------------------------------------------------------------------------
 
 ifeq ($(GAIA_VERSION),)
-  $(error Gaia not initialized)
+  $(error `GAIA_VERSION` not set)
 endif
 
-ifeq ($(GAIA_CXX_TOOLCHAIN),)
-  GAIA_CXX_TOOLCHAIN=$(GAIA_DEFAULT_CXX_TOOLCHAIN)
-endif
 ifeq ($(filter $(GAIA_CXX_TOOLCHAIN),gnu llvm),)
   $(error `GAIA_CXX_TOOLCHAIN`: Invalid value `$(GAIA_CXX_TOOLCHAIN)`; expected `gnu` or `llvm`)
 endif
 
-ifeq ($(GAIA_BUILD_TYPE),)
-  GAIA_BUILD_TYPE=$(GAIA_DEFAULT_BUILD_TYPE)
-endif
 ifeq ($(filter $(GAIA_BUILD_TYPE),debug release),)
   $(error `GAIA_BUILD_TYPE`: Invalid value `$(GAIA_BUILD_TYPE)`; expected `debug` or `release`)
 endif
@@ -41,7 +35,7 @@ COMMA := ,
 EMPTY :=
 SPACE := $(EMPTY) $(EMPTY)
 
-BUILD_DIR := target/$(GAIA_TARGET_SYSTEM)-$(GAIA_TARGET_ARCH)-$(GAIA_CXX_TOOLCHAIN)-$(GAIA_BUILD_TYPE)
+BUILD_DIR := target/$(GAIA_TARGET)-$(GAIA_CXX_TOOLCHAIN)-$(GAIA_BUILD_TYPE)
 export BUILD_DIR # Used in `Doxyfile`
 CXX_STD := gnu++2b
 MAKE_FLAGS := --no-print-directory
@@ -60,20 +54,17 @@ TEST_DEPS :=
 
 # Some functions --------------------------------------------------------------------------------------------
 
-# $1: Directory
-hexVersion = $(shell python3 -c 'import gaia; gaia.hexVersion("$1")')
-
 lower = $(shell echo $1 | tr A-Z -az)
 
-# $1 Items to move to the back
-# $2 All items
+# $1: items to move to the back
+# $2: all items
 moveBack = $(filter-out $1,$2) $1
 
-# $1 Items to move to the front
-# $2 All items
+# $1: items to move to the front
+# $2: all items
 moveFront = $1 $(filter-out $1,$2)
 
-# $1: Target
+# $1: target
 define printInfo
 $(info ####################)
 $(info #)
@@ -83,15 +74,17 @@ $(info ####################)
 
 endef
 
+# $1: directory
+printVersion = $(shell python3 -c 'import gaia; gaia.printVersion("$1")')
+
 unique = $(if $1,$(firstword $1) $(call unique,$(filter-out $(firstword $1),$1)))
 
 upper = $(shell echo $1 | tr a-z A-Z)
 
-# $1: Directory
-version = $(shell python3 -c 'import gaia; gaia.version("$1")')
-
-# $1: Directory
-versionCode = $(shell python3 -c 'import gaia; gaia.versionCode("$1")')
+# $1: path
+# $2: version name
+# $3: version
+writeVersionHeader = $(shell python3 -c 'import gaia; gaia.writeVersionHeader("$1", "$2", "$3")')
 
 # Binaries and options (gnu, llvm) --------------------------------------------------------------------------
 
@@ -128,8 +121,7 @@ AR_FLAGS := -rc
 CXX_FLAGS := \
     -DBOOST_SPIRIT_UNICODE \
     -DGAIA_CXX_TOOLCHAIN_$(call upper,$(GAIA_CXX_TOOLCHAIN)) \
-    -DGAIA_TARGET_OS_FAMILY_$(call upper,$(GAIA_TARGET_OS_FAMILY)) \
-    -DGAIA_TARGET_SYSTEM_$(call upper,$(GAIA_TARGET_SYSTEM)) \
+    -DGAIA_TARGET_OS_$(call upper,$(GAIA_TARGET_OS)) \
     -Wall -Werror \
     -fPIC -fmessage-length=0 -fsized-deallocation \
     -pthread \

@@ -72,4 +72,4 @@ Markdown isn't standardized, so not every feature will work in every environment
 Studio Code, and GitHub---only to name a few---all use their individual Markdown parsers and renderers.
 
 A full documentation for CommonMark (used by Rustdoc) can be found
-[here](https://spec.commonmark.org/0.31.2/).
+[here](https://spec.commonmark.org/0.31.2).

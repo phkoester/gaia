@@ -4,12 +4,12 @@
 # Sets environment variables related to Rust.
 #
 
+unset GAIA_RUSTC_TARGET
 unset GAIA_RUSTC_TOOLCHAIN
-unset GAIA_RUSTUP_TOOLCHAIN
 
 if which rustc > /dev/null; then
-  export GAIA_RUSTC_TOOLCHAIN=/rustc/$(rustc --version -v | grep ^commit-hash: | awk '{print $2}')
-  export GAIA_RUSTUP_TOOLCHAIN=stable-$(rustc --version -v | grep ^host: | awk '{print $2}')
+  export GAIA_RUSTC_TARGET=stable-$(rustc --version -v | grep ^host: | awk '{print $2}')
+  export GAIA_RUSTC_ID=/rustc/$(rustc --version -v | grep ^commit-hash: | awk '{print $2}')
 fi
 
 # EOF

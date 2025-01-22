@@ -1,0 +1,70 @@
+#
+# init-host-triple
+#
+# Detects the host triple and sets Gaia environment variables accordingly. These are
+#
+# - GAIA_HOST_ARCH
+# - GAIA_HOST_VENDOR
+# - GAIA_HOST_OS
+# - GAIA_HOST_ABI
+# - GAIA_HOST (combines all of the above) 
+#
+# The term *triple* refers to the number of components historically. Today, a triple has up to 10 parts:
+#
+#   triple = [arch][subarch][endian]-[vendor]-[os]-[libc]?[abi]?[variant]?[version]-[object file format]?
+#
+# As an example, `armv7k_be-arm-linux-gnueabihf6.3.3-macho` would be a 10-part triple specifying:
+#
+# - Architecture: ARM
+# - Subarchitecture: v7k
+# - Endianness: Big Endian
+# - Vendor: ARM Ltd
+# - OS: Linux
+# - libc: GNU (glibc)
+# - ABI: EABI (embedded ABI)
+# - Variant: Hardware Floating Point
+# - OS Version: 6.3.3
+# - File Format: Mach-O
+#
+# Until now, these host triples are supported:
+#
+# - `x86_64-pc-linux-gnu`
+# - `x86_64-pc-windows-msvc`
+
+# Detect host triple ----------------------------------------------------------------------------------------
+
+unset GAIA_HOST_ARCH GAIA_HOST_VENDOR GAIA_HOST_OS GAIA_HOST_ABI GAIA_HOST
+export GAIA_HOST_ARCH GAIA_HOST_VENDOR GAIA_HOST_OS GAIA_HOST_ABI GAIA_HOST
+
+if [[ $OSTYPE == linux-gnu ]]; then
+  # Linux
+
+  if [[ $MACHTYPE != x86_64-pc-linux-gnu ]]; then
+    echo init-host-triple: error: Unsupported host architecture: \`$MACHTYPE\` > /dev/stderr
+    return 2
+  fi
+
+  GAIA_HOST_ARCH=x86_64
+  GAIA_HOST_VENDOR=pc
+  GAIA_HOST_OS=linux
+  GAIA_HOST_ABI=gnu
+elif [[ $OS == Windows_NT ]]; then
+  # Windows
+
+  if [[ $PROCESSOR_ARCHITECTURE != AMD64 ]]; then
+    echo init-host-triple: error: Unsupported host architecture: \`$PROCESSOR_ARCHITECTURE\` > /dev/stderr
+    return 2
+  fi
+
+  GAIA_HOST_ARCH=x86_64
+  GAIA_HOST_VENDOR=pc
+  GAIA_HOST_OS=windows
+  GAIA_HOST_ABI=msvc
+else
+  echo init-host-triple: error: Cannot detect OS > /dev/stderr
+  return 2
+fi
+
+GAIA_HOST=$GAIA_HOST_ARCH-$GAIA_HOST_VENDOR-$GAIA_HOST_OS-$GAIA_HOST_ABI
+
+# EOF

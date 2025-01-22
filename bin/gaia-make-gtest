@@ -44,7 +44,7 @@ mkdir -p target
 cd target
 
 for buildType in debug release; do
-  dir=$GAIA_TARGET_SYSTEM-$GAIA_TARGET_ARCH-$toolchain-$buildType
+  dir=$GAIA_TARGET-$toolchain-$buildType
   
   CMAKE_FLAGS=-DCMAKE_BUILD_TYPE=${buildType^} # ^: Convert first letter to uppercase
   

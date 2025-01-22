@@ -12,7 +12,7 @@ from typing import TextIO, List
 # Local functions -------------------------------------------------------------------------------------------
 
 def _printHeader(file: TextIO, name: str):
-  file.write(f"/*\n * {name}\n *\n * This is a generated file. Do not edit.\n */\n\n")
+  file.write(f"/*\n * {name}\n *\n * THIS IS A GENERATED FILE. DO NOT EDIT.\n */\n\n")
   
 def _printIncludes(file: TextIO, includes: List[str]):
   for include in includes:

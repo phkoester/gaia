@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+#
+# gaia-git-version
+#
+
+source "$GAIA_DIR/src/main/bash/gaia/init" || exit 2
+
+set -e
+
+tag_version=
+commit_hash=
+commit_date=
+
+if [[ -d .git ]]; then
+  tag_version=$(git tag | grep ^v | tail -1)
+  commit_hash=$(git rev-parse HEAD)
+  commit_date=$(git show -s --format=%cd --date=format:'%Y-%m-%d' HEAD)
+fi
+
+[[ -z $tag_version ]] && tag_version=N/A
+[[ -z $commit_hash ]] && commit_hash=N/A
+[[ -z $commit_date ]] && commit_date=N/A
+
+echo tag-version: $tag_version
+echo commit-hash: $commit_hash
+echo commit-date: $commit_date
+
+# EOF
