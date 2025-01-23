@@ -1,30 +1,22 @@
 #
-# @file path.py
+# path.py
 #
 # Path utilities.
 #
 
-import gaia
+import gaia.string
 import os
 
 def absolute(path: str) -> bool:
   """
-  Returns `True` if the path @p path is an absolute path.
-
-  @param path a path
-  @return `True` if @p path is an absolute path
+  Returns `True` if the path `path` is an absolute path.
   """
   return path[0:1] == "/"
 
-def find(paths: str, file: str, pathSeparator: str = ":") -> str:
+def find(paths: str, file: str, path_sep: str = ":") -> str | None:
   """
-  Looks for the file @p file either as an existing absolute file or as an existing file relative to one of
-  the paths in @p paths, which is a list of paths, separated by @p pathSeparator.
-
-  @param paths a list of paths, separated by @p pathSeparator
-  @param file the file to look for, either absolute or relative
-  @param pathSeparator the path separator used in @p paths
-  @return a path to the found file, if any, `None` otherwise
+  Looks for the file `file` either as an existing absolute file or as an existing file relative to one of
+  the paths in `paths`, which is a list of paths, separated by `path_sep`.
   """
 
   if absolute(file):
@@ -32,8 +24,8 @@ def find(paths: str, file: str, pathSeparator: str = ":") -> str:
       return file
     return None
   
-  for path in paths.split(pathSeparator):
-    path = gaia.string.removeTrailing(path, "/")
+  for path in paths.split(path_sep):
+    path = gaia.string.remove_trailing(path, "/")
     if os.path.isfile(path + "/" + file):
       return path + "/" + file
   return None

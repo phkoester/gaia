@@ -4,13 +4,13 @@
 #
 
 import argparse
+import gaia.log
 import gaia.list
 import gaia.shell
 import io
 import json5
 import os
 
-from gaia import log
 from gaia.shell import error
 from os import environ as env
 
@@ -92,61 +92,68 @@ USAGE = """%(prog)s [OPTION]... [PROJECT]... [COMMAND]...
 
 # Functions -------------------------------------------------------------------------------------------------
 
-def collectCommands(projectType: ProjectType, cmds: list[str]):
+def collect_commands(project_type: ProjectType, cmds: list[str]):
   # Add all commands available for this project type
   collected = []
-  byProjectType = COMMANDS_BY_PROJECT_TYPE.get(projectType)
-  if not byProjectType:
+  by_project_type = COMMANDS_BY_PROJECT_TYPE.get(project_type)
+  if not by_project_type:
     return []
-  log.debug(f"{cmds=}")
+  gaia.log.debug(f"{cmds=}")
   for cmd in cmds:
-    log.debug(f"{cmd=}")
-    if cmd in byProjectType:
+    gaia.log.debug(f"{cmd=}")
+    if cmd in by_project_type:
       # Add dependencies, if any
       deps = COMMANDS_DEPS.get(cmd)
-      log.debug(f"{deps=}")
+      gaia.log.debug(f"{deps=}")
       if deps:
         collected.extend(deps)
       # Add command
       collected.append(cmd)
-  log.debug(f"{collected=}")
+  gaia.log.debug(f"{collected=}")
 
   # Sort commands, eliminate duplicates
   result = []
   for cmd in COMMANDS_ORDERED:
     if cmd in collected:
       result.append(cmd)
-  log.debug(f"{result=}")
+  gaia.log.debug(f"{result=}")
   return result
 
-def findRootDir() -> str:
+def find_root_dir() -> str:
   # Test current and parent directories
   dir = os.getcwd()
   while True:
-    if testRootDir(dir):
+    if test_root_dir(dir):
       return dir
     if dir == "/":
       break
     dir = os.path.abspath(dir + "/..")
 
+  # Test `GAIA_PROJECT_DIR`
+  dir = env.get("GAIA_PROJECT_DIR")
+  if dir:
+    if test_root_dir(dir):
+      return dir
+
   # Test `~/project`
   dir = env["HOME"] + "/project"
-  if testRootDir(dir):
+  if test_root_dir(dir):
     return dir
   
   raise RuntimeError("Cannot find root directory")
 
-def getProjectDir(prj: str) -> str:
-  return rootDir + "/" + prj
+def get_project_dir(prj: str) -> str:
+  return root_dir + "/" + prj
 
-def getProjectJson(prj: str) -> str:
-  dir = getProjectDir(prj)
+def get_project_json(prj: str) -> dict[str, any]:
+  dir = get_project_dir(prj)
   path = dir + "/project.json"
+  gaia.log.debug(f"{path=}")
   with io.open(path, mode="r") as file:
     o = json5.load(file)
     return o
 
-def getProjectType(dir: str) -> ProjectType:
+def get_project_type(dir: str) -> ProjectType:
   if os.path.isfile(dir + "/Cargo.toml"):
     return ProjectType.cargo
   if os.path.isfile(dir + "/Makefile"):
@@ -154,7 +161,7 @@ def getProjectType(dir: str) -> ProjectType:
   else:
     return ProjectType.none
 
-def parseCl() -> argparse.Namespace:
+def parse_cl() -> argparse.Namespace:
   parser = argparse.ArgumentParser(
     add_help=False,
     description=DESCRIPTION,
@@ -166,11 +173,11 @@ def parseCl() -> argparse.Namespace:
   
   parser.add_argument("-a", "--all", action="store_true", dest="all",
       help="an \"all\" hint")
-  parser.add_argument("-b", "--build-type", action="store", choices=["debug", "release"], dest="buildType", type=str,
+  parser.add_argument("-b", "--build-type", action="store", choices=["debug", "release"], dest="build_type", type=str,
       help="specify a build type")
   parser.add_argument("-h", "--help", action="help",
       help="show this help message and exit")
-  parser.add_argument("-p", "--project-type", action="store", choices=ProjectType._member_names_, dest="projectType", type=str,
+  parser.add_argument("-p", "--project-type", action="store", choices=ProjectType._member_names_, dest="project_type", type=str,
       help="filter projects by project type")
   parser.add_argument("-s", "--skip", action="store_true", dest="skip",
       help="skip processing dependencies")
@@ -183,7 +190,7 @@ def parseCl() -> argparse.Namespace:
   
   return parser.parse_args()
 
-def parseCommandsOrCl() -> tuple[list[str], list[str]]:
+def parse_commands_or_cl() -> tuple[list[str], list[str]]:
   cmds, cl = [], []
   if not args.args:
     cmds = ["build"]
@@ -198,10 +205,10 @@ def parseCommandsOrCl() -> tuple[list[str], list[str]]:
           cmds.append(cmd)
       else:
         error(f"Invalid command: `{cmd}`", 2, False)
-  log.debug(f"{cmds=}, {cl=}")
+  gaia.log.debug(f"{cmds=}, {cl=}")
   return cmds, cl
 
-def parseProjects() -> list[str]:
+def parse_projects() -> list[str]:
   result = []
   # Consume `args` as long as the first element matches a project or "all"
   while True:
@@ -215,7 +222,7 @@ def parseProjects() -> list[str]:
       break
   if not result:
     result = ["all"]
-  log.debug(f"{result=}, {args.args=}")
+  gaia.log.debug(f"{result=}, {args.args=}")
 
   # Resolve `all``
   tmp = result
@@ -226,7 +233,7 @@ def parseProjects() -> list[str]:
         result.append(p)
     else:
       result.append(prj)
-  log.debug(f"Resolved `all`, {result=}")
+  gaia.log.debug(f"Resolved `all`, {result=}")
 
   # Resolve dependencies
   if not args.skip:
@@ -234,16 +241,16 @@ def parseProjects() -> list[str]:
     result = []
     for prj in tmp:
       result.extend(resolve(prj))
-    log.debug(f"Resolved dependencies, {result=}")
+    gaia.log.debug(f"Resolved dependencies, {result=}")
 
   # Eliminate duplicates
-  gaia.list.dedupIn(result)
-  log.debug(f"Eliminated duplicates, {result=}")
+  gaia.list.dedup(result)
+  gaia.log.debug(f"Eliminated duplicates, {result=}")
 
   return result
 
-def printSection(what: str, targets: list[str], cl: list[str] = None) -> None:
-  s = 40 * "#" + "\n# \n# " + rootDir + "\n#\n# " + what
+def print_section(what: str, targets: list[str], cl: list[str] = None) -> None:
+  s = 40 * "#" + "\n# \n# " + root_dir + "\n#\n# " + what
   if targets:
     s+= " > " + " ".join(targets)
     if cl:
@@ -253,10 +260,10 @@ def printSection(what: str, targets: list[str], cl: list[str] = None) -> None:
   s += "\n#\n" + 40 * "#"
   print(s)
 
-def printVersion(prj: str) -> None:
+def print_version(prj: str) -> None:
   # Print version from `project.json`
-  dir = getProjectDir(prj)
-  version = gaia.getVersion(dir)
+  dir = get_project_dir(prj)
+  version = gaia.get_version(dir)
   if not version:
     version = "N/A"
   print(f"version: {version}")
@@ -277,14 +284,14 @@ def resolve(prj: str) -> list[str]:
   resolve0(prj, result)
   return result
 
-def runCargo(prj: str, cmds: list[str]) -> None:
+def run_cargo(prj: str, cmds: list[str]) -> None:
   # Print section
-  printSection(prj, cmds)
+  print_section(prj, cmds)
 
   # Run commands
   for cmd in cmds:
     cl = ["cargo"]
-    clLen = len(cl)
+    cl_len = len(cl)
     
     if cmd == "build":
       cl.append("build")
@@ -299,30 +306,30 @@ def runCargo(prj: str, cmds: list[str]) -> None:
     elif cmd == "update":
       cl.append("update")
     elif cmd == "version":
-      printVersion(prj)
+      print_version(prj)
 
-    if len(cl) > clLen:
-      if args.buildType == "release":
+    if len(cl) > cl_len:
+      if args.build_type == "release":
         cl.append("--release")
-      log.debug(f"{cl=}")
-      runCl(prj, cl)
+      gaia.log.debug(f"{cl=}")
+      run_cl(prj, cl)
 
-def runCl(prj: str, cl: list[str]) -> None:
-  dir = getProjectDir(prj)
+def run_cl(prj: str, cl: list[str]) -> None:
+  dir = get_project_dir(prj)
   os.chdir(dir)
   gaia.shell.run(cl, check=True)
 
-def runMake(prj: str, cmds: list[str]) -> None:
+def run_make(prj: str, cmds: list[str]) -> None:
   # Print section
-  printSection(prj, cmds)
+  print_section(prj, cmds)
 
   # Run commands
   for cmd in cmds:
     cl = ["make"]
-    gaiaMakeFlags = env.get("GAIA_MAKE_FLAGS")
-    if gaiaMakeFlags:
-      cl.extend(gaiaMakeFlags.split())
-    clLen = len(cl)
+    gaia_make_flags = env.get("GAIA_MAKE_FLAGS")
+    if gaia_make_flags:
+      cl.extend(gaia_make_flags.split())
+    cl_len = len(cl)
 
     if cmd == "build":
       cl.append("build")
@@ -335,29 +342,29 @@ def runMake(prj: str, cmds: list[str]) -> None:
     elif cmd == "test":
       cl.append("test")
     elif cmd == "version":
-      printVersion(prj)
+      print_version(prj)
 
-    if len(cl) > clLen:
-      if args.buildType:
-        cl.append(f"GAIA_BUILD_TYPE={args.buildType}")
-      log.debug(f"{cl=}")
-      runCl(prj, cl)
+    if len(cl) > cl_len:
+      if args.build_type:
+        cl.append(f"GAIA_BUILD_TYPE={args.build_type}")
+      gaia.log.debug(f"{cl=}")
+      run_cl(prj, cl)
 
-def runNone(prj: str, cmds: list[str]) -> None:
-  log.debug(f"{prj=}, {cmds=}")
+def run_none(prj: str, cmds: list[str]) -> None:
+  gaia.log.debug(f"{prj=}, {cmds=}")
 
   # Filter by accepted commands
   cmds = gaia.list.filter(cmds, ["version"])
   if len(cmds) == 0:
     return
-  printSection(prj, cmds)
+  print_section(prj, cmds)
 
   # Run commands
   for cmd in cmds:
     if cmd == "version":
-      printVersion(prj)
+      print_version(prj)
 
-def testRootDir(dir: str) -> bool:
+def test_root_dir(dir: str) -> bool:
   if not os.path.isdir(dir):
     return False
   for file in os.listdir(dir):
@@ -370,53 +377,54 @@ def testRootDir(dir: str) -> bool:
 # Main ------------------------------------------------------------------------------------------------------
 
 # Parse command line
-args = parseCl()
-log.debug(f"{args=}")
+args = parse_cl()
+gaia.log.debug(f"{args=}")
 
 # Find root dir
-rootDir = findRootDir()
-log.debug(f"{rootDir=}")
+root_dir = find_root_dir()
+gaia.shell.note(f"Using project root directory: {root_dir}")
+gaia.log.debug(f"{root_dir=}")
 
 # Collect projects and their dependencies from `project.json`
 projects = {}
-for prj in os.listdir(rootDir):
-  subdir = rootDir + "/" + prj
+for prj in os.listdir(root_dir):
+  subdir = root_dir + "/" + prj
   if os.path.isfile(subdir + "/project.json"):
     projects[prj] = []
-    o = getProjectJson(prj)
+    o = get_project_json(prj)
     if "dependencies" in o:
       projects[prj] = o["dependencies"]
-log.debug(f"{projects=}")
+gaia.log.debug(f"{projects=}")
 
 # Find out what to do (commands or command line)
-prjs = parseProjects()
-log.debug(f"{prjs=}")
-cmds, cl = parseCommandsOrCl()
-runCmds = len(cmds) > 0
-log.debug(f"{cmds=}, {cl=}")
+prjs = parse_projects()
+gaia.log.debug(f"{prjs=}")
+cmds, cl = parse_commands_or_cl()
+run_cmds = len(cmds) > 0
+gaia.log.debug(f"{cmds=}, {cl=}")
 
 # Process projects
 for prj in prjs:
-  dir = getProjectDir(prj)
-  projectType = getProjectType(dir)
-  log.debug(f"{projectType=}")
+  dir = get_project_dir(prj)
+  project_type = get_project_type(dir)
+  gaia.log.debug(f"{project_type=}")
   # If applicable, consider project-type filter
-  if args.projectType and args.projectType != projectType.name:
+  if args.project_type and args.project_type != project_type.name:
     continue
-  if runCmds:
-    prjCmds = collectCommands(projectType, cmds)
-    log.debug(f"{prj=}, {cmds=}")
-    if len(prjCmds) > 0:
+  if run_cmds:
+    prj_cmds = collect_commands(project_type, cmds)
+    gaia.log.debug(f"{prj=}, {cmds=}")
+    if len(prj_cmds) > 0:
       # Execute commands, call appropriate runner
-      if projectType == ProjectType.cargo:
-        runCargo(prj, prjCmds)
-      elif projectType == ProjectType.make:
-        runMake(prj, prjCmds)
+      if project_type == ProjectType.cargo:
+        run_cargo(prj, prj_cmds)
+      elif project_type == ProjectType.make:
+        run_make(prj, prj_cmds)
       else:
-        runNone(prj, prjCmds)
+        run_none(prj, prj_cmds)
   else:
     # Execute command line
-    printSection(prj, None, cl)
-    runCl(prj, cl)
+    print_section(prj, None, cl)
+    run_cl(prj, cl)
 
 # EOF

@@ -26,7 +26,7 @@ SHARED_LIB_DIRS := $(BUILD_DIR) $(EXTERNAL_SHARED_LIB_DIRS)
 
 # Target rule -----------------------------------------------------------------------------------------------
 
-TARGET := $(BUILD_DIR)/$(call sharedLibName,$(NAME),$(VERSION))
+TARGET := $(BUILD_DIR)/$(call shared-lib-name,$(NAME),$(VERSION))
 BUILD_DEPS += $(TARGET)
 
 $(TARGET): EXTERNAL_SHARED_LIBS := $(EXTERNAL_SHARED_LIBS)

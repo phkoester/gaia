@@ -36,7 +36,7 @@ EMPTY :=
 SPACE := $(EMPTY) $(EMPTY)
 
 BUILD_DIR := target/$(GAIA_TARGET)-$(GAIA_CXX_TOOLCHAIN)-$(GAIA_BUILD_TYPE)
-export BUILD_DIR # Used in `Doxyfile`
+export BUILD_DIR # May be used in project-specific Doxyfile
 CXX_STD := gnu++2b
 MAKE_FLAGS := --no-print-directory
 MAKEFILE_DEPS := \
@@ -58,14 +58,14 @@ lower = $(shell echo $1 | tr A-Z -az)
 
 # $1: items to move to the back
 # $2: all items
-moveBack = $(filter-out $1,$2) $1
+move-back = $(filter-out $1,$2) $1
 
 # $1: items to move to the front
 # $2: all items
-moveFront = $1 $(filter-out $1,$2)
+move-front = $1 $(filter-out $1,$2)
 
 # $1: target
-define printInfo
+define print-info
 $(info ####################)
 $(info #)
 $(info # $(notdir $(realpath .)): $1 ($(GAIA_CXX_TOOLCHAIN), $(GAIA_BUILD_TYPE)))
@@ -75,7 +75,7 @@ $(info ####################)
 endef
 
 # $1: directory
-printVersion = $(shell python3 -c 'import gaia; gaia.printVersion("$1")')
+print-version = $(shell python3 -c 'import gaia; gaia.print_version("$1")')
 
 unique = $(if $1,$(firstword $1) $(call unique,$(filter-out $(firstword $1),$1)))
 
@@ -84,9 +84,9 @@ upper = $(shell echo $1 | tr a-z A-Z)
 # $1: path
 # $2: version name
 # $3: version
-writeVersionHeader = $(shell python3 -c 'import gaia; gaia.writeVersionHeader("$1", "$2", "$3")')
+write-version-header = $(shell python3 -c 'import gaia; gaia.write_version_header("$1", "$2", "$3")')
 
-# Binaries and options (gnu, llvm) --------------------------------------------------------------------------
+# Binaries and options (toolchains `gnu`, `llvm`) -----------------------------------------------------------
 
 ifeq ($(GAIA_CXX_GNU),)
   GAIA_CXX_GNU := $(shell which g++)
@@ -117,11 +117,19 @@ endif
 
 AR_FLAGS := -rc
 
-# -D_GLIBCXX_DEFINE_STDEXCEPT_COPY_OPS
-CXX_FLAGS := \
+CXX_DEFINES := \
     -DBOOST_SPIRIT_UNICODE \
     -DGAIA_CXX_TOOLCHAIN_$(call upper,$(GAIA_CXX_TOOLCHAIN)) \
     -DGAIA_TARGET_OS_$(call upper,$(GAIA_TARGET_OS)) \
+
+# -D_GLIBCXX_DEFINE_STDEXCEPT_COPY_OPS
+
+ifeq ($(GAIA_BUILD_TYPE),debug)
+  CXX_DEFINES += -DGAIA_DEBUG
+endif
+
+CXX_FLAGS := \
+    $(CXX_DEFINES) \
     -Wall -Werror \
     -fPIC -fmessage-length=0 -fsized-deallocation \
     -pthread \
@@ -132,7 +140,7 @@ ifeq ($(GAIA_CXX_TOOLCHAIN),gnu)
 endif
 
 ifeq ($(GAIA_BUILD_TYPE),debug)
-  CXX_FLAGS += -DGAIA_DEBUG -O0 -g3
+  CXX_FLAGS += -O0 -g3
 else
   CXX_FLAGS += -O3
 endif
@@ -141,7 +149,7 @@ LINK := $(CXX)
 
 LINK_FLAGS := -pthread -static-libstdc++
 
-# Configure for target platform -----------------------------------------------------------------------------
+# Configure for target --------------------------------------------------------------------------------------
 
 ifeq ($(GAIA_TARGET_OS_FAMILY),win)
   EXECUTABLE_SUFFIX := .exe
@@ -149,21 +157,21 @@ ifeq ($(GAIA_TARGET_OS_FAMILY),win)
   SHARED_LIB_PATH = $(PATH)
   SHARED_LIB_PATH_NAME := PATH
 
-  # $1: Base name
-  # $2: Version
-  sharedLibName = $1$(if $2,-$2).dll
+  # $1: base name
+  # $2: version
+  shared-lib-name = $1$(if $2,-$2).dll
 else
   EXECUTABLE_SUFFIX :=
   # No colon in the next line!
   SHARED_LIB_PATH = $(LD_LIBRARY_PATH)
   SHARED_LIB_PATH_NAME := LD_LIBRARY_PATH
 
-  # $1: Base name
-  # $2: Version
-  sharedLibName = lib$1.so$(if $2,.$2)
+  # $1: base name
+  # $2: version
+  shared-lib-name = lib$1.so$(if $2,.$2)
 endif
 
-# Include directories ---------------------------------------------------------------------------------------
+# Collect include directories -------------------------------------------------------------------------------
 
 BUILD_INCLUDE_DIRS := $(addprefix $(BUILD_DIR)/,$(INCLUDE_DIRS))
 SRC_INCLUDE_DIRS := $(addprefix src/,$(INCLUDE_DIRS))
@@ -213,7 +221,7 @@ endif
 # Cppcheck --------------------------------------------------------------------------------------------------
 
 CPPCHECK_FLAGS := \
-    -DGAIA_CXX_TOOLCHAIN_$(call upper,$(GAIA_CXX_TOOLCHAIN)) \
+    $(CXX_DEFINES) \
     --check-level=exhaustive \
     --cppcheck-build-dir=$(BUILD_DIR)/cppcheck  \
     --enable=all \
@@ -235,7 +243,7 @@ endif
 
 ifeq ($(COMPILE_COMMANDS),1)
 check: compile_commands.json
-	@$(call printInfo,$@)
+	@$(call print-info,$@)
 	@mkdir -p $(BUILD_DIR)/cppcheck
 	@cppcheck $(CPPCHECK_FLAGS)
 endif
@@ -245,22 +253,22 @@ endif
 # Predefined targets ----------------------------------------------------------------------------------------
 
 clean:
-	@$(call printInfo,$@)
+	@$(call print-info,$@)
 	@rm -rf $(BUILD_DIR)
 
 cxxDefines:
-	@$(call printInfo,$@)
+	@$(call print-info,$@)
 	@$(CXX) -dM -E -x c /dev/null
 
 cxxIncludes:
-	@$(call printInfo,$@)
+	@$(call print-info,$@)
 	@$(CXX) -E -x c++ - -v < /dev/null
 
 info:
-	@$(call printInfo,$@)
+	@$(call print-info,$@)
 	@echo
-	@echo "Host platform  : $(GAIA_HOST)"
-	@echo "Target platform: $(GAIA_TARGET)"
+	@echo "Host           : $(GAIA_HOST)"
+	@echo "Target         : $(GAIA_TARGET)"
 	@echo "C++ toolchain  : $(GAIA_CXX_TOOLCHAIN)"
 	@echo "Build type     : $(GAIA_BUILD_TYPE)"
 	@echo "Build directory: $(BUILD_DIR)"

@@ -12,15 +12,15 @@ all: test
 buildMain:
 
 buildTest: buildMain
-	@$(call printInfo,$@)
+	@$(call print-info,$@)
 	@+$(MAKE) $(MAKE_FLAGS) -f src/test/Makefile build
 
 test: buildMain
-	@$(call printInfo,$@)
+	@$(call print-info,$@)
 	@+$(MAKE) $(MAKE_FLAGS) -f src/test/Makefile test
 
 tests: buildMain
-	@$(call printInfo,$@)
+	@$(call print-info,$@)
 	@+$(MAKE) $(MAKE_FLAGS) -f src/test/Makefile tests
 
 # EOF

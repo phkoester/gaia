@@ -3,16 +3,15 @@
 # test-list.py
 #
 
+import gaia.list
 import unittest
-
-from gaia.list import *
 
 # Tests -----------------------------------------------------------------------------------------------------
 
 class TestList(unittest.TestCase):
-  def testDedupIn(self):
+  def test_dedup(self):
     l = [ 1, 2, 1, 2, 4, 3, 3, 4, 4, 1, 1 ]
-    dedupIn(l)
+    gaia.list.dedup(l)
     self.assertEqual(l, [1, 2, 4, 3])
 
 # Main ------------------------------------------------------------------------------------------------------

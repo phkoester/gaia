@@ -3,39 +3,38 @@
 # test-string.py
 #
 
+import gaia.string
 import unittest
-
-from gaia.string import *
 
 # Tests -----------------------------------------------------------------------------------------------------
 
 class TestString(unittest.TestCase):
-  def testCapitalize(self):
-    self.assertEqual(capitalize("hello"), "Hello")
+  def test_capitalize(self):
+    self.assertEqual(gaia.string.capitalize("hello"), "Hello")
 
-  def testCapitalizeUnicode(self):
-    self.assertEqual(capitalize("ärger"), "Ärger")
+  def test_capitalize_unicode(self):
+    self.assertEqual(gaia.string.capitalize("ärger"), "Ärger")
 
-  def testRemoveLeading(self):
-    self.assertEqual(removeLeading("", "hello"), "")
-    self.assertEqual(removeLeading("hello", ""), "hello")
-    self.assertEqual(removeLeading("hhello", "x"), "hhello")
-    self.assertEqual(removeLeading("hhello", "h"), "hello")
+  def test_remove_leading(self):
+    self.assertEqual(gaia.string.remove_leading("", "hello"), "")
+    self.assertEqual(gaia.string.remove_leading("hello", ""), "hello")
+    self.assertEqual(gaia.string.remove_leading("hhello", "x"), "hhello")
+    self.assertEqual(gaia.string.remove_leading("hhello", "h"), "hello")
 
-  def testRemoveTrailing(self):
-    self.assertEqual(removeTrailing("", "hello"), "")
-    self.assertEqual(removeTrailing("hello", ""), "hello")
-    self.assertEqual(removeTrailing("helloo", "x"), "helloo")
-    self.assertEqual(removeTrailing("helloo", "o"), "hello")
+  def test_remove_trailing(self):
+    self.assertEqual(gaia.string.remove_trailing("", "hello"), "")
+    self.assertEqual(gaia.string.remove_trailing("hello", ""), "hello")
+    self.assertEqual(gaia.string.remove_trailing("helloo", "x"), "helloo")
+    self.assertEqual(gaia.string.remove_trailing("helloo", "o"), "hello")
 
-  def testRemoveTrailingUnicode(self):
-    self.assertEqual(removeTrailing("hellö", "ö"), "hell")
+  def test_remove_trailing_unicode(self):
+    self.assertEqual(gaia.string.remove_trailing("hellö", "ö"), "hell")
 
-  def testUncapitalize(self):
-    self.assertEqual(uncapitalize("Hello"), "hello")
+  def test_uncapitalize(self):
+    self.assertEqual(gaia.string.uncapitalize("Hello"), "hello")
 
-  def testUncapitalizeUnicode(self):
-    self.assertEqual(uncapitalize("Ärger"), "ärger")
+  def test_uncapitalize_unicode(self):
+    self.assertEqual(gaia.string.uncapitalize("Ärger"), "ärger")
 
 # Main ------------------------------------------------------------------------------------------------------
 

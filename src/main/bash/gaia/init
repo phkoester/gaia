@@ -28,7 +28,7 @@ source "$dir__/init-rust" || return 2
 # Detect Gaia version ---------------------------------------------------------------------------------------
 
 export GAIA_VERSION=$(cat "$GAIA_DIR/project.json" | \
-    grep -w version | sed -E 's/\s*"version": "(.*)",/\1/')
+    grep -w version | sed -E 's/\s*"version": "(.*)",?/\1/')
 
 if [[ ! $GAIA_VERSION =~ [0-9]+\.[0-9]+\.[0-9]+ ]]; then
   echo init: error: Cannot find valid version in \`$GAIA_DIR/project.json\` > /dev/stderr
@@ -48,6 +48,7 @@ export GAIA_EDITOR=${GAIA_EDITOR:-nano}
 j__=$(($(nproc) / 3 * 2))
 l__=$(nproc)
 export GAIA_MAKE_FLAGS="-j$j__ -l$l__"
+unset j__ l__
 
 if [[ $HOME ]]; then
   export GAIA_USER_DIR=$HOME
@@ -89,5 +90,7 @@ if shell-is-interactive && [[ $SHLVL == 1 ]] && [[ ! $GAIA_REINIT ]]; then
   echo \#
   echo $ruler__
 fi
+
+unset dir__ ruler__
 
 # EOF

@@ -3,35 +3,39 @@
 Gaia is an experimental collection of Bash scripts, Python scripts, and Makefiles that help to build projects
 in a Bash shell.
 
+**NOTE:** For the time being, it is not recommended for public use. Use it at your own risk.
+
 Supported project types are Bash, Python, C++, and Rust.
 
 I decided to make this repository public on GitHub, since all `phkoester` repositories depend on Gaia. This
 is where the name comes from: Gaia is supposed to be the building ground of everything.
 
-**NOTE:** For the time being, it is not recommended for public use. Use it at your own risk.
-
-## General Documents
+Recommended readings:
 
 - [Text-File Guidelines](doc/text_file_guidelines.md)
-- [C++ Guidelines](doc/c++_guidelines.md)
+- [C++ Guidelines](doc/c++-guidelines.md)
 - [Rust Guidelines](doc/rust-guidelines.md)
 - [Dictionary](doc/dictionary.md)
 
-## Installation
+## Set Up
 
-- [Install Windows Development](doc/install-win.md)
-- [Install Windows/WSL/Ubuntu Development](doc/install-win-wsl-ubuntu.md)
+### Required Packages
 
-### Prerequisites
+- `cmake`
+- `lldb` (?)
+- `llvm` (?)
+- `make`
+- `python3`
+- `python3-json5`
+- `python3-semver`
+- `python3-toml`
 
-Python is required for some Gaia scripts and Makefiles, along with the packages `json5`, `semver`, and
-`toml`.
+### Recommended Packages
 
-In Ubuntu, run:
-
-```bash
-sudo apt install python3 python3-json5 python3-semver python3-toml
-```
+- `batcat`
+- `gedit`
+- `ripgrep`
+- `valgrind`
 
 ### Gaia
 
@@ -48,15 +52,30 @@ In your `~/.bashrc`, export these variables:
 | `GAIA_CXX_LLVM`           | No        | Absolute path to the `clang++` executable. If not set, `which clang++` is used
 | `GAIA_CXX_TOOLCHAIN`      | No        | Values: `gnu`, `llvm` (default)
 | `GAIA_DIR`                | Yes       | Example: `~/project/gaia`
-| `GAIA_DOXYGEN`            | No        | Example: `~/download/doxygen-1.12.0/bin/doxygen`
+| `GAIA_DOXYGEN`            | No        | Example: `/usr/local/bin/doxygen-1.12.0/bin/doxygen`
 | `GAIA_EDITOR`             | No        | Example: `nano` (default)
 | `GAIA_GTEST_DIR`          | Yes       | Example: `~/project/googletest`
+| `GAIA_PROJECT_DIR`        | No        | Fallback directory where `gaia-build` looks for projects
 
 After that, to initialize Gaia, place this line in `~/.bashrc`:
 
 ```bash
 source "$GAIA_DIR/src/main/bash/gaia/init"
 ```
+
+Now, when opening a terminal that loads your `.bashrc`, you should see a message like the following:
+
+```
+########################################
+#
+# This is Gaia 1.2.0
+#
+# Detected host: x86_64-pc-linux-gnu
+#
+########################################
+```
+
+This means that Gaia is successfully installed and configured.
 
 ## License
 

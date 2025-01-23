@@ -1,26 +1,21 @@
 #
-# @file string.py
+# string.py
 #
 # String utilities.
 #
 
-def capitalize(s: str) -> str:
+def capitalize(s: str) -> str | None:
   """
-  Capitalizes the first character of @p s.
-
-  @param s a string
-  @return a new string where the first character is an upper-case character
+  Capitalizes the first character of `s`.
+  
+  Returns a new string.
   """
 
   return s and s[0:1].upper() + s[1:] or s
 
-def removeLeading(s: str, sub: str) -> str:
+def remove_leading(s: str, sub: str) -> str:
   """
-  If the string @p s begins with the substring @p sub, removes the substring.
-
-  @param s a string
-  @param sub a substring
-  @return a string
+  Strips the leading substring `sub`, if any, from `s`.
   """
 
   l = len(sub)
@@ -30,13 +25,9 @@ def removeLeading(s: str, sub: str) -> str:
     return s[l:]
   return s
 
-def removeTrailing(s: str, sub: str) -> str:
+def remove_trailing(s: str, sub: str) -> str:
   """
-  If the string @p s ends with the substring @p sub, removes the substring.
-
-  @param s a string
-  @param sub a substring
-  @return a string
+  Strips the trailing substring `sub`, if any, from `s`.
   """
 
   l = len(sub)
@@ -46,12 +37,11 @@ def removeTrailing(s: str, sub: str) -> str:
     return s[0:-l]
   return s
 
-def uncapitalize(s: str) -> str:
+def uncapitalize(s: str) -> str | None:
   """
-  Uncapitalizes the first character of @p s.
-
-  @param s a string
-  @return a new string where the first character is a lower-case character
+  Uncapitalizes the first character of `s`.
+  
+  Returns a new string.
   """
 
   return s and s[0:1].lower() + s[1:] or s

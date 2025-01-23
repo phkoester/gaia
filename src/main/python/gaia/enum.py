@@ -1,5 +1,5 @@
 #
-# @file enum.py
+# enum.py
 #
 # Enumerations.
 #

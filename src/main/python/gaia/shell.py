@@ -1,10 +1,11 @@
 #
-# @file shell.py
+# shell.py
 #
 # Shell utilities.
 #
 
-import gaia
+import gaia.log
+import gaia.path
 import locale
 import os
 import re
@@ -13,25 +14,23 @@ import sys
 import subprocess
 import traceback
 
-from gaia import log
 from os import environ as env
 from typing import NoReturn
 
 # Local variables -------------------------------------------------------------------------------------------
 
-_name = os.path.basename(sys.argv[0])
+_inv_name = os.path.basename(sys.argv[0]) # Invocation name
 
 # Local functions -------------------------------------------------------------------------------------------
 
-def _getShebang(file: str) -> list[str]:
+def _get_shebang(file: str) -> list[str]:
   """
-  Looks for the file @p file in `PATH` and tries to read its shebang line.
+  Looks for the file `file`` in `PATH` and tries to read its shebang line.
 
-  Upon success, returns a command line as a string list of the form `["awk", "-f", "file"]`.
-  Otherwise, it returns `None`
-
-  @return upon success, a command line as a string list, otherwise `None`
+  Upon success, returns a command line as a string list of the form `["awk", "-f", "file"]`. Otherwise,
+  returns `None`
   """
+
   file = gaia.path.find(env.get("PATH"), file)
   if not file:
     return None
@@ -45,14 +44,11 @@ def _getShebang(file: str) -> list[str]:
   
   return None
 
-def _onSigint(signal, frame) -> NoReturn:
+def _on_sigint(signal, frame) -> NoReturn:
   """
   `SIGINT` handler.
 
-  Calls `os._exit()` rather than `sys.exit()`, enforcing a cold exit.
-
-  @param signal provided by the caller
-  @param frame provided by the caller
+  Calls `os._exit` rather than `sys.exit`, enforcing a cold exit.
   """
   
   # sys.exit(130)
@@ -60,22 +56,25 @@ def _onSigint(signal, frame) -> NoReturn:
 
 # Functions -------------------------------------------------------------------------------------------------
 
-def error(msg: str, exitStatus: int = 1, stackTrace=True) -> None:
+def error(msg: str, exit_status: int = 1, stack_trace=True) -> None:
   """
-  Prints the error message @p msg to `sys.stderr` and exits if @p exitStatus is not 0.
-
-  @param msg the error message
-  @param exitStatus if not 0, then calls `sys.exit()` with this value
-  @param stackTrace if `true`, prints the current stack trace to `sys.stderr`
+  Prints the error message `msg` to `sys.stderr` and exits if `exit_status` is not 0.
   """
 
-  sys.stderr.write(f"{_name}: error: {msg}\n")
-  if stackTrace:
-    printStackTrace()
-  if exitStatus != 0:
-    sys.exit(exitStatus)
+  sys.stderr.write(f"{_inv_name}: error: {msg}\n")
+  if stack_trace:
+    stack_trace()
+  if exit_status != 0:
+    sys.exit(exit_status)
 
-def printStackTrace() -> None:
+def note(msg: str) -> None:
+  """
+  Prints the note message `msg` to `sys.stdout`.
+  """
+
+  sys.stdout.write(f"{_inv_name}: note: {msg}\n")
+
+def print_stack_trace() -> None:
   """
   Prints the current stack trace to `sys.stderr`.
   """
@@ -85,41 +84,31 @@ def printStackTrace() -> None:
 
 def run(*cl, input=None, timeout=None, check=False, **kwargs) -> subprocess.CompletedProcess:
   """
-  A wrapper for `subprocess.run()`.
-  
-  @param cl see `subprocess.run()`
-  @param input see `subprocess.run()`
-  @param timeout see `subprocess.run()`
-  @param check see `subprocess.run()`
-  @param kwargs see `subprocess.run()`
+  A wrapper for `subprocess.run`.
   """
 
-  log.debug(f"{cl=}")
-  file = cl[0][0]
-  cl[0][0] = file
+  gaia.log.debug(f"{cl=}")
   
 # try:
   return subprocess.run(*cl, input=input, timeout=timeout, check=check, **kwargs)
 # except OSError:
 #   # Excecution failed. We look for a shebang
-#   if newCl := _getShebang(file):
-#     newCl.extend(cl[0][1:]) # Add all but the first argument to the new command line
+#   if new_cl := _get_shebang(file):
+#     new_cl.extend(cl[0][1:]) # Add all but the first argument to the new command line
 #     # We got a new command line: recursive call
-#     return run(newCl, input=input, timeout=timeout, check=check, **kwargs) 
+#     return run(new_cl, input=input, timeout=timeout, check=check, **kwargs) 
 #   raise
 
 def warn(msg: str) -> None:
   """
-  Prints the warning message @p msg to `sys.stderr`
-
-  @param msg the warning message
+  Prints the warning message `msg` to `sys.stderr`
   """
 
-  sys.stderr.write(f"{_name}: warning: {msg}\n")
+  sys.stderr.write(f"{_inv_name}: warning: {msg}\n")
 
 # Main ------------------------------------------------------------------------------------------------------
 
-signal.signal(signal.SIGINT, _onSigint)
+signal.signal(signal.SIGINT, _on_sigint)
 
 _encoding = locale.getpreferredencoding()
 if _encoding not in ["UTF-8", "utf-8"]:
