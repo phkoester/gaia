@@ -60,7 +60,7 @@ def write_version_header(path: str, version_name: str, version: str) -> None:
 f"""/*
  * {file_name}
  *
- * THIS IS A GENERATED FILE. DO NOT EDIT.
+ * GENERATED FILE. DO NOT EDIT.
  */
 
 #pragma once

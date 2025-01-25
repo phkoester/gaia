@@ -9,16 +9,6 @@ import gaia.string
 
 from typing import TextIO
 
-# Local functions -------------------------------------------------------------------------------------------
-
-def _print_header(file: TextIO, name: str):
-  file.write(f"/*\n * {name}\n *\n * THIS IS A GENERATED FILE. DO NOT EDIT.\n */\n\n")
-  
-def _print_includes(file: TextIO, includes: list[str]):
-  for include in includes:
-    file.write(f"#include {include}\n")
-  file.write("\n")
-
 # Functions -------------------------------------------------------------------------------------------------
 
 def parse_east_asian_width(input: str, output: str) -> None:
@@ -123,5 +113,13 @@ def parse_emoji(input: str, output: str) -> None:
         "};\n\n"
         "} // namespace rocket::unicode::internal\n\n"
         "// EOF\n")
+
+def _print_header(file: TextIO, name: str):
+  file.write(f"/*\n * {name}\n *\n * GENERATED FILE. DO NOT EDIT.\n */\n\n")
+  
+def _print_includes(file: TextIO, includes: list[str]):
+  for include in includes:
+    file.write(f"#include {include}\n")
+  file.write("\n")
 
 # EOF

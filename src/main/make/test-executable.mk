@@ -36,8 +36,8 @@ $(TARGET): SHARED_LIB_DIRS := $(SHARED_LIB_DIRS)
 $(TARGET): $(SAVE_TARGET)
 	@echo '$$' $@ $(ARGS)
 	@$(SHARED_LIB_PATH_NAME)="$(SHARED_LIB_PATH):$(subst $(SPACE),:,$(SHARED_LIB_DIRS))" \
-	 BUILD_DIR=$(BUILD_DIR) \
-	 $(SAVE_TARGET) --gtest_catch_exceptions=0 $(ARGS)
+	    BUILD_DIR=$(BUILD_DIR) \
+	    $(SAVE_TARGET) --gtest_catch_exceptions=0 $(ARGS)
 
 .PHONY: $(TARGET)
 

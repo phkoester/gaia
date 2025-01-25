@@ -27,7 +27,7 @@ class LogLevel(gaia.enum.OrderedEnum):
   debug = 4
   trace = 5
 
-# Local variables -------------------------------------------------------------------------------------------
+# Variables -------------------------------------------------------------------------------------------------
 
 _log_level = LogLevel.info
 _out = sys.stdout

@@ -7,8 +7,7 @@ in a Bash shell.
 
 Supported project types are Bash, Python, C++, and Rust.
 
-I decided to make this repository public on GitHub, since all `phkoester` repositories depend on Gaia. This
-is where the name comes from: Gaia is supposed to be the building ground of everything.
+All other `phkoester` projects depend on Gaia. Gaia is supposed to be the building ground of everything.
 
 Recommended readings:
 
@@ -22,6 +21,7 @@ Recommended readings:
 ### Required Packages
 
 - `cmake`
+- `grcov` (?)
 - `lldb` (?)
 - `llvm` (?)
 - `make`
@@ -34,6 +34,7 @@ Recommended readings:
 
 - `batcat`
 - `gedit`
+- `meld`
 - `ripgrep`
 - `valgrind`
 
