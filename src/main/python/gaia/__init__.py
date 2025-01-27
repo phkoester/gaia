@@ -12,33 +12,28 @@ import toml
 
 def get_version(dir: str) -> str | None:
   """
-  Tries to retrieve a version from the file `project.json` in the directory `dir`.
+  Tries to retrieve a version from the file `gaia-project.json` in the directory `dir`.
   
   If needed, other files such as `Cargo.toml` are read.
 
   Returns `None` if no version is found.
   """
 
-  # Read `project.json`
-  path = dir + "/project.json"
+  # Read `gaia-project.json`
+  path = dir + "/gaia-project.json"
   with io.open(path, mode="r") as file:
     o = json5.load(file)
-    version = o["version"]
-    if version:
-      # Link to another file?
-      if version.startswith("@"):
-        path = dir + "/" + version[1:]
-        if path.endswith("/Cargo.toml"):
-          # Read `Cargo.toml`
-          with io.open(path, mode="r") as file:
-            o = toml.load(file)
-            return o["package"]["version"]
-        else:
-            return None
-      else:
-        return version
+    if "version" in o:
+      return o["version"]
     else:
-      return None
+      path = dir + "/Cargo.toml"
+      if os.path.isfile(path):
+        # Read `Cargo.toml`
+        with io.open(path, mode="r") as file:
+          o = toml.load(file)
+          return o["package"]["version"]
+      else:
+        return None
 
 def print_version(dir: str) -> None:
   """

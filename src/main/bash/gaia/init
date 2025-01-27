@@ -27,11 +27,11 @@ source "$dir__/init-rust" || return 2
 
 # Detect Gaia version ---------------------------------------------------------------------------------------
 
-export GAIA_VERSION=$(cat "$GAIA_DIR/project.json" | \
+export GAIA_VERSION=$(cat "$GAIA_DIR/gaia-project.json" | \
     grep -w version | sed -E 's/\s*"version": "(.*)",?/\1/')
 
 if [[ ! $GAIA_VERSION =~ [0-9]+\.[0-9]+\.[0-9]+ ]]; then
-  echo init: error: Cannot find valid version in \`$GAIA_DIR/project.json\` > /dev/stderr
+  echo init: error: Cannot find valid version in \`$GAIA_DIR/gaia-project.json\` > /dev/stderr
   return 2
 fi
 

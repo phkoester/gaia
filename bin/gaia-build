@@ -142,16 +142,16 @@ def find_root_dir() -> str:
   
   raise RuntimeError("Cannot find root directory")
 
-def get_project_dir(prj: str) -> str:
-  return root_dir + "/" + prj
-
-def get_project_json(prj: str) -> dict[str, any]:
+def get_gaia_project_json(prj: str) -> dict[str, any]:
   dir = get_project_dir(prj)
-  path = dir + "/project.json"
+  path = dir + "/gaia-project.json"
   gaia.log.debug(f"{path=}")
   with io.open(path, mode="r") as file:
     o = json5.load(file)
     return o
+
+def get_project_dir(prj: str) -> str:
+  return root_dir + "/" + prj
 
 def get_project_type(dir: str) -> ProjectType:
   if os.path.isfile(dir + "/Cargo.toml"):
@@ -261,7 +261,7 @@ def print_section(what: str, targets: list[str], cl: list[str] = None) -> None:
   print(s)
 
 def print_version(prj: str) -> None:
-  # Print version from `project.json`
+  # Print version from `gaia-project.json`
   dir = get_project_dir(prj)
   version = gaia.get_version(dir)
   if not version:
@@ -370,7 +370,7 @@ def test_root_dir(dir: str) -> bool:
   for file in os.listdir(dir):
     subdir = dir + "/" + file
     if os.path.isdir(subdir):
-      if os.path.isfile(subdir + "/project.json"):
+      if os.path.isfile(subdir + "/gaia-project.json"):
         return True
   return False
 
@@ -385,13 +385,13 @@ root_dir = find_root_dir()
 gaia.shell.note(f"Using project root directory: {root_dir}")
 gaia.log.debug(f"{root_dir=}")
 
-# Collect projects and their dependencies from `project.json`
+# Collect projects and their dependencies from `gaia-project.json`
 projects = {}
 for prj in os.listdir(root_dir):
   subdir = root_dir + "/" + prj
-  if os.path.isfile(subdir + "/project.json"):
+  if os.path.isfile(subdir + "/gaia-project.json"):
     projects[prj] = []
-    o = get_project_json(prj)
+    o = get_gaia_project_json(prj)
     if "dependencies" in o:
       projects[prj] = o["dependencies"]
 gaia.log.debug(f"{projects=}")

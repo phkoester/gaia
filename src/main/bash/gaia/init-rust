@@ -8,8 +8,8 @@ unset GAIA_RUSTC_TARGET
 unset GAIA_RUSTC_TOOLCHAIN
 
 if which rustc > /dev/null; then
-  export GAIA_RUSTC_TARGET=stable-$(rustc --version -v | grep ^host: | awk '{print $2}')
-  export GAIA_RUSTC_ID=/rustc/$(rustc --version -v | grep ^commit-hash: | awk '{print $2}')
+  export GAIA_RUSTC_TARGET=stable-$(rustc -Vv | grep ^host: | cut -f2 -d' ')
+  export GAIA_RUSTC_ID=/rustc/$(rustc -Vv | grep ^commit-hash: | cut -f2 -d' ')
 fi
 
 # EOF
