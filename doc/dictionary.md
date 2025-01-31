@@ -6,7 +6,8 @@ Since the language to write is American English, [Merriam-Webster](https://www.m
 recommended reference.
 
 In some cases, where technical terms tend to be used as closed compounds, e.g. *toolchain*, the closed form
-is preferred even though Merriam-Webster does not list it.
+is preferred even though Merriam-Webster does not list it. If a technical term is listed in the
+Wikipedia---which is true for *toolchain*---, then the Wikipedia may be an acceptable reference.
 
 On open, closed, and hyphenated compounds, see
 ["Should that word have a hyphen?"](https://www.merriam-webster.com/grammar/hyphen-rules-open-closed-compound-words).
@@ -15,6 +16,7 @@ Prefixes such as *anti*, *meta*, or *non* need not be followed by a hyphen: *ant
 *nonnegative*.
 
 - **antialiasing** noun
+- **backend** noun
 - **backslash** noun; symbol
 - **backtick** noun; symbol
 - **Bash** name; command-line tool
@@ -27,6 +29,7 @@ Prefixes such as *anti*, *meta*, or *non* need not be followed by a hyphen: *ant
 - **email** noun; see ["Email (let's drop the hyphen)"](https://www-cs-faculty.stanford.edu/~knuth/email.html)
 - **enum** noun; language item
 - **file name** noun
+- **frontend** noun
 - **guideline** noun
 - **macOS** name; operating system
 - **Make** name; command-line tool
@@ -35,6 +38,8 @@ Prefixes such as *anti*, *meta*, or *non* need not be followed by a hyphen: *ant
 - **nonnull** adjective
 - **nonpositive** adjective
 - **null** 1. adjective. 2. noun. 3. verb
+- **plug in** verb
+- **plugin** noun
 - **run time** noun
 - **Rustdoc** name; command-line tool
 - **Rustfmt** name; command-line tool
