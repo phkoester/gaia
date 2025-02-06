@@ -41,12 +41,7 @@ For section titles in code, title case is not in use.
 
 ## Styling with Markdown
 
-Wherever feasible, use Markdown. This includes comments, even if no documentation is ever generated from
-these comments:
-
-```rust
-frobnicate(x); // Do some *really* sophisticated stuff with `x`
-```
+Wherever feasible, use Markdown. Resort to HTML only if what you want cannot be accomplished using markdown.
 
 In general, anything "code-ish" may be enclosed in backticks (<code>`</code>). This includes file names,
 pieces of code, names and values of environment variables, or command-line tools. To some extent, where they
@@ -73,3 +68,18 @@ Studio Code, and GitHub---only to name a few---all use their individual Markdown
 
 A full documentation for CommonMark (used by Rustdoc) can be found
 [here](https://spec.commonmark.org/0.31.2).
+
+### Styling in Comments
+
+Some markdown features such as `*...*` and <code>&grave;...&grave;</code> may be used in comments:
+
+```rust
+frobinate(x); // Do some *really* sophisticated stuff with `x`
+```
+
+However, literals and links should not be styled in comments for better readability:
+
+```rust
+s.pop(); // Strip trailing '\n'
+assert_eq!(mem::size_of::<i32>(), 4); // See https://turbo.fish
+```
