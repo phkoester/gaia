@@ -10,15 +10,15 @@ ssh-init() {
   local n=$(arg-count $pids)
 
   if [[ $n == 0 ]]; then
-    echo Starting new `ssh-agent` ...
+    echo Starting new \`ssh-agent\` ...
     ssh-agent > ~/.ssh-init
     source ~/.ssh-init
     ssh-add
   elif [[ $n == 1 ]]; then
-    echo Using running `ssh-agent` ...
+    echo Using running \`ssh-agent\` ...
     source ~/.ssh-init || return 1
   else
-    shell-error-f -r1 $FUNCNAME Found more than one `ssh-agent`: $pids
+    shell-error-f -r1 $FUNCNAME Found more than one \`ssh-agent\`: $pids
     return 1
   fi
 }
