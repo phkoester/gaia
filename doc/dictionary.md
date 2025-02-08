@@ -24,7 +24,6 @@ Prefixes such as *anti*, *meta*, or *non* need not be followed by a hyphen: *ant
 - **code page** noun
 - **code point** noun; Unicode entity
 - **command line** noun
-- **compile time** noun
 - **Doxygen** name; command-line tool
 - **email** noun; see ["Email (let's drop the hyphen)"](https://www-cs-faculty.stanford.edu/~knuth/email.html)
 - **enum** noun; language item
@@ -40,7 +39,7 @@ Prefixes such as *anti*, *meta*, or *non* need not be followed by a hyphen: *ant
 - **null** 1. adjective. 2. noun. 3. verb
 - **plug in** verb
 - **plugin** noun
-- **run time** noun
+- **runtime** noun
 - **Rustdoc** name; command-line tool
 - **Rustfmt** name; command-line tool
 - **set up** verb
