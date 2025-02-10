@@ -10,10 +10,10 @@
 # - GAIA_TARGET_ABI
 # - GAIA_TARGET (combines all of the above) 
 #
-# Host triple              | Default target triple
-# ------------------------ | ---------------------
-# `x86_64-pc-linux-gnu`    | `x86_64-unknown-linux-gnu`
-# `x86_64-pc-windows-msvc` | `x86_64-pc-windows-msvc`
+# Host triple               | Default target triple
+# ------------------------- | ---------------------
+# `x86_64-VENDOR-linux-gnu` | `x86_64-unknown-linux-gnu`
+# x86_64-pc-windows-msvc`   | `x86_64-pc-windows-msvc`
 #
 
 # Select default target triple ------------------------------------------------------------------------------
@@ -21,8 +21,8 @@
 unset GAIA_TARGET_ARCH GAIA_TARGET_VENDOR GAIA_TARGET_OS GAIA_TARGET_ABI GAIA_TARGET
 export GAIA_TARGET_ARCH GAIA_TARGET_VENDOR GAIA_TARGET_OS GAIA_TARGET_ABI GAIA_TARGET
 
-if [[ $GAIA_HOST == x86_64-pc-linux-gnu ]]; then
-  # `x86_64-pc-linux-gnu`
+if [[ $GAIA_HOST =~ x86_64-.*-linux-gnu ]]; then
+  # `x86_64-pc-VENDOR-gnu`
 
   GAIA_TARGET_ARCH=x86_64
   GAIA_TARGET_VENDOR=unknown

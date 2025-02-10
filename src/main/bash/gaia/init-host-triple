@@ -28,7 +28,7 @@
 #
 # Until now, these host triples are supported:
 #
-# - `x86_64-pc-linux-gnu`
+# - `x86_64-VENDOR-linux-gnu`
 # - `x86_64-pc-windows-msvc`
 
 # Detect host triple ----------------------------------------------------------------------------------------
@@ -39,20 +39,20 @@ export GAIA_HOST_ARCH GAIA_HOST_VENDOR GAIA_HOST_OS GAIA_HOST_ABI GAIA_HOST
 if [[ $OSTYPE == linux-gnu ]]; then
   # Linux
 
-  if [[ $MACHTYPE != x86_64-pc-linux-gnu ]]; then
-    echo init-host-triple: error: Unsupported host architecture: \`$MACHTYPE\` > /dev/stderr
+  if [[ ! $MACHTYPE =~ x86_64-.*-linux-gnu ]]; then
+    echo init-host-triple: error: Unsupported host triple: \`$MACHTYPE\` > /dev/stderr
     return 2
   fi
 
   GAIA_HOST_ARCH=x86_64
-  GAIA_HOST_VENDOR=pc
+  GAIA_HOST_VENDOR=$(echo $MACHTYPE | sed -E "s/x86_64-(.*)-linux-gnu/\1/")
   GAIA_HOST_OS=linux
   GAIA_HOST_ABI=gnu
 elif [[ $OS == Windows_NT ]]; then
   # Windows
 
   if [[ $PROCESSOR_ARCHITECTURE != AMD64 ]]; then
-    echo init-host-triple: error: Unsupported host architecture: \`$PROCESSOR_ARCHITECTURE\` > /dev/stderr
+    echo init-host-triple: error: Unsupported host triple: \`$PROCESSOR_ARCHITECTURE\` > /dev/stderr
     return 2
   fi
 
