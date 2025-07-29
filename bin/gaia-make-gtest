@@ -54,6 +54,7 @@ for buildType in debug release; do
   make
   mkdir $dir
   cp lib/* $dir
+  rm -rf CMakeCache.txt CMakeFiles lib
 done
 
 # EOF
