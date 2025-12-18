@@ -46,6 +46,7 @@ MAKEFILE_DEPS := \
 # Variables -------------------------------------------------------------------------------------------------
 
 # These must be initialized once, otherwise `+=` doesn't work as expected
+BENCH_DEPS :=
 BUILD_DEPS :=
 FILES :=
 LIB_FILES :=
@@ -119,6 +120,7 @@ AR_FLAGS := -rc
 
 CXX_DEFINES := \
     -DBOOST_SPIRIT_UNICODE \
+    -DFMT_HEADER_ONLY \
     -DGAIA_CXX_TOOLCHAIN_$(call upper,$(GAIA_CXX_TOOLCHAIN)) \
     -DGAIA_TARGET_OS_$(call upper,$(GAIA_TARGET_OS)) \
 

@@ -52,6 +52,7 @@ In your `~/.bashrc`, export these variables:
 | `GAIA_CXX_GNU`            | No        | Absolute path to the `g++` executable. If not set, `which g++` is used
 | `GAIA_CXX_LLVM`           | No        | Absolute path to the `clang++` executable. If not set, `which clang++` is used
 | `GAIA_CXX_TOOLCHAIN`      | No        | Values: `gnu`, `llvm` (default)
+| `GAIA_FMT_DIR`            | Yes       | Example: `~/project/fmt`
 | `GAIA_DIR`                | Yes       | Example: `~/project/gaia`
 | `GAIA_DOXYGEN`            | No        | Example: `/usr/local/bin/doxygen-1.12.0/bin/doxygen`
 | `GAIA_EDITOR`             | No        | Example: `nano` (default)
