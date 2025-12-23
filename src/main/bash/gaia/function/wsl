@@ -6,6 +6,11 @@
 
 [[ ! $GAIA_WSL ]] && return
 
+# USAGE: wsl-env NAME
+wsl-env() {
+  wslpath $(cmd.exe /c echo %$1% 2>/dev/null) | tr -d '\r'
+}
+
 # Usage: wsl-open
 wsl-open() {
   eval $(cl-get-options-f $FUNCNAME "" "$@")
