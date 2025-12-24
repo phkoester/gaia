@@ -191,9 +191,9 @@ The macro provides the following declarations:^^ \
 
 ALIASES += spec{2}="\1 template specialization for \2."
 
-ALIASES += spec_rocket_IsContainerImpl{1}="@spec{rocket::IsContainerImpl, \1}"
+ALIASES += spec_fmt_formatter{1}="@spec{`fmt::formatter`, \1}"
 
-ALIASES += spec_std_formatter{1}="@spec{`std::formatter`, \1}"
+ALIASES += spec_rocket_IsContainerImpl{1}="@spec{rocket::IsContainerImpl, \1}"
 
 ALIASES += spec_std_hash{1}="@spec{`std::hash`, \1}"
 
