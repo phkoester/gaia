@@ -33,7 +33,7 @@ Section headings may appear at different levels. Do not use title case:
 ```c++
 // A first-level section ------------------------------------------------------------------------------------
 // A second-level section ...................................................................................
-// A third-level section  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+// A third-level section  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 ```
 
 ## Doc Comments
@@ -47,7 +47,7 @@ For each documented item, start with a short but descriptive sentence in a parag
 ```c++
 /**
  * Processes @p x in a state-of-the-art fashion.
- * 
+ *
  * There is even more to say about this function. This happens starting a new paragraph.
  *
  * @tparam T the value type
@@ -72,7 +72,7 @@ need to be documented, in this order:
  * @tparam C the component type
  * @param comp the component
  * @return `true` if the component is visible
- * @throw #rocket::except::InvalidState if the component isn't attached yet
+ * @throw #rocket::InvalidState if the component isn't attached yet
  * @throw #mygui::InvalidThread if the current thread is not the GUI thread
  *
  * ## Examples

@@ -153,8 +153,8 @@ If the parsing fails, the fail bit of the input stream @p is is set, and @p v is
 @param is the input stream to parse as RON (Rocket object notation) \
 @param v the value to assign to \
 @return @p is \
-@throw #rocket::except::InputFailure if `is.fail()` returns `true` \
-@throw #rocket::except::ParseFailure if `is.eof()` returns `true` or if the input cannot be parsed as a \
+@throw #rocket::io::InputFailure if `is.fail()` returns `true` \
+@throw #rocket::io::ParseFailure if `is.eof()` returns `true` or if the input cannot be parsed as a \
     value of type \1"
 
 ALIASES += fn_parseRon_precision{1}="`parseRon` overload for \1.^^^^ \
@@ -163,29 +163,16 @@ If the parsing fails, the fail bit of the input stream @p is is set, and @p v is
 @param v the value to assign to \
 @param precision the floating-point precision to use \
 @return @p is \
-@throw #rocket::except::InputFailure if `is.fail()` returns `true` \
-@throw #rocket::except::ParseFailure if `is.eof()` returns `true` or if the input cannot be parsed as a \
+@throw #rocket::io::InputFailure if `is.fail()` returns `true` \
+@throw #rocket::io::ParseFailure if `is.eof()` returns `true` or if the input cannot be parsed as a \
     value of type \1"
-
-ALIASES += fn_printRon{1}="`printRon` overload for \1. \
-@param os the output stream \
-@param v the value to print as RON (Rocket object notation) \
-@return @p os"
-
-ALIASES += fn_printRon_precision{1}="`printRon` overload for \1. \
-@param os the output stream \
-@param v the value to print as RON (Rocket object notation) \
-@param precision the floating-point precision to use \
-@return @p os"
 
 # Enums -----------------------------------------------------------------------------------------------------
 
 ALIASES += enum_declare{1}="Automatic declarations for the enum \1.^^^^ \
 The macro provides the following declarations:^^ \
 - `std::istream& operator>>(std::istream&, \1&)`^^ \
-- `std::ostream& operator<<(std::ostream&, \1)`^^ \
 - `std::istream& parseRon(std::istream&, \1&)`^^ \
-- `std::ostream& printRon(std::ostream&, \1)`"
 
 # Specializations -------------------------------------------------------------------------------------------
 
@@ -193,7 +180,7 @@ ALIASES += spec{2}="\1 template specialization for \2."
 
 ALIASES += spec_fmt_formatter{1}="@spec{`fmt::formatter`, \1}"
 
-ALIASES += spec_rocket_IsContainerImpl{1}="@spec{rocket::IsContainerImpl, \1}"
+ALIASES += spec_rocket_StringConvert{1}="@spec{rocket::StringConvert, \1}"
 
 ALIASES += spec_std_hash{1}="@spec{`std::hash`, \1}"
 

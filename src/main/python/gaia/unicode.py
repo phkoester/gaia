@@ -19,7 +19,6 @@ def parse_east_asian_width(input: str, output: str) -> None:
   with open(output, "w") as out_file:
     _print_header(out_file, output)
     _print_includes(out_file, [
-      '<iostream>',
       '"rocket/internal/unicode-internal.h"'
     ])
 
@@ -27,7 +26,7 @@ def parse_east_asian_width(input: str, output: str) -> None:
         "using namespace std;\n\n"
         "namespace rocket::unicode::internal {\n\n"
         "const vector<EastAsianWidthBlock> eastAsianWidthBlocks = {\n")
-    
+
     with open(input, "r") as in_file:
       for line in in_file:
         line = line.strip()
@@ -44,7 +43,7 @@ def parse_east_asian_width(input: str, output: str) -> None:
           upper = int("0x" + codes[1], 16) + 1 # Right-open interval, hence `+ 1`
         else:
           upper = lower + 1
-        
+
         eaw = None
         match tokens[2]:
           case "F": eaw = "fullWidth"
@@ -70,16 +69,15 @@ def parse_emoji(input: str, output: str) -> None:
   with open(output, "w") as out_file:
     _print_header(out_file, output)
     _print_includes(out_file, [
-      '<iostream>',
       '"rocket/internal/unicode-internal.h"'
     ])
 
     out_file.write(
         "using namespace std;\n\n"
         "namespace rocket::unicode::internal {\n\n")
-    
+
     emoji = None
-    
+
     with open(input, "r") as in_file:
       for line in in_file:
         line = line.strip()
@@ -96,7 +94,7 @@ def parse_emoji(input: str, output: str) -> None:
           upper = int("0x" + codes[1], 16) + 1 # Right-open interval, hence `+ 1`
         else:
           upper = lower + 1
-        
+
         # Change vector?
         new_emoji = gaia.string.remove_trailing(tokens[2], "#")
         if new_emoji != emoji:
@@ -116,7 +114,7 @@ def parse_emoji(input: str, output: str) -> None:
 
 def _print_header(file: TextIO, name: str):
   file.write(f"/*\n * {name}\n *\n * GENERATED FILE. DO NOT EDIT.\n */\n\n")
-  
+
 def _print_includes(file: TextIO, includes: list[str]):
   for include in includes:
     file.write(f"#include {include}\n")
