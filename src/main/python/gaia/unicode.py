@@ -19,7 +19,7 @@ def parse_east_asian_width(input: str, output: str) -> None:
   with open(output, "w") as out_file:
     _print_header(out_file, output)
     _print_includes(out_file, [
-      '"rocket/internal/unicode-internal.h"'
+      '"rocket/unicode/internal/block.h"'
     ])
 
     out_file.write(
@@ -69,7 +69,7 @@ def parse_emoji(input: str, output: str) -> None:
   with open(output, "w") as out_file:
     _print_header(out_file, output)
     _print_includes(out_file, [
-      '"rocket/internal/unicode-internal.h"'
+      '"rocket/unicode/internal/block.h"'
     ])
 
     out_file.write(
