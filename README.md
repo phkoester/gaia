@@ -56,7 +56,7 @@ In your `~/.bashrc`, export these variables:
 | `GAIA_DIR`                | Yes       | Example: `~/project/gaia`
 | `GAIA_DOXYGEN`            | No        | Example: `/usr/local/bin/doxygen-1.12.0/bin/doxygen`
 | `GAIA_EDITOR`             | No        | Example: `nano` (default)
-| `GAIA_GTEST_DIR`          | Yes       | Example: `~/project/googletest`
+| `GAIA_GOOGLETEST_DIR`     | Yes       | Example: `~/project/googletest`
 | `GAIA_PROJECT_DIR`        | No        | Fallback directory where `gaia-build` looks for projects
 
 After that, to initialize Gaia, place this line in `~/.bashrc`:

@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+#
+# gaia-make-libunicode
+#
+# Usage: gaia-make-libunicode
+#
+
+source "$GAIA_DIR/src/main/bash/gaia/init" || exit 2
+
+set -e
+
+for toolchain in gnu llvm; do
+  if [[ $toolchain != gnu && $toolchain != llvm ]]; then
+    shell-error -e2 Toolchain must be \`gnu\` or  \`llvm\`
+  fi
+
+  CXX_FLAGS="-fPIC -pthread"
+
+  # `CXX` and `CC`
+
+  if [[ $toolchain == gnu ]]; then
+    if [[ $GAIA_CXX_GNU ]]; then
+      export CXX=$GAIA_CXX_GNU
+    else
+      export CXX=$(which g++)
+    fi
+    export CC=$(dirname $CXX)/gcc
+  else
+    if [[ $GAIA_CXX_LLVM ]]; then
+      export CXX=$GAIA_CXX_LLVM
+    else
+      export CXX=$(which clang++)
+    fi
+    export CC=$(dirname $CXX)/clang
+  fi
+
+  # Go to project
+
+  if [[ ! $GAIA_LIBUNICODE_DIR ]]; then
+    shell-error -e2 Environment variable \`GAIA_LIBUNICODE_DIR\` not defined
+  fi
+  cd "$GAIA_LIBUNICODE_DIR"
+
+  for buildType in debug release; do
+    dir=$GAIA_TARGET-$toolchain-$buildType
+
+    echo "########################################"
+    echo "#"
+    echo "# $dir"
+    echo "#"
+    echo "# CC : $CC"
+    echo "# CXX: $CXX"
+    echo "#"
+    echo "########################################"
+
+    set -x
+
+    CMAKE_FLAGS=-DCMAKE_BUILD_TYPE=${buildType^} # ^: Convert first letter to uppercase
+
+    cmake $CMAKE_FLAGS \
+        -DCMAKE_CXX_FLAGS="$CXX_FLAGS" \
+        -DLIBUNICODE_BUILD_STATIC=ON \
+        -DLIBUNICODE_TESTING=OFF \
+        -DLIBUNICODE_BENCHMARK=OFF \
+        .
+    make clean
+    make
+    mkdir -p target/$dir
+    cp src/libunicode/*.a target/$dir
+
+    set +x
+  done
+done
+
+# Clean up
+
+cd "$GAIA_LIBUNICODE_DIR"
+rm -rf \
+    CMakeCache.txt \
+    Makefile \
+    *.cmake \
+    CMakeFiles/ \
+    src/libunicode/Makefile \
+    src/libunicode/unicode_tablegen \
+    src/libunicode/*.a \
+    src/libunicode/*.cmake \
+    src/libunicode/CMakeFiles/ \
+    src/tools/Makefile \
+    src/tools/unicode-query \
+    src/tools/*.cmake \
+    src/tools/CMakeFiles/
+
+# EOF
