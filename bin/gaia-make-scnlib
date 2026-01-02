@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+#
+# gaia-make-scnlib
+#
+# Usage: gaia-make-scnlib
+#
+
+source "$GAIA_DIR/src/main/bash/gaia/init" || exit 2
+
+set -e
+
+for toolchain in gnu llvm; do
+  if [[ $toolchain != gnu && $toolchain != llvm ]]; then
+    shell-error -e2 Toolchain must be \`gnu\` or  \`llvm\`
+  fi
+
+  CXX_FLAGS="-fPIC -pthread"
+
+  # `CXX` and `CC`
+
+  if [[ $toolchain == gnu ]]; then
+      if [[ $GAIA_CXX_GNU ]]; then
+      export CXX=$GAIA_CXX_GNU
+    else
+      export CXX=$(which g++)
+    fi
+    export CC=$(dirname $CXX)/gcc
+  else
+    if [[ $GAIA_CXX_LLVM ]]; then
+      export CXX=$GAIA_CXX_LLVM
+    else
+      export CXX=$(which clang++)
+    fi
+    export CC=$(dirname $CXX)/clang
+  fi
+
+  # Go to project
+
+  if [[ ! $GAIA_SCNLIB_DIR ]]; then
+    shell-error -e2 Environment variable \`GAIA_SCNLIB_DIR\` not defined
+  fi
+  cd "$GAIA_SCNLIB_DIR"
+  mkdir -p target
+  cd target
+
+  for buildType in debug release; do
+    dir=$GAIA_TARGET-$toolchain-$buildType
+
+    echo "########################################"
+    echo "#"
+    echo "# $dir"
+    echo "#"
+    echo "# CC : $CC"
+    echo "# CXX: $CXX"
+    echo "#"
+    echo "########################################"
+
+    set -x
+
+    CMAKE_FLAGS=-DCMAKE_BUILD_TYPE=${buildType^} # ^: Convert first letter to uppercase
+
+    cmake $CMAKE_FLAGS -DCMAKE_CXX_FLAGS="$CXX_FLAGS" ..
+    make clean
+    make -j8
+    mkdir -p $dir
+    cp libscn.a $dir
+
+    set +x
+  done
+done
+
+# Clean up
+
+# XXX
+
+# EOF
