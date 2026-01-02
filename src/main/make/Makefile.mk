@@ -35,7 +35,8 @@ COMMA := ,
 EMPTY :=
 SPACE := $(EMPTY) $(EMPTY)
 
-BUILD_DIR := target/$(GAIA_TARGET)-$(GAIA_CXX_TOOLCHAIN)-$(GAIA_BUILD_TYPE)
+BUILD_TARGET := $(GAIA_TARGET)-$(GAIA_CXX_TOOLCHAIN)-$(GAIA_BUILD_TYPE)
+BUILD_DIR := target/$(BUILD_TARGET)
 export BUILD_DIR # May be used in project-specific Doxyfile
 CXX_STD := gnu++2b
 MAKE_FLAGS := --no-print-directory
