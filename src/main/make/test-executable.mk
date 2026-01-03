@@ -16,9 +16,6 @@
 
 # Include `executable.mk` -----------------------------------------------------------------------------------
 
-# Libraries in this directory must have been made by `gaia-make-googletest`
-GOOGLETEST_LIB_DIR := $(GAIA_GOOGLETEST_DIR)/target/$(GAIA_TARGET)-$(GAIA_CXX_TOOLCHAIN)-$(GAIA_BUILD_TYPE)
-
 LIB_FILES += \
     ../rocket/$(BUILD_DIR)/librocket-gtest.a \
     $(GOOGLETEST_LIB_DIR)/libgmock.a \

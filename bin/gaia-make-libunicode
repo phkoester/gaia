@@ -7,16 +7,49 @@
 
 source "$GAIA_DIR/src/main/bash/gaia/init" || exit 2
 
+clean_up() {
+  rm -r $1 \
+    CMakeCache.txt \
+    CMakeFiles/ \
+    Makefile \
+    cmake_install.cmake \
+    src/libunicode/CMakeFiles/ \
+    src/libunicode/Makefile \
+    src/libunicode/cmake_install.cmake \
+    src/libunicode/libunicode-config-version.cmake \
+    src/libunicode/libunicode-config.cmake \
+    src/libunicode/libunicode.a \
+    src/libunicode/libunicode_loader.a \
+    src/libunicode/libunicode_ucd.a \
+    src/libunicode/unicode_tablegen \
+    src/tools/CMakeFiles/ \
+    src/tools/Makefile \
+    src/tools/cmake_install.cmake \
+    src/tools/unicode-query
+}
+
 set -e
+
+# Go to project
+
+if [[ ! $GAIA_LIBUNICODE_DIR ]]; then
+  shell-error -e2 Environment variable \`GAIA_LIBUNICODE_DIR\` not defined
+fi
+cd "$GAIA_LIBUNICODE_DIR"
+
+# Set `CFLAGS` and `CXXFLAGS`
+
+export CFLAGS="-fPIC -pthread"
+export CXXFLAGS="-fPIC -pthread"
+
+# Loop through toolchains
 
 for toolchain in gnu llvm; do
   if [[ $toolchain != gnu && $toolchain != llvm ]]; then
     shell-error -e2 Toolchain must be \`gnu\` or  \`llvm\`
   fi
 
-  CXX_FLAGS="-fPIC -pthread"
-
-  # `CXX` and `CC`
+  # Set `CXX` and `CC`
 
   if [[ $toolchain == gnu ]]; then
     if [[ $GAIA_CXX_GNU ]]; then
@@ -34,60 +67,39 @@ for toolchain in gnu llvm; do
     export CC=$(dirname $CXX)/clang
   fi
 
-  # Go to project
-
-  if [[ ! $GAIA_LIBUNICODE_DIR ]]; then
-    shell-error -e2 Environment variable \`GAIA_LIBUNICODE_DIR\` not defined
-  fi
-  cd "$GAIA_LIBUNICODE_DIR"
+  # Loop through build types
 
   for buildType in debug release; do
-    dir=$GAIA_TARGET-$toolchain-$buildType
+    dir=target/$GAIA_TARGET-$toolchain-$buildType
 
     echo "########################################"
     echo "#"
     echo "# $dir"
     echo "#"
-    echo "# CC : $CC"
-    echo "# CXX: $CXX"
+    echo "# CC      : $CC"
+    echo "# CFLAGS  : $CFLAGS"
+    echo "# CXX     : $CXX"
+    echo "# CXXFLAGS: $CXXFLAGS"
     echo "#"
     echo "########################################"
 
     set -x
 
-    CMAKE_FLAGS=-DCMAKE_BUILD_TYPE=${buildType^} # ^: Convert first letter to uppercase
+    # Call CMake and Make
 
-    cmake $CMAKE_FLAGS \
-        -DCMAKE_CXX_FLAGS="$CXX_FLAGS" \
+    clean_up -f
+    cmake -DCMAKE_BUILD_TYPE=${buildType^} . \
         -DLIBUNICODE_BUILD_STATIC=ON \
         -DLIBUNICODE_TESTING=OFF \
-        -DLIBUNICODE_BENCHMARK=OFF \
-        .
+        -DLIBUNICODE_BENCHMARK=OFF
     make clean
-    make
-    mkdir -p target/$dir
-    cp src/libunicode/*.a target/$dir
+    make -j$(($(nproc) / 2))
+    mkdir -p $dir
+    cp src/libunicode/*.a $dir/
+    clean_up
 
     set +x
   done
 done
-
-# Clean up
-
-cd "$GAIA_LIBUNICODE_DIR"
-rm -rf \
-    CMakeCache.txt \
-    Makefile \
-    *.cmake \
-    CMakeFiles/ \
-    src/libunicode/Makefile \
-    src/libunicode/unicode_tablegen \
-    src/libunicode/*.a \
-    src/libunicode/*.cmake \
-    src/libunicode/CMakeFiles/ \
-    src/tools/Makefile \
-    src/tools/unicode-query \
-    src/tools/*.cmake \
-    src/tools/CMakeFiles/
 
 # EOF

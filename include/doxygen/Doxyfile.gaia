@@ -7,7 +7,7 @@
 @INCLUDE = $(GAIA_DIR)/include/doxygen/Doxyfile.aliases
 
 ALLOW_UNICODE_NAMES = YES
-EXCLUDE_SYMBOLS     = experimental internal
+EXCLUDE_SYMBOLS     = internal
 GENERATE_LATEX      = NO
 GENERATE_TREEVIEW   = YES
 HAVE_DOT            = YES
