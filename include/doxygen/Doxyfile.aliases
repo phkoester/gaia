@@ -148,12 +148,12 @@ ALIASES += fn_hash_value{1}="`hash_value` overload for \1, to be used by Boost. 
 @param v the value to hash \
 @return a hash value"
 
-ALIASES += fn_read{1}="`read` overload for \1, to be used by {fmt}.^^^^ \
+ALIASES += fn_read{1}="`read` overload for \1.^^^^ \
 Reads a value of type \1 from the source @p in. \
 @param in the source to read from \
 @param v the value to assign to \
 @return the number of bytes read. If it is 0, then the value of @p v is undefined after the function \
-    returns."
+    returns"
 
 # Enums -----------------------------------------------------------------------------------------------------
 
@@ -165,7 +165,7 @@ ALIASES += spec{2}="\1 template specialization for \2."
 
 ALIASES += spec_fmt_formatter{1}="@spec{`fmt::formatter`, \1}"
 
-ALIASES += spec_rocket_StringConvert{1}="@spec{rocket::StringConvert, \1}"
+ALIASES += spec_rocket_StringConvert{1}="@spec{\#rocket::StringConvert, \1}"
 
 ALIASES += spec_std_hash{1}="@spec{`std::hash`, \1}"
 
