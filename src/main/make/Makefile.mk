@@ -49,9 +49,6 @@ MAKEFILE_DEPS := \
 # Libraries in this directory must have been made by `gaia-make-googletest`
 export GOOGLETEST_LIB_DIR := $(GAIA_GOOGLETEST_DIR)/$(BUILD_DIR)
 
-# Libraries in this directory must have been made by `gaia-make-libunicode`
-export LIBUNICODE_LIB_DIR := $(GAIA_LIBUNICODE_DIR)/$(BUILD_DIR)
-
 # Libraries in this directory must have been made by `gaia-make-scnlib`
 export SCNLIB_LIB_DIR := $(GAIA_SCNLIB_DIR)/$(BUILD_DIR)
 
