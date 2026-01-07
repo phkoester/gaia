@@ -1,19 +1,19 @@
 # Dictionary
 
-This dictionary shows some frequently used terms and how to spell them.
+This dictionary lists some frequently used terms and shows the recommended spelling.
 
 Since the language to write is American English, [Merriam-Webster](https://www.merriam-webster.com) is the
 recommended reference.
 
 In some cases, where technical terms tend to be used as closed compounds, e.g. *toolchain*, the closed form
 is preferred even though Merriam-Webster does not list it. If a technical term is listed in the
-Wikipedia---which is true for *toolchain*---, then the Wikipedia may be an acceptable reference.
+Wikipedia—which is true for **toolchain**—, then the Wikipedia may be an acceptable reference.
 
 On open, closed, and hyphenated compounds, see
 ["Should that word have a hyphen?"](https://www.merriam-webster.com/grammar/hyphen-rules-open-closed-compound-words).
 
-Prefixes such as *anti*, *meta*, or *non* need not be followed by a hyphen: *antialiasing*, *metadata*,
-*nonnegative*.
+Prefixes such as *anti*, *meta*, or *non* need not be followed by a hyphen: **antialiasing**, **metadata**,
+**nonnegative**.
 
 - **antialiasing** noun
 - **backend** noun
@@ -21,6 +21,7 @@ Prefixes such as *anti*, *meta*, or *non* need not be followed by a hyphen: *ant
 - **backtick** noun; symbol
 - **Bash** name; command-line tool
 - **Cargo** name; command-line tool
+- **CMake** name; command-line tool
 - **code page** noun
 - **code point** noun; Unicode entity
 - **command line** noun
@@ -36,7 +37,7 @@ Prefixes such as *anti*, *meta*, or *non* need not be followed by a hyphen: *ant
 - **nonnegative** adjective
 - **nonnull** adjective
 - **nonpositive** adjective
-- **null** 1. adjective. 2. noun. 3. verb
+- **null** 1. adjective. 2. noun
 - **plug in** verb
 - **plugin** noun
 - **runtime** noun

@@ -7,7 +7,7 @@ The standard encoding for text files of any kind is UTF-8.
 Standard line breaks are Unix-style line breaks (ASCII 10, LF, `\n`).
 
 When reading text files, the software should also recognize Windows-style line breaks (ASCII 13 and 10, CR
-and LF, `\r\n`).
+and LF, `\r\n`), and possibly discard the CR.
 
 ## Line Wrapping
 

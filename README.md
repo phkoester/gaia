@@ -11,34 +11,12 @@ All other `phkoester` projects depend on Gaia. Gaia is supposed to be the buildi
 
 Recommended readings:
 
-- [Text-File Guidelines](doc/text_file_guidelines.md)
+- [Text-File Guidelines](doc/text-file-guidelines.md)
 - [C++ Guidelines](doc/c++-guidelines.md)
 - [Rust Guidelines](doc/rust-guidelines.md)
 - [Dictionary](doc/dictionary.md)
 
 ## Set Up
-
-### Required Packages
-
-- `cmake`
-- `grcov` (?)
-- `lldb` (?)
-- `llvm` (?)
-- `make`
-- `python3`
-- `python3-json5`
-- `python3-semver`
-- `python3-toml`
-
-### Recommended Packages
-
-- `batcat`
-- `gedit`
-- `meld`
-- `ripgrep`
-- `valgrind`
-
-### Gaia
 
 Clone from `git@github.com:phkoester/gaia.git` (SSH) or <https://github.com/phkoester/gaia.git> (HTTPS).
 
@@ -58,8 +36,9 @@ In your `~/.bashrc`, export these variables:
 | `GAIA_EDITOR`             | No        | Example: `nano` (default)
 | `GAIA_GOOGLETEST_DIR`     | Yes       | Example: `~/project/googletest`
 | `GAIA_PROJECT_DIR`        | No        | Fallback directory where `gaia-build` looks for projects
+| `GAIA_SCNLIB_DIR`         | Yes       | Example: `~/project/scnlib`
 
-After that, to initialize Gaia, place this line in `~/.bashrc`:
+After that, to initialize Gaia, place this line in your `~/.bashrc`:
 
 ```bash
 source "$GAIA_DIR/src/main/bash/gaia/init"
