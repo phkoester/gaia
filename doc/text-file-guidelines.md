@@ -22,8 +22,8 @@ Where block indenting occurs in a text file, the standard indent is 2 spaces. Th
 code, which by default uses an indent of 4 spaces.
 
 If a line of code is wrapped, the wrapped lines should use a *hanging indent* of 4 spaces. If this cannot be
-achieved because a formatting tool---e.g. Rustfmt---does not support it, the best-looking alternative
-offered by the formatter may be used.
+achieved because a formatting tool—e.g. Rustfmt—does not support it, the best-looking alternative offered by
+the formatter may be used.
 
 ## Tabs
 
@@ -64,7 +64,7 @@ Some basic Markdown features:
 | strike-through | `~~text~~`                      | ~~text~~
 
 Markdown isn't standardized, so not every feature will work in every environment. Rustdoc, Doxygen, Visual
-Studio Code, and GitHub---only to name a few---all use their individual Markdown parsers and renderers.
+Studio Code, and GitHub—only to name a few—all use their individual Markdown parsers and renderers.
 
 A full documentation for CommonMark (used by Rustdoc) can be found
 [here](https://spec.commonmark.org/0.31.2).
