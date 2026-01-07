@@ -69,6 +69,14 @@ Studio Code, and GitHub—only to name a few—all use their individual Markdown
 A full documentation for CommonMark (used by Rustdoc) can be found
 [here](https://spec.commonmark.org/0.31.2).
 
+For hints, use a bold font:
+
+  ```
+  **Note:** Using this class is not encouraged.
+
+  **Attention:** This class is not thread-safe.
+  ```
+
 ### Styling in Comments
 
 Some markdown features such as `*...*` and <code>&grave;...&grave;</code> may be used in comments:

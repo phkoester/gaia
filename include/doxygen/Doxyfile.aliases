@@ -151,7 +151,7 @@ ALIASES += fn_hash_value{1}="`hash_value` overload for \1, to be used by Boost. 
 ALIASES += fn_read{1}="`read` overload for \1.^^^^ \
 Reads a value of type \1 from the source @p in. \
 @param in the source to read from \
-@param v the value to assign to \
+@param out the value to assign to \
 @return the number of bytes read. If it is 0, then the value of @p v is undefined after the function \
     returns"
 

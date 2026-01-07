@@ -22,6 +22,7 @@ Prefixes such as *anti*, *meta*, or *non* need not be followed by a hyphen: **an
 - **Bash** name; command-line tool
 - **Cargo** name; command-line tool
 - **CMake** name; command-line tool
+- **Cppcheck** name; command-line tool
 - **code page** noun
 - **code point** noun; Unicode entity
 - **command line** noun

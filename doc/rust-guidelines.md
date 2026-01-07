@@ -2,14 +2,14 @@
 
 This document is "work in progress" and far from complete.
 
-The general text-file rules from [Text-File Guidelines](text_file_guidelines.md) apply.
+The general text-file rules from [Text-File Guidelines](text-file-guidelines.md) apply.
 
 Next, you should read the [Rust API Guidelines](https://rust-lang.github.io/api-guidelines/about.html).
 
 ## Rustfmt
 
 The `rustfmt.toml` file from the `meadows` project serves as a reference. It contains the Rustfmt settings to
-be used. It makes use of unstable Rustfmt features, so the Rust nightly toolchain is required. 
+be used. It makes use of unstable Rustfmt features, so the Rust nightly toolchain is required.
 
 ### Rustfmt in Visual Studio Code
 
@@ -18,7 +18,7 @@ In Code, Alt+Shift+F formats the current Rust source file.
 To enable the unstable features, `settings.json` needs the following entry:
 
 ```json
-  "rust-analyzer.rustfmt.extraArgs": ["+nightly"]
+"rust-analyzer.rustfmt.extraArgs": ["+nightly"]
 ```
 
 ## Lints
@@ -80,7 +80,7 @@ mod tests {
 
   #[test]
   fn test_first_function() { ... }
-  
+
   #[test]
   fn test_second_function() { ... }
 }
@@ -92,7 +92,7 @@ Section headings may appear at different levels. Do not use title case:
 // Tests (top-level, only for unit tests) ===================================================================
 // A first-level section ------------------------------------------------------------------------------------
 // A second-level section ...................................................................................
-// A third-level section  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+// A third-level section  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 ```
 
 ## Doc Comments

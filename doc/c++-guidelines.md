@@ -2,7 +2,12 @@
 
 This document is "work in progress" and far from complete.
 
-The general text-file rules from [Text-File Guidelines](text_file_guidelines.md) apply.
+The general text-file rules from [Text-File Guidelines](text-file-guidelines.md) apply.
+
+## Cppcheck
+
+For static code analysis, [Cppcheck](https://cppcheck.sourceforge.io) is used. The tool is automatically
+configured by Gaia.
 
 ## Source-File Sections
 
@@ -23,9 +28,9 @@ A collection of functions may be placed in a section called "Functions":
 ```c++
 // Functions ------------------------------------------------------------------------------------------------
 
-void first_function() { ... }
+void firstFunction() { ... }
 
-void second_function() { ... }
+void secondFunction() { ... }
 ```
 
 Section headings may appear at different levels. Do not use title case:
@@ -82,16 +87,16 @@ need to be documented, in this order:
  * assert(visible(comp));
  * ```
  */
-template<typename C>
+template<typename Component>
 bool
-visible(const C& comp) { ... }
+visible(const Component& comp) { ... }
 ```
 
 ### References
 
 Even though Doxygen has some auto-linking, you should not rely on it. Whenever you refer to a code item, use
-the `#` operator. This will raise an error if the reference cannot be resolved. For functions, the `()` can
-be omitted if they are not overloaded:
+the `#` operator. This will raise an error if the reference cannot be resolved. For functions, the trailing
+parentheses `()` can be omitted if there are no overloads:
 
 ```c++
 /**
@@ -117,4 +122,4 @@ in the documentation.
 ### Known Issues with Doxygen
 
 Straight single quotes in backticks, such as <code>&grave;'x'&grave;</code>, don't work. Instead, you have to
-write `<code>'x'</code>`.
+write `<code>'x'</code>` or <code>@c 'x'</code> to achieve `'x'`.

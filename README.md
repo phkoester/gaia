@@ -3,7 +3,7 @@
 Gaia is an experimental collection of Bash scripts, Python scripts, and Makefiles that help to build projects
 in a Bash shell.
 
-**NOTE:** For the time being, it is not recommended for public use. Use it at your own risk.
+**Note:** For the time being, it is not recommended for public use. Use it at your own risk.
 
 Supported project types are Bash, Python, C++, and Rust.
 
