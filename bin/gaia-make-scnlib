@@ -26,66 +26,52 @@ if [[ ! $GAIA_SCNLIB_DIR ]]; then
 fi
 cd "$GAIA_SCNLIB_DIR"
 
-# Set `CFLAGS` and `CXXFLAGS`
+# Set environment variables
 
-export CFLAGS="-fPIC -pthread"
+if [[ $GAIA_CXX_GNU ]]; then
+  export CXX=$GAIA_CXX_GNU
+else
+  export CXX=$(which g++)
+fi
 export CXXFLAGS="-fPIC -pthread"
+export CC=$(dirname $CXX)/gcc
+export CFLAGS="-fPIC -pthread"
 
-# Loop through toolchains
+# Loop through build types
 
-for toolchain in gnu llvm; do
-  if [[ $toolchain != gnu && $toolchain != llvm ]]; then
-    shell-error -e2 Toolchain must be \`gnu\` or  \`llvm\`
-  fi
+for buildType in debug release; do
+  echo "########################################"
+  echo "#"
+  echo "# Build type: $buildType"
+  echo "#"
+  echo "# CC      : $CC"
+  echo "# CFLAGS  : $CFLAGS"
+  echo "# CXX     : $CXX"
+  echo "# CXXFLAGS: $CXXFLAGS"
+  echo "#"
+  echo "########################################"
 
-  # Set `CXX` and `CC`
+  # Call CMake and Make
 
-  if [[ $toolchain == gnu ]]; then
-      if [[ $GAIA_CXX_GNU ]]; then
-      export CXX=$GAIA_CXX_GNU
-    else
-      export CXX=$(which g++)
+  clean_up -f
+  set -x
+  cmake -DCMAKE_BUILD_TYPE=${buildType^} .
+  make clean
+  make -j$(($(nproc) / 2))
+  set +x
+
+  # Copy files
+
+  for file in *.a; do
+    dest=$(basename $file)
+    if [[ $buildType == debug ]]; then
+      dest=${dest%.a}-g.a
     fi
-    export CC=$(dirname $CXX)/gcc
-  else
-    if [[ $GAIA_CXX_LLVM ]]; then
-      export CXX=$GAIA_CXX_LLVM
-    else
-      export CXX=$(which clang++)
-    fi
-    export CC=$(dirname $CXX)/clang
-  fi
-
-  # Loop through build types
-
-  for buildType in debug release; do
-    dir=target/$GAIA_TARGET-$toolchain-$buildType
-
-    echo "########################################"
-    echo "#"
-    echo "# $dir"
-    echo "#"
-    echo "# CC      : $CC"
-    echo "# CFLAGS  : $CFLAGS"
-    echo "# CXX     : $CXX"
-    echo "# CXXFLAGS: $CXXFLAGS"
-    echo "#"
-    echo "########################################"
-
-    set -x
-
-    # Call CMake and Make
-
-    clean_up -f
-    cmake -DCMAKE_BUILD_TYPE=${buildType^} .
-    make clean
-    make -j$(($(nproc) / 2))
-    mkdir -p $dir
-    cp libscn.a $dir
-    clean_up
-
-    set +x
+    dest=/usr/lib/$dest
+    sudo cp -v $file $dest
   done
+
+  clean_up
 done
 
 # EOF

@@ -18,8 +18,8 @@
 
 LIB_FILES += \
     ../rocket/$(BUILD_DIR)/librocket-gtest.a \
-    $(GOOGLETEST_LIB_DIR)/libgmock.a \
-    $(GOOGLETEST_LIB_DIR)/libgtest.a
+    $(LIB_DIR)/libgmock$(G).a \
+    $(LIB_DIR)/libgtest$(G).a
 
 include $(GAIA_DIR)/src/main/make/executable.mk
 

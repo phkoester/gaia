@@ -14,11 +14,11 @@ ssh-init() {
     ssh-agent > ~/.ssh-init
     source ~/.ssh-init
     ssh-add
-  elif [[ $n == 1 ]]; then
+  elif [[  $n == 1 && -f ~/.ssh-init ]] && grep "SSH_AGENT_PID=$pids;" ~/.ssh-init >/dev/null; then
     echo Using running \`ssh-agent\` ...
     source ~/.ssh-init || return 1
   else
-    shell-error-f -r1 $FUNCNAME Found more than one \`ssh-agent\`: $pids
+    shell-error-f -r1 $FUNCNAME Found no suitable \`ssh-agent\`: $pids
     return 1
   fi
 }

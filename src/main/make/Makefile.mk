@@ -39,18 +39,17 @@ BUILD_TARGET := $(GAIA_TARGET)-$(GAIA_CXX_TOOLCHAIN)-$(GAIA_BUILD_TYPE)
 BUILD_DIR := target/$(BUILD_TARGET)
 export BUILD_DIR # May be used in project-specific Doxyfile
 CXX_STD := gnu++2b
+LIB_DIR := /usr/lib
 MAKE_FLAGS := --no-print-directory
 MAKEFILE_DEPS := \
     $(shell find -type f -name Makefile) \
     $(shell find $(GAIA_DIR)/src/main/make -type f -name "*.mk")
 
-# External libraries ----------------------------------------------------------------------------------------
-
-# Libraries in this directory must have been made by `gaia-make-googletest`
-export GOOGLETEST_LIB_DIR := $(GAIA_GOOGLETEST_DIR)/$(BUILD_DIR)
-
-# Libraries in this directory must have been made by `gaia-make-scnlib`
-export SCNLIB_LIB_DIR := $(GAIA_SCNLIB_DIR)/$(BUILD_DIR)
+ifeq ($(GAIA_BUILD_TYPE),debug)
+  G := -g
+else
+  G :=
+endif
 
 # Variables -------------------------------------------------------------------------------------------------
 
