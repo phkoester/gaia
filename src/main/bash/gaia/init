@@ -45,6 +45,9 @@ export GAIA_BUILD_TYPE=${GAIA_BUILD_TYPE:-debug}
 export GAIA_CXX_TOOLCHAIN=${GAIA_CXX_TOOLCHAIN:-llvm}
 export GAIA_EDITOR=${GAIA_EDITOR:-nano}
 
+export GAIA_INSTALL_LIB_DIR
+[[ ! -d $GAIA_INSTALL_LIB_DIR ]] && GAIA_INSTALL_LIB_DIR=$HOME/lib
+
 j__=$(($(nproc) / 3 * 2))
 l__=$(nproc)
 export GAIA_MAKE_FLAGS="-j$j__ -l$l__"
@@ -85,7 +88,7 @@ if shell-is-interactive && [[ $SHLVL == 1 ]] && [[ ! $GAIA_REINIT ]]; then
   echo $ruler__
   echo \#
   echo \# This is Gaia $GAIA_VERSION
-  echo \#  
+  echo \#
   echo \# "Detected host: $GAIA_HOST"
   echo \#
   echo $ruler__

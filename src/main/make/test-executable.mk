@@ -10,16 +10,14 @@
 # - SRC_MOVE_FRONT
 # - LIB_FILES
 # - SHARED_LIBS
-# - EXTERNAL_SHARED_LIB_DIRS
-# - EXTERNAL_SHARED_LIBS
 #
 
 # Include `executable.mk` -----------------------------------------------------------------------------------
 
 LIB_FILES += \
-    ../rocket/$(BUILD_DIR)/librocket-gtest.a \
-    $(LIB_DIR)/libgmock$(G).a \
-    $(LIB_DIR)/libgtest$(G).a
+    $(INSTALL_LIB_DIR)/librocket-gtest$(G).a \
+    $(INSTALL_LIB_DIR)/libgtest$(G).a \
+    $(INSTALL_LIB_DIR)/libgmock$(G).a
 
 include $(GAIA_DIR)/src/main/make/executable.mk
 
@@ -32,12 +30,9 @@ TEST_DEPS += $(TARGET)
 
 $(TARGET): ARGS := $(ARGS)
 $(TARGET): SAVE_TARGET := $(SAVE_TARGET)
-$(TARGET): SHARED_LIB_DIRS := $(SHARED_LIB_DIRS)
 $(TARGET): $(SAVE_TARGET)
 	@echo '$$' $@ $(ARGS)
-	@$(SHARED_LIB_PATH_NAME)="$(SHARED_LIB_PATH):$(subst $(SPACE),:,$(SHARED_LIB_DIRS))" \
-	    BUILD_DIR=$(BUILD_DIR) \
-	    $(SAVE_TARGET) --gtest_catch_exceptions=0 $(ARGS)
+	@BUILD_DIR=$(BUILD_DIR) $(SAVE_TARGET) --gtest_catch_exceptions=0 $(ARGS)
 
 .PHONY: $(TARGET)
 

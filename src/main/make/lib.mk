@@ -8,6 +8,7 @@
 # - SRC_DIR
 # - SRC_ADD
 # - SRC_MOVE_FRONT
+# - INSTALL
 #
 
 # Collect files ---------------------------------------------------------------------------------------------
@@ -26,13 +27,25 @@ O_FILES := $(foreach it,$(CC_FILES),$(BUILD_DIR)/$(it).o)
 
 # Target rule -----------------------------------------------------------------------------------------------
 
-TARGET := $(BUILD_DIR)/lib$(NAME).a
+LIB_TARGET := $(BUILD_DIR)/lib$(NAME).a
+INSTALL_TARGET := $(INSTALL_LIB_DIR)/lib$(NAME)$(G).a
+
+ifeq ($(INSTALL),)
+  TARGET := $(LIB_TARGET)
+else
+  TARGET := $(INSTALL_TARGET)
+endif
 BUILD_DEPS += $(TARGET)
 
-$(TARGET): O_FILES := $(O_FILES)
-$(TARGET): $(O_FILES)
+$(LIB_TARGET): O_FILES := $(O_FILES)
+$(LIB_TARGET): $(O_FILES)
 	@echo ">" $@
 	@$(AR) $(AR_FLAGS) $@ $(O_FILES)
+
+$(INSTALL_TARGET): $(LIB_TARGET)
+	@echo ">" $@
+	@mkdir -p $(dir $@)
+	@cp $< $@
 
 # Clean up --------------------------------------------------------------------------------------------------
 
@@ -41,5 +54,6 @@ CC_FILES :=
 SRC_DIR :=
 SRC_ADD :=
 SRC_MOVE_FRONT :=
+INSTALL :=
 
 # EOF

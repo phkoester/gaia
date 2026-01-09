@@ -10,8 +10,6 @@
 # - SRC_MOVE_FRONT
 # - LIB_FILES
 # - SHARED_LIBS
-# - EXTERNAL_SHARED_LIB_DIRS
-# - EXTERNAL_SHARED_LIBS
 #
 
 # Collect files and directories -----------------------------------------------------------------------------
@@ -24,9 +22,6 @@ endif
 CC_D_FILES := $(foreach it,$(CC_FILES),$(BUILD_DIR)/$(it).d)
 O_FILES := $(foreach it,$(CC_FILES),$(BUILD_DIR)/$(it).o)
 
-SHARED_LIB_FILES := $(addprefix $(BUILD_DIR)/,$(SHARED_LIBS))
-SHARED_LIB_DIRS := $(strip $(BUILD_DIR) $(EXTERNAL_SHARED_LIB_DIRS))
-
 # Include dependency files ----------------------------------------------------------------------------------
 
 -include $(CC_D_FILES)
@@ -36,18 +31,18 @@ SHARED_LIB_DIRS := $(strip $(BUILD_DIR) $(EXTERNAL_SHARED_LIB_DIRS))
 TARGET := $(BUILD_DIR)/$(NAME)$(EXECUTABLE_SUFFIX)
 BUILD_DEPS += $(TARGET)
 
-$(TARGET): EXTERNAL_SHARED_LIBS := $(EXTERNAL_SHARED_LIBS)
+SHARED_LIB_DEPS := $(shell gaia-resolve-shared-libs $(SHARED_LIBS))
+
 $(TARGET): O_FILES := $(O_FILES)
 $(TARGET): LIB_FILES := $(LIB_FILES)
-$(TARGET): SHARED_LIB_DIRS := $(SHARED_LIB_DIRS)
-$(TARGET): SHARED_LIB_FILES := $(SHARED_LIB_FILES)
+$(TARGET): SHARED_LIB_DEPS := $(SHARED_LIB_DEPS)
 $(TARGET): SHARED_LIBS := $(SHARED_LIBS)
-$(TARGET): $(O_FILES) $(LIB_FILES) $(SHARED_LIB_FILES)
+$(TARGET): $(O_FILES) $(LIB_FILES) $(SHARED_LIB_DEPS)
 	@echo ">" $@
-	@$(LINK) $(addprefix -L,$(SHARED_LIB_DIRS)) $(LINK_FLAGS) \
-         -o $@ \
-	 $(O_FILES) $(LIB_FILES) \
-	 -lstdc++_libbacktrace $(addprefix -l:,$(SHARED_LIBS) $(EXTERNAL_SHARED_LIBS))
+	@$(LINK) $(LINK_FLAGS) -L $(INSTALL_LIB_DIR) \
+            -o $@ \
+	    $(O_FILES) $(LIB_FILES) \
+	    -lstdc++_libbacktrace $(addprefix -l:,$(SHARED_LIBS))
 
 # Clean up --------------------------------------------------------------------------------------------------
 
@@ -58,7 +53,5 @@ SRC_ADD :=
 SRC_MOVE_FRONT :=
 LIB_FILES :=
 SHARED_LIBS :=
-EXTERNAL_SHARED_LIB_DIRS :=
-EXTERNAL_SHARED_LIBS :=
 
 # EOF

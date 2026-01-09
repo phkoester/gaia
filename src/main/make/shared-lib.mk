@@ -11,8 +11,7 @@
 # - SRC_MOVE_FRONT
 # - LIB_FILES
 # - SHARED_LIBS
-# - EXTERNAL_SHARED_LIB_DIRS
-# - EXTERNAL_SHARED_LIBS
+# - INSTALL
 #
 
 # Collect files and directories -----------------------------------------------------------------------------
@@ -25,30 +24,39 @@ endif
 CC_D_FILES := $(foreach it,$(CC_FILES),$(BUILD_DIR)/$(it).d)
 O_FILES := $(foreach it,$(CC_FILES),$(BUILD_DIR)/$(it).o)
 
-SHARED_LIB_FILES := $(addprefix $(BUILD_DIR)/,$(SHARED_LIBS))
-SHARED_LIB_DIRS := $(BUILD_DIR) $(EXTERNAL_SHARED_LIB_DIRS)
-
 # Include dependency files ----------------------------------------------------------------------------------
 
 -include $(CC_D_FILES)
 
 # Target rule -----------------------------------------------------------------------------------------------
 
-TARGET := $(BUILD_DIR)/$(call shared-lib-name,$(NAME),$(VERSION))
+LIB_TARGET := $(BUILD_DIR)/$(call shared-lib-name,$(NAME),$(VERSION))
+INSTALL_TARGET := $(INSTALL_LIB_DIR)/$(call shared-lib-name,$(NAME),$(VERSION),$(G))
+
+ifeq ($(INSTALL),)
+  TARGET := $(LIB_TARGET)
+else
+  TARGET := $(INSTALL_TARGET)
+endif
 BUILD_DEPS += $(TARGET)
 
-$(TARGET): EXTERNAL_SHARED_LIBS := $(EXTERNAL_SHARED_LIBS)
-$(TARGET): O_FILES := $(O_FILES)
-$(TARGET): LIB_FILES := $(LIB_FILES)
-$(TARGET): SHARED_LIB_DIRS := $(SHARED_LIB_DIRS)
-$(TARGET): SHARED_LIB_FILES := $(SHARED_LIB_FILES)
-$(TARGET): SHARED_LIBS := $(SHARED_LIBS)
-$(TARGET): $(O_FILES) $(LIB_FILES) $(SHARED_LIB_FILES)
+SHARED_LIB_DEPS := $(shell gaia-resolve-shared-libs $(SHARED_LIBS))
+
+$(LIB_TARGET): O_FILES := $(O_FILES)
+$(LIB_TARGET): LIB_FILES := $(LIB_FILES)
+$(LIB_TARGET): SHARED_LIB_DEPS := $(SHARED_LIB_DEPS)
+$(LIB_TARGET): SHARED_LIBS := $(SHARED_LIBS)
+$(LIB_TARGET): $(O_FILES) $(LIB_FILES) $(SHARED_LIB_DEPS)
 	@echo ">" $@
-	@$(LINK) -shared $(addprefix -L,$(SHARED_LIB_DIRS)) $(LINK_FLAGS) \
-	 -o $@ \
-	 $(O_FILES) $(LIB_FILES) \
-	 -lstdc++_libbacktrace $(addprefix -l:,$(SHARED_LIBS) $(EXTERNAL_SHARED_LIBS))
+	@$(LINK) -shared $(LINK_FLAGS) -L $(INSTALL_LIB_DIR) \
+	    -o $@ \
+	    $(O_FILES) $(LIB_FILES) \
+	    -lstdc++_libbacktrace $(addprefix -l:,$(SHARED_LIBS))
+
+$(INSTALL_TARGET): $(LIB_TARGET)
+	@echo ">" $@
+	@mkdir -p $(dir $@)
+	@cp $< $@
 
 # Clean up --------------------------------------------------------------------------------------------------
 
@@ -60,7 +68,6 @@ SRC_ADD :=
 SRC_MOVE_FRONT :=
 LIB_FILES :=
 SHARED_LIBS :=
-EXTERNAL_SHARED_LIB_DIRS :=
-EXTERNAL_SHARED_LIBS :=
+INSTALL :=
 
 # EOF

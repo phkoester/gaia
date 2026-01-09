@@ -67,9 +67,11 @@ for buildType in debug release; do
     if [[ $buildType == debug ]]; then
       dest=${dest%.a}-g.a
     fi
-    dest=/usr/lib/$dest
-    sudo cp -v $file $dest
+    dest=$GAIA_INSTALL_LIB_DIR/$dest
+    cp -v $file $dest
   done
+
+  # Immediately clean up after each run
 
   clean_up
 done

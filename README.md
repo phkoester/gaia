@@ -35,8 +35,10 @@ In your `~/.bashrc`, export these variables:
 | `GAIA_DOXYGEN`            | No        | Example: `/usr/local/bin/doxygen-1.12.0/bin/doxygen`
 | `GAIA_EDITOR`             | No        | Example: `nano` (default)
 | `GAIA_GOOGLETEST_DIR`     | Yes       | Example: `~/project/googletest`
+| `GAIA_INSTALL_LIB_DIR`    | No        | Example: `~/lib` (default)
 | `GAIA_PROJECT_DIR`        | No        | Fallback directory where `gaia-build` looks for projects
 | `GAIA_SCNLIB_DIR`         | Yes       | Example: `~/project/scnlib`
+| `GAIA_SHARED_LIB_PATH`    | Yes       | Example: `~/lib:/usr/lib/x86_64-linux-gnu`. Where the Makefiles look for shared libraries.
 
 After that, to initialize Gaia, place this line in your `~/.bashrc`:
 

@@ -39,16 +39,14 @@ BUILD_TARGET := $(GAIA_TARGET)-$(GAIA_CXX_TOOLCHAIN)-$(GAIA_BUILD_TYPE)
 BUILD_DIR := target/$(BUILD_TARGET)
 export BUILD_DIR # May be used in project-specific Doxyfile
 CXX_STD := gnu++2b
-LIB_DIR := /usr/lib
 MAKE_FLAGS := --no-print-directory
 MAKEFILE_DEPS := \
     $(shell find -type f -name Makefile) \
     $(shell find $(GAIA_DIR)/src/main/make -type f -name "*.mk")
 
-ifeq ($(GAIA_BUILD_TYPE),debug)
-  G := -g
-else
-  G :=
+INSTALL_LIB_DIR := $(GAIA_INSTALL_LIB_DIR)
+ifeq ($(INSTALL_LIB_DIR),)
+  INSTALL_LIB_DIR := $(HOME)/lib
 endif
 
 # Variables -------------------------------------------------------------------------------------------------
@@ -164,23 +162,21 @@ LINK_FLAGS := -pthread -static-libstdc++
 # Configure for target --------------------------------------------------------------------------------------
 
 ifeq ($(GAIA_TARGET_OS_FAMILY),win)
-  EXECUTABLE_SUFFIX := .exe
-  # No colon in the next line!
-  SHARED_LIB_PATH = $(PATH)
-  SHARED_LIB_PATH_NAME := PATH
-
   # $1: base name
-  # $2: version
-  shared-lib-name = $1$(if $2,-$2).dll
+  # $2: optional;version
+  # $3: optional; $(G)
+  shared-lib-name = $1$(if $2,-$2)$3.dll
 else
-  EXECUTABLE_SUFFIX :=
-  # No colon in the next line!
-  SHARED_LIB_PATH = $(LD_LIBRARY_PATH)
-  SHARED_LIB_PATH_NAME := LD_LIBRARY_PATH
-
   # $1: base name
-  # $2: version
-  shared-lib-name = lib$1.so$(if $2,.$2)
+  # $2: optional; version
+  # $3: optional; $(G)
+  shared-lib-name = lib$1$3.so$(if $2,.$2)
+endif
+
+ifeq ($(GAIA_BUILD_TYPE),debug)
+  G := -g
+else
+  G :=
 endif
 
 # Collect include directories -------------------------------------------------------------------------------
