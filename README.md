@@ -26,7 +26,6 @@ In your `~/.bashrc`, export these variables:
 | :------------------------ | :-------- | :----------
 | `GAIA_BOOST_DIR`          | No        | Absolute path to Boost. If not set, the system's default Boost version is used
 | `GAIA_BUILD_TYPE`         | No        | Values: `debug` (default), `release`
-| `GAIA_CPP_UNICODELIB_DIR` | Yes       | Example: `~/project/cpp-unicodelib`
 | `GAIA_CXX_GNU`            | No        | Absolute path to the `g++` executable. If not set, `which g++` is used
 | `GAIA_CXX_LLVM`           | No        | Absolute path to the `clang++` executable. If not set, `which clang++` is used
 | `GAIA_CXX_TOOLCHAIN`      | No        | Values: `gnu`, `llvm` (default)
