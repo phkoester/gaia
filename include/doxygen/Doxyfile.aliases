@@ -145,9 +145,18 @@ ALIASES += fn_PrintTo{1}="`PrintTo` overload for \1, to be used by GoogleTest. \
 @param v the value to print \
 @param os the output stream"
 
+ALIASES += fn_format_as{1}="`format_as` overload for \1, to be used by {fmt}. \
+@param v the value to format \
+@return the value to format instead"
+
 ALIASES += fn_hash_value{1}="`hash_value` overload for \1, to be used by Boost. \
 @param v the value to hash \
 @return a hash value"
+
+ALIASES += fn_write{1}="`write` overload for \1, to be used by Rocket. \
+@param out the sink to write to \
+@param v the value to write \
+@return the number of bytes written"
 
 # Enums -----------------------------------------------------------------------------------------------------
 

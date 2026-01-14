@@ -2,7 +2,7 @@
 
 This document is "work in progress" and far from complete.
 
-The general text-file rules from [Text-File Guidelines](text-file-guidelines.md) apply.
+The general coding rules from [Coding Guidelines](coding-guidelines.md) apply.
 
 Next, you should read the [Rust API Guidelines](https://rust-lang.github.io/api-guidelines/about.html).
 

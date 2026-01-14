@@ -12,6 +12,7 @@ All other `phkoester` projects depend on Gaia. Gaia is supposed to be the buildi
 Recommended readings:
 
 - [Text-File Guidelines](doc/text-file-guidelines.md)
+- [Coding Guidelines](doc/coding-guidelines.md)
 - [C++ Guidelines](doc/c++-guidelines.md)
 - [Rust Guidelines](doc/rust-guidelines.md)
 - [Dictionary](doc/dictionary.md)

@@ -23,7 +23,7 @@ code, which by default uses an indent of 4 spaces.
 
 If a line of code is wrapped, the wrapped lines should use a *hanging indent* of 4 spaces. If this cannot be
 achieved because a formatting tool—e.g. Rustfmt—does not support it, the best-looking alternative offered by
-the formatter may be used.
+the formatter may be used, or even no formatter at all.
 
 ## Tabs
 
@@ -76,18 +76,3 @@ For hints, use a bold font:
 
   **Attention:** This class is not thread-safe.
   ```
-
-### Styling in Comments
-
-Some markdown features such as `*...*` and <code>&grave;...&grave;</code> may be used in comments:
-
-```rust
-frobinate(x); // Do some *really* sophisticated stuff with `x`
-```
-
-However, literals and links should not be styled in comments for better readability:
-
-```rust
-s.pop(); // Strip trailing '\n'
-assert_eq!(mem::size_of::<i32>(), 4); // See https://turbo.fish
-```
