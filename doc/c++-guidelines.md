@@ -70,13 +70,13 @@ need to be documented, in this order:
 
 ```c++
 /**
- * Returns `true` if the component @p comp is visible.
+ * Checks if the component @p comp is visible.
  *
  * Additional documentation goes here.
  *
  * @tparam C the component type
  * @param comp the component
- * @return `true` if the component is visible
+ * @return whether the component is visible
  * @throw #rocket::InvalidState if the component isn't attached yet
  * @throw #mygui::InvalidThread if the current thread is not the GUI thread
  *

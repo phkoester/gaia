@@ -9,7 +9,7 @@ import os
 
 def absolute(path: str) -> bool:
   """
-  Returns `True` if the path `path` is an absolute path.
+  Checks if the path `path` is an absolute path.
   """
   return path[0:1] == "/"
 
@@ -23,7 +23,7 @@ def find(paths: str, file: str, path_sep: str = ":") -> str | None:
     if os.path.isfile(file):
       return file
     return None
-  
+
   for path in paths.split(path_sep):
     path = gaia.string.remove_trailing(path, "/")
     if os.path.isfile(path + "/" + file):

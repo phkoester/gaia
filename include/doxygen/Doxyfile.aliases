@@ -2,12 +2,12 @@
 # Doxyfile.aliases
 #
 
-# `@param` --------------------------------------------------------------------------------------------------
+# Parameters ------------------------------------------------------------------------------------------------
 
 ALIASES += param_lhs="@param lhs the left-hand side"
 ALIASES += param_rhs="@param rhs the right-hand side"
 
-# `@return` -------------------------------------------------------------------------------------------------
+# Return values ---------------------------------------------------------------------------------------------
 
 ALIASES += return_this="@return a reference to this instance"
 
@@ -55,29 +55,29 @@ ALIASES += member_op_call="Function-call operator."
 ALIASES += member_op_subscript="Subscript operator. \
 @param index an index"
 
-ALIASES += member_op_eq="Tests if this instance equals @p rhs. \
+ALIASES += member_op_eq="Tests if this instance is equal to @p rhs. \
 @param rhs the right-hand side \
-@return `true` if this instance equals @p rhs"
+@return whether this instance is equal to @p rhs"
 
-ALIASES += member_op_ne="Tests if this instance does not equal @p rhs. \
+ALIASES += member_op_ne="Tests if this instance is not equal to @p rhs. \
 @param rhs the right-hand side \
-@return `true` if this instance does not equal @p rhs"
+@return whether this instance is not equal to @p rhs"
 
 ALIASES += member_op_lt="Tests if this instance is less than @p rhs. \
 @param rhs the right-hand side \
-@return `true` if this instance is less than @p rhs"
+@return whether this instance is less than @p rhs"
 
 ALIASES += member_op_le="Tests if this instance is less than or equal to @p rhs. \
 @param rhs the right-hand side \
-@return `true` if this instance is less than or equal to @p rhs"
+@return whether this instance is less than or equal to @p rhs"
 
 ALIASES += member_op_gt="Tests if this instance is greater than @p rhs. \
 @param rhs the right-hand side \
-@return `true` if this instance is greater than @p rhs"
+@return whether this instance is greater than @p rhs"
 
 ALIASES += member_op_ge="Tests if this instance is greater than or equal to @p rhs. \
 @param rhs the right-hand side \
-@return `true` if this instance is greater than or equal to @p rhs"
+@return whether this instance is greater than or equal to @p rhs"
 
 ALIASES += member_op_cmp_strong_ordering="Compares this instance with @p rhs and returns a value of type \
 `std::strong_ordering`. \
@@ -117,19 +117,19 @@ ALIASES += type_base="The base type."
 # Operators -------------------------------------------------------------------------------------------------
 
 ALIASES += op_eq{1}="Equality operator for \1.^^^^ \
-Tests if @p lhs equals @p rhs. \
+Tests if @p lhs is equal to @p rhs. \
 @param lhs the left-hand side \
 @param rhs the right-hand side \
-@return @p true if @p lhs and @p rhs equal"
+@return whether @p lhs equals to @p rhs"
 
 ALIASES += op_ne{1}="Inequality operator for \1.^^^^ \
-Tests if @p lhs does not equal @p rhs. \
+Tests if @p lhs is not equal to @p rhs. \
 @param lhs the left-hand side \
 @param rhs the right-hand side \
-@return @p true if @p lhs and @p rhs do not equal"
+@return @p whether @p lhs does not equal to @p rhs"
 
 ALIASES += op_input{1}="Input operator for \1.^^^^ \
-If the parsing fails, the fail bit of the input stream @p is is set, and @p rhs is not assigned any value. \
+If the scanning fails, the fail bit of the input stream @p is is set, and @p rhs is not assigned any value. \
 @param lhs the input stream \
 @param rhs the value to assign to \
 @return @p lhs"
@@ -162,7 +162,7 @@ ALIASES += fn_write{1}="`write` overload for \1, to be used by Rocket. \
 
 ALIASES += enum_declare{1}="Automatic declarations for the enum \1."
 
-# Specializations -------------------------------------------------------------------------------------------
+# Template specializations ----------------------------------------------------------------------------------
 
 ALIASES += spec{2}="\1 template specialization for \2."
 

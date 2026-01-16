@@ -24,7 +24,7 @@ for file in "$@"; do
   done
   IFS=' '
 
-  [[ ! $found ]] && echo $file
+  [[ ! $found ]] && echo $GAIA_INSTALL_LIB_DIR/$file
 done
 
 # EOF
