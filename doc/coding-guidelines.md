@@ -24,5 +24,5 @@ assert_eq!(mem::size_of::<i32>(), 4); // See https://turbo.fish
 Hexadecimal numbers are set in capital letters:
 
 ```c++
-int n = 0xFF;
+i32 n = 0xFF;
 auto c = U'\U20AC'; // U+20AC (EURO SIGN)
