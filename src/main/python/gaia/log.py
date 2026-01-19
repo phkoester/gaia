@@ -86,7 +86,7 @@ def trace(*args) -> None:
 # Main ------------------------------------------------------------------------------------------------------
 
 # Read the log level from the environment
-if v := env.get("GAIA_LOG"):
-  _log_level = LogLevel[v]
+if val := env.get("GAIA_LOG"):
+  _log_level = LogLevel[val]
 
 # EOF

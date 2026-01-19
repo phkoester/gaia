@@ -15,14 +15,15 @@ frobinate(x); // Do some *really* sophisticated stuff with `x`
 However, literals and links should not be styled in comments for better readability:
 
 ```rust
-s.pop(); // Strip trailing '\n'
+str.pop(); // Strip trailing '\n'
 assert_eq!(mem::size_of::<i32>(), 4); // See https://turbo.fish
 ```
 
-## Hexdecimal Numbers
+## Hexadecimal Numbers
 
 Hexadecimal numbers are set in capital letters:
 
 ```c++
 i32 n = 0xFF;
 auto c = U'\U20AC'; // U+20AC (EURO SIGN)
+```

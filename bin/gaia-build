@@ -139,7 +139,7 @@ def find_root_dir() -> str:
   dir = env["HOME"] + "/project"
   if test_root_dir(dir):
     return dir
-  
+
   raise RuntimeError("Cannot find root directory")
 
 def get_gaia_project_json(prj: str) -> dict[str, any]:
@@ -170,7 +170,7 @@ def parse_cl() -> argparse.Namespace:
     prog="gaia-build",
     usage=USAGE,
   )
-  
+
   parser.add_argument("-a", "--all", action="store_true", dest="all",
       help="an \"all\" hint")
   parser.add_argument("-b", "--build-type", action="store", choices=["debug", "release"], dest="build_type", type=str,
@@ -187,7 +187,7 @@ def parse_cl() -> argparse.Namespace:
       help="print all warnings")
 
   parser.add_argument("args", action="store", nargs="*", type=str)
-  
+
   return parser.parse_args()
 
 def parse_commands_or_cl() -> tuple[list[str], list[str]]:
@@ -196,7 +196,7 @@ def parse_commands_or_cl() -> tuple[list[str], list[str]]:
     cmds = ["build"]
   elif args.args[0] not in COMMANDS:
     cl = args.args
-    if cl[0] == "g": 
+    if cl[0] == "g":
       cl[0] = "gaia-git"
   else:
     for cmd in args.args:
@@ -250,15 +250,15 @@ def parse_projects() -> list[str]:
   return result
 
 def print_section(what: str, targets: list[str], cl: list[str] = None) -> None:
-  s = 40 * "#" + "\n# \n# " + root_dir + "\n#\n# " + what
+  str = 40 * "#" + "\n# \n# " + root_dir + "\n#\n# " + what
   if targets:
-    s+= " > " + " ".join(targets)
+    str+= " > " + " ".join(targets)
     if cl:
-      s += "\n#\n# $ " + " ".join(cl)
+      str += "\n#\n# $ " + " ".join(cl)
   else:
-    s+= " $ " + " ".join(cl)
-  s += "\n#\n" + 40 * "#"
-  print(s)
+    str+= " $ " + " ".join(cl)
+  str += "\n#\n" + 40 * "#"
+  print(str)
 
 def print_version(prj: str) -> None:
   # Print version from `gaia-project.json`
@@ -267,7 +267,7 @@ def print_version(prj: str) -> None:
   if not version:
     version = "N/A"
   print(f"version: {version}")
-  
+
   # Run `gaia-git-version`
   os.chdir(dir)
   gaia.shell.run(["gaia-git-version"])
@@ -292,7 +292,7 @@ def run_cargo(prj: str, cmds: list[str]) -> None:
   for cmd in cmds:
     cl = ["cargo"]
     cl_len = len(cl)
-    
+
     if cmd == "build":
       cl.append("build")
     elif cmd == "check":

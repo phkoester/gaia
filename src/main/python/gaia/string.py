@@ -4,46 +4,46 @@
 # String utilities.
 #
 
-def capitalize(s: str) -> str | None:
+def capitalize(str: str) -> str | None:
   """
-  Capitalizes the first character of `s`.
-  
+  Capitalizes the first character of `str`.
+
   Returns a new string.
   """
 
-  return s and s[0:1].upper() + s[1:] or s
+  return str and str[0:1].upper() + str[1:] or str
 
-def remove_leading(s: str, sub: str) -> str:
+def remove_leading(str: str, sub: str) -> str:
   """
-  Strips the leading substring `sub`, if any, from `s`.
-  """
-
-  l = len(sub)
-  if l == 0 or l > len(s):
-    return s
-  if s[0:l] == sub:
-    return s[l:]
-  return s
-
-def remove_trailing(s: str, sub: str) -> str:
-  """
-  Strips the trailing substring `sub`, if any, from `s`.
+  Strips the leading substring `sub`, if any, from `str`.
   """
 
   l = len(sub)
-  if l == 0 or l > len(s):
-    return s
-  if s[-l] == sub:
-    return s[0:-l]
-  return s
+  if l == 0 or l > len(str):
+    return str
+  if str[0:l] == sub:
+    return str[l:]
+  return str
 
-def uncapitalize(s: str) -> str | None:
+def remove_trailing(str: str, sub: str) -> str:
   """
-  Uncapitalizes the first character of `s`.
-  
+  Strips the trailing substring `sub`, if any, from `str`.
+  """
+
+  l = len(sub)
+  if l == 0 or l > len(str):
+    return str
+  if str[-l] == sub:
+    return str[0:-l]
+  return str
+
+def uncapitalize(str: str) -> str | None:
+  """
+  Uncapitalizes the first character of `str`.
+
   Returns a new string.
   """
 
-  return s and s[0:1].lower() + s[1:] or s
+  return str and str[0:1].lower() + str[1:] or str
 
 # EOF

@@ -1,6 +1,6 @@
 #
 # __init.py__
-# 
+#
 # Module `gaia`.
 #
 
@@ -13,7 +13,7 @@ import toml
 def get_version(dir: str) -> str | None:
   """
   Tries to retrieve a version from the file `gaia-project.json` in the directory `dir`.
-  
+
   If needed, other files such as `Cargo.toml` are read.
 
   Returns `None` if no version is found.
@@ -39,16 +39,16 @@ def print_version(dir: str) -> None:
   """
   Prints the result of `get_version`.
   """
-  
+
   print(get_version(dir), end="")
 
 def write_version_header(path: str, version_name: str, version: str) -> None:
   """
   Writes a C/C++ version header to a file located at `path`.
   """
-  
+
   file_name = os.path.basename(path)
-  v = semver.parse_version_info(version)
+  val = semver.parse_version_info(version)
 
   with io.open(path, mode="w") as file:
     file.write(
@@ -63,8 +63,8 @@ f"""/*
 // SemVer string
 #define {version_name}_INFO "{version}"
 // Major, minor (4 decimal digits), patch (4 decimal digits)
-#define {version_name} {v.major}{v.minor:04d}{v.patch:04d}UL
- 
+#define {version_name} {val.major}{val.minor:04d}{val.patch:04d}UL
+
 // EOF
 """);
 

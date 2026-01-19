@@ -17,46 +17,46 @@ string-amount() {
 # Usage: string-begins-with S SUB
 string-begins-with() {
   eval $(cl-get-options-f $FUNCNAME "" "$@")
-  eval $(cl-get-args-f $FUNCNAME S SUB)
-  [[ ${#sub} == 0 || x"${s:0:${#sub}}" == x"$sub" ]]
+  eval $(cl-get-args-f $FUNCNAME STR SUB)
+  [[ ${#sub} == 0 || x"${str:0:${#sub}}" == x"$sub" ]]
 }
 
 # Usage: string-ends-with S SUB
 string-ends-with() {
   eval $(cl-get-options-f $FUNCNAME "" "$@")
-  eval $(cl-get-args-f $FUNCNAME S SUB)
-  [[ ${#sub} == 0 || x"${s: -${#sub}}" == x"$sub" ]]
+  eval $(cl-get-args-f $FUNCNAME STR SUB)
+  [[ ${#sub} == 0 || x"${str: -${#sub}}" == x"$sub" ]]
 }
 
 # Usage: string-remove-leading S SUB
 string-remove-leading() {
   eval $(cl-get-options-f $FUNCNAME "" "$@")
-  eval $(cl-get-args-f $FUNCNAME S SUB)
+  eval $(cl-get-args-f $FUNCNAME STR SUB)
 
-  if string-begins-with "$s" "$sub"; then
-    s=${s:${#sub}}
+  if string-begins-with "$str" "$sub"; then
+    str=${str:${#sub}}
   fi
-  echo $s
+  echo $str
 }
 
 # Usage: string-remove-trailing S SUB
 string-remove-trailing() {
   eval $(cl-get-options-f $FUNCNAME "" "$@")
-  eval $(cl-get-args-f $FUNCNAME S SUB)
+  eval $(cl-get-args-f $FUNCNAME STR SUB)
 
-  if string-ends-with "$s" "$sub"; then
-    s=${s:0:${#s} - ${#sub}}
+  if string-ends-with "$str" "$sub"; then
+    str=${str:0:${#str} - ${#sub}}
   fi
-  echo $s
+  echo $str
 }
 
 # Usage: string-repeat S N
 string-repeat() {
   eval $(cl-get-options-f $FUNCNAME "" "$@")
-  eval $(cl-get-args-f $FUNCNAME S N)
+  eval $(cl-get-args-f $FUNCNAME STR N)
 
   for ((i = 0; i < $n; ++i)); do
-    echo -n $s
+    echo -n $str
   done
 }
 
