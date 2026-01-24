@@ -326,9 +326,6 @@ def run_make(prj: str, cmds: list[str]) -> None:
   # Run commands
   for cmd in cmds:
     cl = ["make"]
-    gaia_make_flags = env.get("GAIA_MAKE_FLAGS")
-    if gaia_make_flags:
-      cl.extend(gaia_make_flags.split())
     cl_len = len(cl)
 
     if cmd == "build":

@@ -48,10 +48,6 @@ export GAIA_NPROC=$(nproc)
 export GAIA_NPROC_1_3=$(($GAIA_NPROC / 3))
 export GAIA_NPROC_2_3=$((2 * $GAIA_NPROC / 3))
 
-# XXX Weg
-export GAIA_INSTALL_LIB_DIR
-[[ ! -d $GAIA_INSTALL_LIB_DIR ]] && GAIA_INSTALL_LIB_DIR=$HOME/lib
-
 export GAIA_MAKE_FLAGS="-j$GAIA_NPROC_2_3 -l$GAIA_NPROC"
 
 if [[ $HOME ]]; then
