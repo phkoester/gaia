@@ -7,8 +7,6 @@ in a Bash shell.
 
 Supported project types are Bash, Python, C++, and Rust.
 
-All other `phkoester` projects depend on Gaia. Gaia is supposed to be the building ground of everything.
-
 Recommended readings:
 
 - [Text-File Guidelines](doc/text-file-guidelines.md)
