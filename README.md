@@ -25,20 +25,11 @@ In your `~/.bashrc`, export these variables:
 
 | Environment Variable      | Required? | Description
 | :------------------------ | :-------- | :----------
-| `GAIA_BOOST_DIR`          | No        | Absolute path to Boost. If not set, the system's default Boost version is used
 | `GAIA_BUILD_TYPE`         | No        | Values: `debug`, `release` (default)
-| `GAIA_CXX_GNU`            | No        | Absolute path to the `g++` executable. If not set, `which g++` is used
-| `GAIA_CXX_LLVM`           | No        | Absolute path to the `clang++` executable. If not set, `which clang++` is used
 | `GAIA_CXX_TOOLCHAIN`      | No        | Values: `gnu`, `llvm` (default)
-| `GAIA_FMT_DIR`            | Yes       | Example: `~/project/fmt`
 | `GAIA_DIR`                | Yes       | Example: `~/project/gaia`
-| `GAIA_DOXYGEN`            | No        | Example: `/usr/local/bin/doxygen-1.12.0/bin/doxygen`
 | `GAIA_EDITOR`             | No        | Example: `nano` (default)
-| `GAIA_GOOGLETEST_DIR`     | Yes       | Example: `~/project/googletest`
-| `GAIA_INSTALL_LIB_DIR`    | No        | Example: `~/lib` (default)
 | `GAIA_PROJECT_DIR`        | No        | Fallback directory where `gaia-build` looks for projects
-| `GAIA_SCNLIB_DIR`         | Yes       | Example: `~/project/scnlib`
-| `GAIA_SHARED_LIB_PATH`    | Yes       | Example: `~/lib:/usr/lib/x86_64-linux-gnu`. Where the Makefiles look for shared libraries.
 
 After that, to initialize Gaia, place this line in your `~/.bashrc`:
 
