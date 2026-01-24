@@ -144,7 +144,7 @@ endif
 
 # Predefined targets ----------------------------------------------------------------------------------------
 
-CMAKE_DEPS := $(shell find -name CMakeLists.txt) $(shell find cmake -name "*.cmake")
+CMAKE_DEPS := CMakeLists.txt $(shell find src -name CMakeLists.txt) $(shell find cmake -name "*.cmake")
 
 $(BUILD_DIR)/Makefile: $(CMAKE_DEPS)
 	@$(call print-info,$@)
