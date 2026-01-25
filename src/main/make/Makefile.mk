@@ -103,8 +103,6 @@ endif
 
 # Cppcheck --------------------------------------------------------------------------------------------------
 
-CPPCHECK_COMPILE_COMMANDS_JSON := $(BUILD_DIR)/cppcheck/compile_commands.json
-
 CPPCHECK_FLAGS := \
     --check-level=exhaustive \
     --cppcheck-build-dir=$(BUILD_DIR)/cppcheck  \
@@ -144,34 +142,6 @@ endif
 
 # Predefined targets ----------------------------------------------------------------------------------------
 
-CMAKE_DEPS := CMakeLists.txt $(shell find src -name CMakeLists.txt) $(shell find cmake -name "*.cmake")
-
-$(BUILD_DIR)/Makefile: $(CMAKE_DEPS)
-	@$(call print-info,$@)
-	@cmake $(CMAKE_FLAGS) --preset $(CMAKE_PRESET)
-
-.PHONY: cmake-build
-cmake-build: $(BUILD_DIR)/Makefile
-	@$(call print-info,$@)
-	@cmake $(CMAKE_FLAGS) --build --preset $(CMAKE_PRESET) $(CMAKE_TRAILING_FLAGS) -- $(GMAKE_FLAGS)
-
-.PHONY: cmake-test
-cmake-test: cmake-build
-	@$(call print-info,$@)
-	@ctest $(CTEST_FLAGS) --preset $(CMAKE_PRESET)
-
-$(BUILD_DIR)/compile_commands.json: cmake-build
-
-compile_commands.json: $(BUILD_DIR)/compile_commands.json
-	@echo ">" $@
-	@filter-compile-commands.py -o $@ $< $(PROJECT_NAME)/src
-
-.PHONY: check
-check: compile_commands.json
-	@$(call print-info,$@)
-	@mkdir -p $(BUILD_DIR)/cppcheck
-	@cppcheck $(CPPCHECK_FLAGS) --project=compile_commands.json
-
 .PHONY: info
 info:
 	@$(call print-info,$@)
@@ -183,5 +153,33 @@ info:
 	@echo
 	@echo Current Gaia settings:
 	@printenv | grep ^GAIA_ | grep -v ^GAIA_COLOR | sort | sed 's/^/  /'
+
+CMAKE_DEPS := CMakeLists.txt $(shell find src -name CMakeLists.txt) $(shell find cmake -type f)
+
+$(BUILD_DIR)/Makefile: $(CMAKE_DEPS)
+	@$(call print-info,$@)
+	@cmake $(CMAKE_FLAGS) --preset $(CMAKE_PRESET)
+
+.PHONY: cmake-build
+cmake-build: $(BUILD_DIR)/Makefile
+	@$(call print-info,$@)
+	@cmake $(CMAKE_FLAGS) --build --preset $(CMAKE_PRESET) $(CMAKE_TRAILING_FLAGS) -- $(GMAKE_FLAGS)
+
+$(BUILD_DIR)/compile_commands.json: cmake-build
+
+compile_commands.json: $(BUILD_DIR)/compile_commands.json
+	@echo ">" $@
+	@filter-compile-commands.py --field file -i $< -o $@ $(PROJECT_NAME)/src
+
+.PHONY: cmake-test
+cmake-test: compile_commands.json
+	@$(call print-info,$@)
+	@ctest $(CTEST_FLAGS) --preset $(CMAKE_PRESET)
+
+.PHONY: check
+check: compile_commands.json
+	@$(call print-info,$@)
+	@mkdir -p $(BUILD_DIR)/cppcheck
+	@cppcheck $(CPPCHECK_FLAGS) --project=compile_commands.json
 
 # EOF

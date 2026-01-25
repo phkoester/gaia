@@ -10,17 +10,17 @@ This script reads a compile_commands.json file, splits it into blocks (one per c
 filters blocks matching a regular expression pattern.
 
 Usage:
-  filter-compile-commands.py [OPTIONS] FILE PATTERN
+  filter-compile-commands.py [OPTIONS] -i INPUT_FILE -o OUTPUT_FILE PATTERN
 
 Arguments:
-  FILE     Path to the compile_commands.json file
   PATTERN  Regular expression pattern to match against
 
 Options:
-  --field FIELD  Field to match against: 'file', 'command', 'directory', or 'all' (default: 'file')
-  -o, --out OUT  Output file path (required)
-  --invert       Invert the filter (keep non-matching blocks)
-  --help         Show this help message
+  -i, --in IN        Input file path (required)
+  -o, --out OUT      Output file path (required)
+      --field FIELD  Field to match against: 'file', 'command', 'directory', or 'all' (default: 'file')
+      --invert       Invert the filter (keep non-matching blocks)
+      --help         Show this help message
 """
 
 import argparse
@@ -30,21 +30,9 @@ import sys
 
 from pathlib import Path
 
-def filter_compile_commands(input_file, pattern, field='file', output_file=None, invert=False):
-  """
-  Filter compile_commands.json entries based on a regex pattern.
-
-  Args:
-    input_file: Path to the input compile_commands.json file
-    pattern: Regular expression pattern to match
-    field: Field to match against ('file', 'command', 'directory', or 'all')
-    output_file: Path to output file (required)
-    invert: If True, keep entries that don't match the pattern
-
-  Returns:
-    Exit code (0 on success, 1 on error)
-  """
+def filter_compile_commands(input_file, output_file, pattern, field='file', invert=False):
   # Read input file
+
   input_path = Path(input_file)
   if not input_path.exists():
     print(f"Error: Input file '{input_file}' does not exist", file=sys.stderr)
@@ -65,6 +53,7 @@ def filter_compile_commands(input_file, pattern, field='file', output_file=None,
     return 1
 
   # Compile regex pattern
+
   try:
     regex = re.compile(pattern)
   except re.error as e:
@@ -72,7 +61,8 @@ def filter_compile_commands(input_file, pattern, field='file', output_file=None,
     return 1
 
   # Filter entries
-  original_count = len(data)
+
+  # original_count = len(data)
   filtered_data = []
 
   for entry in data:
@@ -105,6 +95,7 @@ def filter_compile_commands(input_file, pattern, field='file', output_file=None,
       filtered_data.append(entry)
 
   # Write output
+
   output_path = Path(output_file)
   try:
     with open(output_path, 'w', encoding='utf-8') as f:
@@ -113,13 +104,13 @@ def filter_compile_commands(input_file, pattern, field='file', output_file=None,
     print(f"Error: Failed to write '{output_path}': {e}", file=sys.stderr)
     return 1
 
-  kept_count = len(filtered_data)
-  removed_count = original_count - kept_count
+  # kept_count = len(filtered_data)
+  # removed_count = original_count - kept_count
 
-  print(f"Filtered {original_count} entries:")
-  print(f"  Kept:    {kept_count}")
-  print(f"  Removed: {removed_count}")
-  print(f"Output written to: {output_path}")
+  # print(f"Filtered {original_count} entries:")
+  # print(f"  Kept:    {kept_count}")
+  # print(f"  Removed: {removed_count}")
+  # print(f"Output written to: {output_path}")
 
   return 0
 
@@ -130,12 +121,16 @@ def main():
     epilog=__doc__
   )
   parser.add_argument(
-    'input_file',
-    help='Path to the compile_commands.json file'
+    "-i", "--in",
+    dest='input_file',
+    required=True,
+    help='Input file path (required)'
   )
   parser.add_argument(
-    'pattern',
-    help='Regular expression pattern to match against'
+    "-o", "--out",
+    dest='output_file',
+    required=True,
+    help='Output file path (required)'
   )
   parser.add_argument(
     '--field',
@@ -144,24 +139,22 @@ def main():
     help="Field to match against (default: 'file')"
   )
   parser.add_argument(
-    '--out', '-o',
-    dest='output_file',
-    required=True,
-    help='Output file path (required)'
-  )
-  parser.add_argument(
     '--invert',
     action='store_true',
     help='Invert the filter (keep non-matching blocks)'
+  )
+  parser.add_argument(
+    'pattern',
+    help='Regular expression pattern to match against'
   )
 
   args = parser.parse_args()
 
   return filter_compile_commands(
     args.input_file,
+    args.output_file,
     args.pattern,
     field=args.field,
-    output_file=args.output_file,
     invert=args.invert
   )
 

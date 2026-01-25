@@ -18,12 +18,8 @@ be omitted if it is either not feasible, as in Markdown table cells, or if wrapp
 readable. For instance, lengthy formatted messages are usually built and output in a single line of code
 without wrapping.
 
-Where block indenting occurs in a text file, the standard indent is 2 spaces. This is also true for Rust
-code, which by default uses an indent of 4 spaces.
-
-If a line of code is wrapped, the wrapped lines should use a *hanging indent* of 4 spaces. If this cannot be
-achieved because a formatting tool—e.g. Rustfmt—does not support it, the best-looking alternative offered by
-the formatter may be used, or even no formatter at all.
+Where block indenting occurs in a text file, the standard indent is 2 spaces. This is also true for Python
+and Rust code, which commonly uses an indent of 4 spaces.
 
 ## Tabs
 
