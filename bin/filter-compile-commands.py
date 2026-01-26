@@ -18,7 +18,7 @@ Arguments:
 Options:
   -i, --in IN        Input file path (required)
   -o, --out OUT      Output file path (required)
-      --field FIELD  Field to match against: 'file', 'command', 'directory', or 'all' (default: 'file')
+      --field FIELD  Field to match against: 'file' (default), 'command', 'directory', or 'all'
       --invert       Invert the filter (keep non-matching blocks)
       --help         Show this help message
 """

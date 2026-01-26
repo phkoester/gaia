@@ -3,6 +3,8 @@
 #
 # Parameters:
 #
+# - COMPILE_DEPS
+#     Compile prerequisites
 # - GAIA_BUILD_TYPE
 #     The build type: `debug` or `release`
 # - GAIA_CXX_TOOLCHAIN
@@ -142,6 +144,8 @@ endif
 
 # Predefined targets ----------------------------------------------------------------------------------------
 
+# `info` ....................................................................................................
+
 .PHONY: info
 info:
 	@$(call print-info,$@)
@@ -154,9 +158,25 @@ info:
 	@echo Current Gaia settings:
 	@printenv | grep ^GAIA_ | grep -v ^GAIA_COLOR | sort | sed 's/^/  /'
 
+# Files copied automatically from Gaia ......................................................................
+#
+# These targets should be added to `COMPILE_DEPS`.
+#
+# ...........................................................................................................
+
+build.cmd: $(GAIA_DIR)/src/main/cmd/build.cmd
+	@echo ">" $@
+	@cp $< $@
+
+cmake/base.cmake: $(GAIA_DIR)/src/main/cmake/base.cmake
+	@echo ">" $@
+	@cp $< $@
+
+# CMake .....................................................................................................
+
 CMAKE_DEPS := CMakeLists.txt $(shell find src -name CMakeLists.txt) $(shell find cmake -type f)
 
-$(BUILD_DIR)/Makefile: $(CMAKE_DEPS)
+$(BUILD_DIR)/Makefile: $(COMPILE_DEPS) $(CMAKE_DEPS)
 	@$(call print-info,$@)
 	@cmake $(CMAKE_FLAGS) --preset $(CMAKE_PRESET)
 
@@ -175,6 +195,8 @@ compile_commands.json: $(BUILD_DIR)/compile_commands.json
 cmake-test: compile_commands.json
 	@$(call print-info,$@)
 	@ctest $(CTEST_FLAGS) --preset $(CMAKE_PRESET)
+
+# `check` ...................................................................................................
 
 .PHONY: check
 check: compile_commands.json
