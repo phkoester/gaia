@@ -160,15 +160,15 @@ info:
 
 # Files copied automatically from Gaia ......................................................................
 #
-# These targets should be added to `COMPILE_DEPS`.
+# These targets should be added to `COMPILE_DEPS` before including this file.
 #
 # ...........................................................................................................
 
-build.cmd: $(GAIA_DIR)/src/main/cmd/build.cmd
+build.cmd: $(GAIA_DIR)/src/main/cmd/gaia-build.cmd
 	@echo ">" $@
 	@cp $< $@
 
-cmake/base.cmake: $(GAIA_DIR)/src/main/cmake/base.cmake
+cmake/base.cmake: $(GAIA_DIR)/src/main/cmake/gaia-base.cmake
 	@echo ">" $@
 	@cp $< $@
 

@@ -1,6 +1,8 @@
 #
 # base.cmake
 #
+# THIS FILE IS AUTOMATICALLY COPIED. ONLY EDIT THE SOURCE FILE, WHICH IS `gaia-base.cmake`.
+#
 
 # Check prerequisites ---------------------------------------------------------------------------------------
 
@@ -107,10 +109,12 @@ endif()
 
 # Functions -------------------------------------------------------------------------------------------------
 
-function(CopyRuntimeDlls name)
+function(AddRuntimeDlls name)
   if(WIN32) # AND $<TARGET_RUNTIME_DLLS:${name}>
     add_custom_command(
       TARGET  ${name} POST_BUILD
+      # Since CMake 4.2, there is `copy_if_newer`. If that is available, we can add this to `AddBench` and
+      # `AddTest`. For the time being, VS comes with CMake 4.1.1
       COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:${name}> $<TARGET_FILE_DIR:${name}>
       COMMAND_EXPAND_LISTS
     )
@@ -126,36 +130,64 @@ function(AddExecutable name)
   target_compile_options(${name} PRIVATE ${COMPILE_FLAGS})
 endfunction()
 
-# AddBench(name dir srcFile...)
+# AddBench(name dir srcFile...  [ENVIRONMENT name=value...])
 function(AddBench name dir)
-  list(TRANSFORM ARGN PREPEND "${dir}/")
-  AddExecutable(${name} ${ARGN})
+  set(srcFiles)
+  set(env "BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}")
+  set(appendTo srcFiles)
+  foreach(it IN LISTS ARGN)
+    if(it STREQUAL "ENVIRONMENT")
+      set(appendTo env)
+    else()
+      list(APPEND ${appendTo} ${it})
+    endif()
+  endforeach()
+
+  set(props)
+  foreach(it IN LISTS env)
+    list(APPEND props PROPERTIES ENVIRONMENT "${it}")
+  endforeach()
+
+  list(TRANSFORM srcFiles PREPEND "${dir}/")
+  AddExecutable(${name} ${srcFiles})
   target_link_libraries(${name} PRIVATE Rocket::rocket-test)
   # add_test(NAME ${name} COMMAND ${name} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/bench/${dir})
-
-  CopyRuntimeDlls(${name})
 
   gtest_discover_tests(${name}
     DISCOVERY_MODE PRE_TEST
     EXTRA_ARGS --gtest_catch_exceptions=0
-    PROPERTIES ENVIRONMENT "CURRENT_BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}"
+    ${props}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/bench/${dir}
   )
 endfunction()
 
-# AddTest(name dir srcFile...)
+# AddTest(name dir srcFile... [ENVIRONMENT name=value...])
 function(AddTest name dir)
-  list(TRANSFORM ARGN PREPEND "${dir}/")
-  AddExecutable(${name} ${ARGN})
+  set(srcFiles)
+  set(env "BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}")
+  set(appendTo srcFiles)
+  foreach(it IN LISTS ARGN)
+    if(it STREQUAL "ENVIRONMENT")
+      set(appendTo env)
+    else()
+      list(APPEND ${appendTo} ${it})
+    endif()
+  endforeach()
+
+  set(props)
+  foreach(it IN LISTS env)
+    list(APPEND props PROPERTIES ENVIRONMENT "${it}")
+  endforeach()
+
+  list(TRANSFORM srcFiles PREPEND "${dir}/")
+  AddExecutable(${name} ${srcFiles})
   target_link_libraries(${name} PRIVATE Rocket::rocket-test)
   # add_test(NAME ${name} COMMAND ${name} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/test/${dir})
-
-  CopyRuntimeDlls(${name})
 
   gtest_discover_tests(${name}
     DISCOVERY_MODE PRE_TEST
     EXTRA_ARGS --gtest_catch_exceptions=0
-    PROPERTIES ENVIRONMENT "CURRENT_BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}"
+    ${props}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/test/${dir}
   )
 endfunction()
