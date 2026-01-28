@@ -12,7 +12,7 @@
 # - JOBS
 #     Number of jobs for GNU Make (0: none, N: N jobs, default: 2/3 nproc)
 # - TEST
-#     `all` , `test` (default), `bench`, or PATTERN
+#     `all` , `bench`, `test` (default), or PATTERN
 # - VERBOSE
 #     Produce verbose output
 #
@@ -133,10 +133,10 @@ endif
 
 ifeq ($(TEST),all)
   CTEST_FLAGS += --test-dir $(BUILD_DIR)
-else ifeq ($(TEST),test)
-  CTEST_FLAGS += --test-dir $(BUILD_DIR)/src/test
 else ifeq ($(TEST),bench)
   CTEST_FLAGS += --test-dir $(BUILD_DIR)/src/bench
+else ifeq ($(TEST),test)
+  CTEST_FLAGS += --test-dir $(BUILD_DIR)/src/test
 else
   CTEST_FLAGS += --test-dir $(BUILD_DIR) -R $(TEST)
 endif
@@ -242,7 +242,7 @@ check: compile_commands.json
 # `doc` .....................................................................................................
 
 .PHONY: doc
-doc:
+doc: compile_commands.json
 	@$(call print-info,$@)
 ifneq ($(wildcard src/main/Doxyfile),)
 	@mkdir -p $(BUILD_DIR)/src/main/doc

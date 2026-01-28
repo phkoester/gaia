@@ -6,7 +6,14 @@
 
 @INCLUDE = $(GAIA_DIR)/include/doxygen/Doxyfile.aliases
 
+# Download
+#   https://github.com/PeterFeicht/cppreference-doc/releases/download/v20250209/html-book-20250209.zip
+# Unzip, copy `cppreference-doxygen-web.tag.xml` to `$GAIA_DIR/src/main/doxygen`
+
+TAGFILES += "$(GAIA_DIR)/src/main/doxygen/cppreference-doxygen-web.tag.xml=https://en.cppreference.com/w/"
+
 ALLOW_UNICODE_NAMES = YES
+CLANG_DATABASE_PATH = .
 EXCLUDE_SYMBOLS     = internal
 GENERATE_LATEX      = NO
 GENERATE_TREEVIEW   = YES
