@@ -12,14 +12,39 @@
 # - JOBS
 #     Number of jobs for GNU Make (0: none, N: N jobs, default: 2/3 nproc)
 # - TEST
-#     Run tests matching the pattern
+#     `all` , `test` (default), `bench`, or PATTERN
 # - VERBOSE
 #     Produce verbose output
+#
+# Targets that automatically copy files; these are best added to `COMPILE_DEPS` before including this file:
+#
+# - make.cmd
+# - cmake/base.cmake
+# - cmake/generate-version.py
+#
+# CMake targets:
+#
+# - cmake-configure
+#     Configures CMake; this produces a Makefile in the build directory as well as a `compile_commands.json`
+#     in the current directory
+# - cmake-build
+#     Builds the project
+# - cmake-test
+#     Runs the tests
+#
+# Other targets:
+#
+# - check
+#     Runs Cppcheck
+# - doc
+#     Runs Doxygen
+#  - info
+#     Prints current Gaia configuration
 #
 
 # Check prerequisites ---------------------------------------------------------------------------------------
 
-ifeq ($(GAIA_VERSION),)
+ifndef GAIA_VERSION
   $(error `GAIA_VERSION` not set)
 endif
 
@@ -38,14 +63,14 @@ EMPTY :=
 SPACE := $(EMPTY) $(EMPTY)
 
 export BUILD_DIR := build/$(GAIA_BUILD_TYPE)
-PROJECT_NAME := $(notdir $(CURDIR))
+export PROJECT_NAME := $(notdir $(CURDIR))
 
 # Variables -------------------------------------------------------------------------------------------------
 
 BUILD_DEPS :=
 TEST_DEPS :=
 
-# Some functions --------------------------------------------------------------------------------------------
+# Functions -------------------------------------------------------------------------------------------------
 
 lower = $(shell echo $1 | tr A-Z -az)
 
@@ -86,24 +111,37 @@ ifeq ($(GAIA_CXX_TOOLCHAIN),llvm)
   export CXX := clang++
 endif
 
-# CMake -----------------------------------------------------------------------------------------------------
+# Configure CMake -------------------------------------------------------------------------------------------
 
 CMAKE_PRESET := linux-$(GAIA_BUILD_TYPE)
 
 CMAKE_TRAILING_FLAGS :=
-ifneq ($(VERBOSE),)
+ifdef VERBOSE
   CMAKE_TRAILING_FLAGS += -v
 endif
 
+# Configure CTest -------------------------------------------------------------------------------------------
+
 CTEST_FLAGS := --output-on-failure
-ifneq ($(TEST),)
-  CTEST_FLAGS += -R $(TEST)
-endif
-ifneq ($(VERBOSE),)
+ifdef VERBOSE
   CTEST_FLAGS += -V
 endif
 
-# Cppcheck --------------------------------------------------------------------------------------------------
+ifndef TEST
+  TEST := test
+endif
+
+ifeq ($(TEST),all)
+  CTEST_FLAGS += --test-dir $(BUILD_DIR)
+else ifeq ($(TEST),test)
+  CTEST_FLAGS += --test-dir $(BUILD_DIR)/src/test
+else ifeq ($(TEST),bench)
+  CTEST_FLAGS += --test-dir $(BUILD_DIR)/src/bench
+else
+  CTEST_FLAGS += --test-dir $(BUILD_DIR) -R $(TEST)
+endif
+
+# Configure Cppcheck ----------------------------------------------------------------------------------------
 
 CPPCHECK_FLAGS := \
     --check-level=exhaustive \
@@ -118,23 +156,23 @@ CPPCHECK_FLAGS := \
     --suppress=unmatchedSuppression \
     --suppress=unusedFunction
 
-ifeq ($(VERBOSE),)
+ifndef VERBOSE
   CPPCHECK_FLAGS += --quiet --suppress=checkersReport
 else
   CPPCHECK_FLAGS += --verbose
 endif
 
-# Doxygen ---------------------------------------------------------------------------------------------------
+# Configure Doxygen -----------------------------------------------------------------------------------------
 
 DOXYGEN_FLAGS :=
-ifeq ($(VERBOSE),)
+ifndef VERBOSE
   DOXYGEN_FLAGS += -q
 endif
 
-# GNU Make --------------------------------------------------------------------------------------------------
+# Configure GNU Make ----------------------------------------------------------------------------------------
 
 GMAKE_FLAGS := --no-print-directory
-ifneq ($(JOBS),)
+ifdef JOBS
   ifneq ($(JOBS),0)
     GMAKE_FLAGS += -j$(JOBS)
   endif
@@ -143,6 +181,77 @@ else
 endif
 
 # Predefined targets ----------------------------------------------------------------------------------------
+
+# Files copied automatically from Gaia ......................................................................
+#
+# These targets should be added to `COMPILE_DEPS` before including this file.
+#
+# ...........................................................................................................
+
+make.cmd: $(GAIA_DIR)/src/main/cmd/gaia-make.cmd
+	@echo ">" $@
+	@cp $< $@
+
+cmake/base.cmake: $(GAIA_DIR)/src/main/cmake/gaia-base.cmake
+	@echo ">" $@
+	@cp $< $@
+
+cmake/generate-version.py: $(GAIA_DIR)/src/main/cmake/gaia-generate-version.py
+	@echo ">" $@
+	@cp $< $@
+
+# CMake .....................................................................................................
+
+CMAKE_DEPS := CMakeLists.txt $(shell find src -name CMakeLists.txt) $(shell find cmake -type f)
+
+$(BUILD_DIR)/compile_commands.json: $(COMPILE_DEPS) $(CMAKE_DEPS)
+	@$(call print-info,$@)
+	@cmake $(CMAKE_FLAGS) --preset $(CMAKE_PRESET)
+
+compile_commands.json: $(BUILD_DIR)/compile_commands.json
+	@echo ">" $@
+	@filter-compile-commands.py --field file -i $< -o $@ $(PROJECT_NAME)/src
+
+.PHONY: cmake-configure
+cmake-configure: compile_commands.json
+
+# Parameters:
+#  - TARGET
+.PHONY: cmake-build
+cmake-build: cmake-configure
+	@$(call print-info,$@)
+	@cmake $(CMAKE_FLAGS) \
+	  --build --preset $(CMAKE_PRESET) \
+	  $(if $(TARGET),--target $(TARGET),) \
+	  $(CMAKE_TRAILING_FLAGS) \
+	  -- $(GMAKE_FLAGS)
+
+.PHONY: cmake-test
+cmake-test: cmake-build
+	@$(call print-info,$@)
+	@ctest $(CTEST_FLAGS)
+
+# `check` ...................................................................................................
+
+.PHONY: check
+check: compile_commands.json
+	@$(call print-info,$@)
+	@mkdir -p $(BUILD_DIR)/cppcheck
+	@cppcheck $(CPPCHECK_FLAGS) --project=compile_commands.json
+
+# `doc` .....................................................................................................
+
+.PHONY: doc
+doc:
+	@$(call print-info,$@)
+ifneq ($(wildcard src/main/Doxyfile),)
+	@mkdir -p $(BUILD_DIR)/src/main/doc
+	@doxygen $(DOXYGEN_FLAGS) src/main/Doxyfile
+endif
+ifneq ($(wildcard src/test/Doxyfile),)
+	@mkdir -p $(BUILD_DIR)/src/test/doc
+	@doxygen $(DOXYGEN_FLAGS) src/test/Doxyfile
+endif
 
 # `info` ....................................................................................................
 
@@ -157,51 +266,5 @@ info:
 	@echo
 	@echo Current Gaia settings:
 	@printenv | grep ^GAIA_ | grep -v ^GAIA_COLOR | sort | sed 's/^/  /'
-
-# Files copied automatically from Gaia ......................................................................
-#
-# These targets should be added to `COMPILE_DEPS` before including this file.
-#
-# ...........................................................................................................
-
-build.cmd: $(GAIA_DIR)/src/main/cmd/gaia-build.cmd
-	@echo ">" $@
-	@cp $< $@
-
-cmake/base.cmake: $(GAIA_DIR)/src/main/cmake/gaia-base.cmake
-	@echo ">" $@
-	@cp $< $@
-
-# CMake .....................................................................................................
-
-CMAKE_DEPS := CMakeLists.txt $(shell find src -name CMakeLists.txt) $(shell find cmake -type f)
-
-$(BUILD_DIR)/Makefile: $(COMPILE_DEPS) $(CMAKE_DEPS)
-	@$(call print-info,$@)
-	@cmake $(CMAKE_FLAGS) --preset $(CMAKE_PRESET)
-
-.PHONY: cmake-build
-cmake-build: $(BUILD_DIR)/Makefile
-	@$(call print-info,$@)
-	@cmake $(CMAKE_FLAGS) --build --preset $(CMAKE_PRESET) $(CMAKE_TRAILING_FLAGS) -- $(GMAKE_FLAGS)
-
-$(BUILD_DIR)/compile_commands.json: cmake-build
-
-compile_commands.json: $(BUILD_DIR)/compile_commands.json
-	@echo ">" $@
-	@filter-compile-commands.py --field file -i $< -o $@ $(PROJECT_NAME)/src
-
-.PHONY: cmake-test
-cmake-test: compile_commands.json
-	@$(call print-info,$@)
-	@ctest $(CTEST_FLAGS) --preset $(CMAKE_PRESET)
-
-# `check` ...................................................................................................
-
-.PHONY: check
-check: compile_commands.json
-	@$(call print-info,$@)
-	@mkdir -p $(BUILD_DIR)/cppcheck
-	@cppcheck $(CPPCHECK_FLAGS) --project=compile_commands.json
 
 # EOF
