@@ -134,7 +134,7 @@ endif
 ifeq ($(TEST),all)
   CTEST_FLAGS += --test-dir $(BUILD_DIR)
 else ifeq ($(TEST),bench)
-  CTEST_FLAGS += --test-dir $(BUILD_DIR)/src/bench
+  CTEST_FLAGS += --test-dir $(BUILD_DIR)/src/bench -V
 else ifeq ($(TEST),test)
   CTEST_FLAGS += --test-dir $(BUILD_DIR)/src/test
 else
@@ -246,11 +246,11 @@ doc: compile_commands.json
 	@$(call print-info,$@)
 ifneq ($(wildcard src/main/Doxyfile),)
 	@mkdir -p $(BUILD_DIR)/src/main/doc
-	@doxygen $(DOXYGEN_FLAGS) src/main/Doxyfile
+	@doxygen $(DOXYGEN_FLAGS) src/main/Doxyfile 2>&1 | rg -v std::experimental | true
 endif
 ifneq ($(wildcard src/test/Doxyfile),)
 	@mkdir -p $(BUILD_DIR)/src/test/doc
-	@doxygen $(DOXYGEN_FLAGS) src/test/Doxyfile
+	@doxygen $(DOXYGEN_FLAGS) src/test/Doxyfile 2>&1 | rg -v std::experimental | true
 endif
 
 # `info` ....................................................................................................

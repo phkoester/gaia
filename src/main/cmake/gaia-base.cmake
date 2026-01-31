@@ -48,7 +48,11 @@ endif()
 
 # CMPs ------------------------------------------------------------------------------------------------------
 
-# Suppress "The FindBoost module is removed."
+# "More read-only target properties now error when trying to set them."
+if(POLICY CMP0160)
+  cmake_policy(SET CMP0160 NEW)
+endif()
+# "The FindBoost module is removed."
 if(POLICY CMP0167)
   cmake_policy(SET CMP0167 NEW)
 endif()
@@ -95,7 +99,7 @@ set(BUILD_SHARED_LIBS_DEFAULT ${BUILD_SHARED_LIBS})
 # Set compiler definitions, features, and options -----------------------------------------------------------
 
 set(COMPILE_DEFS)
-set(COMPILE_FEATURES cxx_std_23) # XXX
+set(COMPILE_FEATURES cxx_std_23)
 set(COMPILE_FLAGS)
 
 # Set OS-specific compiler options --------------------------------------------------------------------------
@@ -130,10 +134,10 @@ function(AddExecutable name)
   target_compile_options(${name} PRIVATE ${COMPILE_FLAGS})
 endfunction()
 
-# AddBench(name dir srcFile...  [ENVIRONMENT name=value...])
-function(AddBench name dir)
+# ParseArgs__(srcFiles env  srcFile... [ENVIRONMENT name=value...])
+function(ParseArgs__ srcFiles__ env__)
   set(srcFiles)
-  set(env "BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}")
+  set(env)
   set(appendTo srcFiles)
   foreach(it IN LISTS ARGN)
     if(it STREQUAL "ENVIRONMENT")
@@ -143,51 +147,62 @@ function(AddBench name dir)
     endif()
   endforeach()
 
-  set(props)
-  foreach(it IN LISTS env)
-    list(APPEND props PROPERTIES ENVIRONMENT "${it}")
-  endforeach()
+  set(${srcFiles__} ${srcFiles} PARENT_SCOPE)
+  set(${env__} ${env} PARENT_SCOPE)
+endfunction()
+
+# AddBench(name dir srcFile... [ENVIRONMENT name=value...])
+function(AddBench name dir)
+  ParseArgs__(srcFiles env ${ARGN})
 
   list(TRANSFORM srcFiles PREPEND "${dir}/")
   AddExecutable(${name} ${srcFiles})
-  target_link_libraries(${name} PRIVATE Rocket::rocket-test)
-  # add_test(NAME ${name} COMMAND ${name} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/bench/${dir})
+  target_link_libraries(${name}
+    PRIVATE
+      benchmark::benchmark benchmark::benchmark_main Rocket::rocket Rocket::rocket-bench
+  )
 
-  gtest_discover_tests(${name}
-    DISCOVERY_MODE PRE_TEST
-    EXTRA_ARGS --gtest_catch_exceptions=0
-    ${props}
+  add_test(
+    NAME              ${name}
+    COMMAND           ${name}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/bench/${dir}
+  )
+
+  string(JOIN " " configs ${CMAKE_CONFIGURATION_TYPES})
+
+  set_property(TEST ${name}
+    PROPERTY ENVIRONMENT
+      "BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}"
+      "CONFIG=$<CONFIG>"
+      "CONFIGS=${configs}"
+      ${env}
   )
 endfunction()
 
 # AddTest(name dir srcFile... [ENVIRONMENT name=value...])
 function(AddTest name dir)
-  set(srcFiles)
-  set(env "BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}")
-  set(appendTo srcFiles)
-  foreach(it IN LISTS ARGN)
-    if(it STREQUAL "ENVIRONMENT")
-      set(appendTo env)
-    else()
-      list(APPEND ${appendTo} ${it})
-    endif()
-  endforeach()
-
-  set(props)
-  foreach(it IN LISTS env)
-    list(APPEND props PROPERTIES ENVIRONMENT "${it}")
-  endforeach()
+  ParseArgs__(srcFiles env ${ARGN})
 
   list(TRANSFORM srcFiles PREPEND "${dir}/")
   AddExecutable(${name} ${srcFiles})
-  target_link_libraries(${name} PRIVATE Rocket::rocket-test)
-  # add_test(NAME ${name} COMMAND ${name} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/test/${dir})
+  target_link_libraries(${name}
+    PRIVATE
+      Rocket::rocket-test-main Rocket::rocket-test)
+
+  string(JOIN " " configs ${CMAKE_CONFIGURATION_TYPES})
+
+  set(envProps)
+  foreach(it IN LISTS env)
+    list(APPEND envProps PROPERTIES ENVIRONMENT "${it}")
+  endforeach()
 
   gtest_discover_tests(${name}
     DISCOVERY_MODE PRE_TEST
     EXTRA_ARGS --gtest_catch_exceptions=0
-    ${props}
+    PROPERTIES ENVIRONMENT "BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}"
+    PROPERTIES ENVIRONMENT "CONFIG=$<CONFIG>"
+    PROPERTIES ENVIRONMENT "CONFIGS=${configs}"
+    ${envProps}
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/test/${dir}
   )
 endfunction()
