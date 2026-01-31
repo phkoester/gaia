@@ -35,7 +35,7 @@
 # Other targets:
 #
 # - check
-#     Runs Cppcheck
+#     Runs Clang-Tidy
 # - doc
 #     Runs Doxygen
 #  - info
@@ -141,27 +141,6 @@ else
   CTEST_FLAGS += --test-dir $(BUILD_DIR) -R $(TEST)
 endif
 
-# Configure Cppcheck ----------------------------------------------------------------------------------------
-
-CPPCHECK_FLAGS := \
-    --check-level=exhaustive \
-    --cppcheck-build-dir=$(BUILD_DIR)/cppcheck  \
-    --enable=all \
-    --error-exitcode=1 \
-    --inline-suppr \
-    --suppress=missingIncludeSystem \
-    --suppress=shadowFunction \
-    --suppress=syntaxError \
-    --suppress=unknownMacro \
-    --suppress=unmatchedSuppression \
-    --suppress=unusedFunction
-
-ifndef VERBOSE
-  CPPCHECK_FLAGS += --quiet --suppress=checkersReport
-else
-  CPPCHECK_FLAGS += --verbose
-endif
-
 # Configure Doxygen -----------------------------------------------------------------------------------------
 
 DOXYGEN_FLAGS :=
@@ -233,11 +212,24 @@ cmake-test: cmake-build
 
 # `check` ...................................................................................................
 
+CHECK_FILES :=
+ifdef FILE
+  CHECK_FILES := $(shell find src -name "*.cc" | rg -i "$(FILE)")
+  ifeq ($(CHECK_FILES),)
+    $(error No files found for pattern `$(FILE)`)
+  endif
+endif
+
+# Parameters:
+#  - FILE a regex, e.g. `/io.cc` or `(io|boost)`
 .PHONY: check
 check: compile_commands.json
 	@$(call print-info,$@)
-	@mkdir -p $(BUILD_DIR)/cppcheck
-	@cppcheck $(CPPCHECK_FLAGS) --project=compile_commands.json
+	@run-clang-tidy \
+	  -config-file=$(GAIA_DIR)/src/main/clang-tidy/clang-tidy-config.yaml \
+          -j$(GAIA_NPROC_2_3) \
+	  -p. \
+	  $(CHECK_FILES) # If this is empty, nothing happens
 
 # `doc` .....................................................................................................
 

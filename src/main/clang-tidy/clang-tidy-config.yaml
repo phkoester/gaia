@@ -1,0 +1,28 @@
+#
+# clang-tidy-config.yaml
+#
+
+Checks: [
+  'boost-*',
+  'concurrency-*',
+  'cppcoreguidelines-*',
+  'google-*',
+  'misc-*',
+  'modernize-*',
+  'performance-*',
+  'portability-*',
+  'readability-*',
+  '-cppcoreguidelines-avoid-magic-numbers',
+  '-cppcoreguidelines-macro-usage',
+  '-cppcoreguidelines-pro-bounds-pointer-arithmetic',
+  '-cppcoreguidelines-pro-type-reinterpret-cast',
+  '-google-build-using-namespace',
+  '-google-runtime-int',
+  '-misc-include-cleaner',
+  '-modernize-use-trailing-return-type',
+  '-readability-identifier-length',
+  '-readability-magic-numbers',
+]
+HeaderFilterRegex: '.*'
+
+# EOF
