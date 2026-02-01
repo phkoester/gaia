@@ -138,7 +138,7 @@ else ifeq ($(TEST),bench)
 else ifeq ($(TEST),test)
   CTEST_FLAGS += --test-dir $(BUILD_DIR)/src/test
 else
-  CTEST_FLAGS += --test-dir $(BUILD_DIR) -R $(TEST)
+  CTEST_FLAGS += --test-dir $(BUILD_DIR) -R $(TEST) -V
 endif
 
 # Configure Doxygen -----------------------------------------------------------------------------------------
