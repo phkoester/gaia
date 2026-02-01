@@ -4,11 +4,6 @@ This document is "work in progress" and far from complete.
 
 The general coding rules from [Coding Guidelines](coding-guidelines.md) apply.
 
-## Cppcheck
-
-For static code analysis, [Cppcheck](https://cppcheck.sourceforge.io) is used. The tool is automatically
-configured by Gaia.
-
 ## Source-File Sections
 
 A C++ source file may be divided into sections so that a reader can better understand its structure.

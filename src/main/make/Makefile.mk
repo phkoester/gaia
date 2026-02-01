@@ -229,7 +229,7 @@ check: compile_commands.json
 	  -config-file=$(GAIA_DIR)/src/main/clang-tidy/clang-tidy-config.yaml \
           -j$(GAIA_NPROC_2_3) \
 	  -p. \
-	  $(CHECK_FILES) # If this is empty, nothing happens
+	  $(CHECK_FILES) 2>&1 | tee clang-tidy-report.txt
 
 # `doc` .....................................................................................................
 
