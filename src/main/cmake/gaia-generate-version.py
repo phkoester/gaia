@@ -51,18 +51,18 @@ def main():
     "-o", "--output",
     dest="output_file",
     type=str,
-    help="Output file path",
+    help="output file path (required)",
     required=True,
   )
   parser.add_argument(
     "name",
     type=str,
-    help="Name",
+    help="name",
   )
   parser.add_argument(
     "version",
     type=str,
-    help="Version string",
+    help="version string",
   )
   args = parser.parse_args()
 

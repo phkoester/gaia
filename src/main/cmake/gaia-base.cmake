@@ -52,10 +52,6 @@ endif()
 if(POLICY CMP0160)
   cmake_policy(SET CMP0160 NEW)
 endif()
-# "The FindBoost module is removed."
-if(POLICY CMP0167)
-  cmake_policy(SET CMP0167 NEW)
-endif()
 
 # Configuration ---------------------------------------------------------------------------------------------
 #
@@ -113,12 +109,12 @@ endif()
 
 # Functions -------------------------------------------------------------------------------------------------
 
-function(AddRuntimeDlls name)
+function(CopyRuntimeDlls name)
   if(WIN32) # AND $<TARGET_RUNTIME_DLLS:${name}>
     add_custom_command(
       TARGET  ${name} POST_BUILD
       # Since CMake 4.2, there is `copy_if_newer`. If that is available, we can add this to `AddBench` and
-      # `AddTest`. For the time being, VS comes with CMake 4.1.1
+      # `AddTest`. For the time being, Visual Studio comes with CMake 4.1.1
       COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:${name}> $<TARGET_FILE_DIR:${name}>
       COMMAND_EXPAND_LISTS
     )

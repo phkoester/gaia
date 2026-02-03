@@ -25,8 +25,8 @@
 # CMake targets:
 #
 # - cmake-configure
-#     Configures CMake; this produces a Makefile in the build directory as well as a `compile_commands.json`
-#     in the current directory
+#     Configures CMake; this produces a `Makefile` in the build directory as well as a
+#     `compile_commands.json`in the current directory
 # - cmake-build
 #     Builds the project
 # - cmake-test
@@ -220,6 +220,8 @@ ifdef FILE
   endif
 endif
 
+CHECK_REPORT_FILE := $(BUILD_DIR)/check-report.txt
+
 # Parameters:
 #  - FILE a regex, e.g. `/io.cc` or `(io|boost)`
 .PHONY: check
@@ -229,7 +231,8 @@ check: compile_commands.json
 	  -config-file=$(GAIA_DIR)/src/main/clang-tidy/clang-tidy-config.yaml \
           -j$(GAIA_NPROC_2_3) \
 	  -p. \
-	  $(CHECK_FILES) 2>&1 | tee clang-tidy-report.txt
+	  $(CHECK_FILES) 2>&1 | tee $(CHECK_REPORT_FILE)
+	@echo Report written to $(CHECK_REPORT_FILE)
 
 # `doc` .....................................................................................................
 

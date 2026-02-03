@@ -4,9 +4,9 @@
 #
 
 """
-Filter compile_commands.json by regex pattern.
+Filter `compile_commands.json` by regex pattern.
 
-This script reads a compile_commands.json file, splits it into blocks (one per compilation command), and
+This script reads a `compile_commands.json` file, splits it into blocks (one per compilation command), and
 filters blocks matching a regular expression pattern.
 
 Usage:
@@ -18,7 +18,7 @@ Arguments:
 Options:
   -i, --in IN        Input file path (required)
   -o, --out OUT      Output file path (required)
-      --field FIELD  Field to match against: 'file' (default), 'command', 'directory', or 'all'
+      --field FIELD  Field to match against: `file` (default), `command`, `directory`, or `all`
       --invert       Invert the filter (keep non-matching blocks)
       --help         Show this help message
 """
@@ -57,7 +57,7 @@ def filter_compile_commands(input_file, output_file, pattern, field='file', inve
   try:
     regex = re.compile(pattern)
   except re.error as e:
-    print(f"Error: Invalid regular expression '{pattern}': {e}", file=sys.stderr)
+    print(f"Error: Invalid regular expression `{pattern}`: {e}", file=sys.stderr)
     return 1
 
   # Filter entries
@@ -67,14 +67,14 @@ def filter_compile_commands(input_file, output_file, pattern, field='file', inve
 
   for entry in data:
     if not isinstance(entry, dict):
-      print(f"Warning: Skipping non-dict entry: {entry}", file=sys.stderr)
+      print(f"warning: Skipping non-dict entry: {entry}", file=sys.stderr)
       continue
 
     match_found = False
 
     if field == 'all':
       # Match against all string fields
-      for key, value in entry.items():
+      for _, value in entry.items():
         if isinstance(value, str) and regex.search(value):
           match_found = True
           break
@@ -101,7 +101,7 @@ def filter_compile_commands(input_file, output_file, pattern, field='file', inve
     with open(output_path, 'w', encoding='utf-8') as f:
       json.dump(filtered_data, f, indent=2)
   except Exception as e:
-    print(f"Error: Failed to write '{output_path}': {e}", file=sys.stderr)
+    print(f"error: Failed to write `{output_path}`: {e}", file=sys.stderr)
     return 1
 
   # kept_count = len(filtered_data)
@@ -124,28 +124,28 @@ def main():
     "-i", "--in",
     dest='input_file',
     required=True,
-    help='Input file path (required)'
+    help='input file path (required)'
   )
   parser.add_argument(
     "-o", "--out",
     dest='output_file',
     required=True,
-    help='Output file path (required)'
+    help='output file path (required)'
   )
   parser.add_argument(
     '--field',
     choices=['file', 'command', 'directory', 'all'],
     default='file',
-    help="Field to match against (default: 'file')"
+    help="field to match against (default: `file`)"
   )
   parser.add_argument(
     '--invert',
     action='store_true',
-    help='Invert the filter (keep non-matching blocks)'
+    help='invert the filter (keep non-matching blocks)'
   )
   parser.add_argument(
     'pattern',
-    help='Regular expression pattern to match against'
+    help='regular expression pattern to match against'
   )
 
   args = parser.parse_args()
