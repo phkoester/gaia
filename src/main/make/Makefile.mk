@@ -241,12 +241,13 @@ doc: compile_commands.json
 	@$(call print-info,$@)
 ifneq ($(wildcard src/main/Doxyfile),)
 	@mkdir -p $(BUILD_DIR)/src/main/doc
-	@doxygen $(DOXYGEN_FLAGS) src/main/Doxyfile 2>&1 | rg -v std::experimental | true
+	@doxygen $(DOXYGEN_FLAGS) src/main/Doxyfile
 endif
 ifneq ($(wildcard src/test/Doxyfile),)
 	@mkdir -p $(BUILD_DIR)/src/test/doc
-	@doxygen $(DOXYGEN_FLAGS) src/test/Doxyfile 2>&1 | rg -v std::experimental | true
+	@doxygen $(DOXYGEN_FLAGS) src/test/Doxyfile
 endif
+	@find $(BUILD_DIR)/src -name index.html
 
 # `info` ....................................................................................................
 

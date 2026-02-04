@@ -16,11 +16,11 @@ Arguments:
   PATTERN  Regular expression pattern to match against
 
 Options:
-  -i, --in IN        Input file path (required)
-  -o, --out OUT      Output file path (required)
-      --field FIELD  Field to match against: `file` (default), `command`, `directory`, or `all`
-      --invert       Invert the filter (keep non-matching blocks)
-      --help         Show this help message
+  -i, --in IN        input file path (required)
+  -o, --out OUT      output file path (required)
+      --field FIELD  field to match against: `file` (default), `command`, `directory`, or `all`
+      --invert       invert the filter (keep non-matching blocks)
+      --help         display this help message and exit
 """
 
 import argparse

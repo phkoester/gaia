@@ -153,11 +153,6 @@ ALIASES += fn_hash_value{1}="`hash_value` overload for \1, to be used by Boost. 
 @param val the value to hash \
 @return a hash value"
 
-ALIASES += fn_write{1}="`write` overload for \1, to be used by Rocket. \
-@param out the sink to write to \
-@param val the value to write \
-@return the number of bytes written"
-
 # Enums -----------------------------------------------------------------------------------------------------
 
 ALIASES += enum_declare{1}="Automatic declarations for the enum \1."
