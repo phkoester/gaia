@@ -14,7 +14,7 @@
 :: Parameters:
 ::
 :: - BUILD_TYPE
-::     The build type: `debug` (default) or `release`
+::     The build type: `debug` or `release` (default)
 
 @echo off
 
@@ -22,10 +22,10 @@ setlocal
 
 :: Configure build type -------------------------------------------------------------------------------------
 
-if not defined BUILD_TYPE set BUILD_TYPE=debug
+if not defined BUILD_TYPE set BUILD_TYPE=release
 if %BUILD_TYPE% neq debug if %BUILD_TYPE% neq release (
- echo make.cmd: Invalid value `%BUILD_TYPE%` for BUILD_TYPE; expected `debug` or `release` 1>&2
- exit /b 2
+  echo make.cmd: `BUILD_TYPE`: Invalid value `%BUILD_TYPE%`; expected `debug` or `release` 1>&2
+  exit /b 2
 )
 
 if %BUILD_TYPE% == debug set CONFIG=Debug
@@ -97,13 +97,13 @@ set TEST=%1
 if not defined TEST set TEST=test
 
 if %TEST% == all (
-   ctest --preset windows-%BUILD_TYPE%
+  ctest --preset windows-%BUILD_TYPE%
 ) else if %TEST% == bench (
-   ctest --test-dir build\src\bench --preset windows-%BUILD_TYPE% -V
+  ctest --test-dir build\src\bench --preset windows-%BUILD_TYPE% -V
 ) else if %TEST% == test (
-   ctest --test-dir build\src\test --preset windows-%BUILD_TYPE%
+  ctest --test-dir build\src\test --preset windows-%BUILD_TYPE%
 ) else (
-   ctest --preset windows-%BUILD_TYPE% -R %TEST% -V
+  ctest --preset windows-%BUILD_TYPE% -R %TEST% -V
 )
 if %errorlevel% neq 0 exit /b %errorlevel%
 
