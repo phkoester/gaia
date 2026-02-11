@@ -5,6 +5,7 @@
 ::
 :: Usage:
 ::   make                                      (calls `configure` and `build`)
+::   make info
 ::   make configure
 ::   make build [TARGET]
 ::   make test  [all | bench | test | PATTERN] (default: test)
@@ -31,39 +32,41 @@ if %BUILD_TYPE% neq debug if %BUILD_TYPE% neq release (
 if %BUILD_TYPE% == debug set CONFIG=Debug
 if %BUILD_TYPE% == release set CONFIG=Release
 
-echo ################################################################################
+:: Print info -----------------------------------------------------------------------------------------------
+
+echo ####################
 echo #
 echo # BUILD_TYPE: %BUILD_TYPE%
 echo #
-echo ################################################################################
+echo ####################
 
 :: Parse command --------------------------------------------------------------------------------------------
 
-if "%1" == "configure" (
+if "%~1" == "" (
+  call :configure
+  call :build
+  goto :eof
+) else if "%1" == "info" (
+  goto :eof
+) else if "%1" == "configure" (
   call :configure
   goto :eof
-)
-if "%1" == "build" (
+) else if "%1" == "build" (
   call :build %2
   goto :eof
-)
-if "%1" == "test" (
+) else if "%1" == "test" (
   call :test %2
   goto :eof
-)
-if "%1" == "test-terminal" (
+) else if "%1" == "test-terminal" (
   call :test-terminal
   goto :eof
-)
-if "%1" == "clean" (
+) else if "%1" == "clean" (
   call :clean
   goto :eof
+) else (
+  echo make.cmd: Invalid command `%1` 1>&2
+  exit /b 2
 )
-
-:: main ----------------------------------------------------------------------------------------------------
-
-call :configure
-call :build
 
 goto :eof
 
