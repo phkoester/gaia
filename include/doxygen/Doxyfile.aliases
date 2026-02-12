@@ -10,6 +10,7 @@ ALIASES += param_rhs="@param rhs the right-hand side"
 # Return values ---------------------------------------------------------------------------------------------
 
 ALIASES += return_this="@return a reference to this instance"
+ALIASES += return_success="@return `true` if the operation succeeded, `false` otherwise"
 
 # Custom tags -----------------------------------------------------------------------------------------------
 
