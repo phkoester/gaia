@@ -166,6 +166,8 @@ ALIASES += spec_fmt_formatter{1}="@spec{`fmt::formatter`, \1}"
 
 ALIASES += spec_rocket_StringConvert{1}="@spec{rocket::StringConvert, \1}"
 
+ALIASES += spec_scn_scanner{1}="@spec{`scn::scanner`, \1}"
+
 ALIASES += spec_std_hash{1}="@spec{std::hash, \1}"
 
 ALIASES += spec_std_numeric_limits{1}="@spec{std::numeric_limits, \1}"
