@@ -118,19 +118,22 @@ ALIASES += type_base="The base type."
 # Operators -------------------------------------------------------------------------------------------------
 
 ALIASES += op_eq{1}="Equality operator for \1.^^^^ \
-Tests if @p lhs is equal to @p rhs. \
 @param lhs the left-hand side \
 @param rhs the right-hand side \
 @return whether @p lhs equals to @p rhs"
 
 ALIASES += op_ne{1}="Inequality operator for \1.^^^^ \
-Tests if @p lhs is not equal to @p rhs. \
 @param lhs the left-hand side \
 @param rhs the right-hand side \
 @return @p whether @p lhs does not equal to @p rhs"
 
+ALIASES += op_cmp{1}="Three-way-comparison operator for \1.^^^^ \
+@param lhs the left-hand side \
+@param rhs the right-hand side \
+@return the ordering result"
+
 ALIASES += op_input{1}="Input operator for \1.^^^^ \
-If the scanning fails, the fail bit of the input stream @p is is set, and @p rhs is not assigned any value. \
+If the scanning fails, the fail bit of the input stream @p is set, and @p rhs is not assigned any value. \
 @param lhs the input stream \
 @param rhs the value to assign to \
 @return @p lhs"
@@ -167,6 +170,8 @@ ALIASES += spec_fmt_formatter{1}="@spec{`fmt::formatter`, \1}"
 ALIASES += spec_rocket_StringConvert{1}="@spec{rocket::StringConvert, \1}"
 
 ALIASES += spec_scn_scanner{1}="@spec{`scn::scanner`, \1}"
+
+ALIASES += spec_std_equal_to{1}="@spec{std::equal_to, \1}"
 
 ALIASES += spec_std_hash{1}="@spec{std::hash, \1}"
 
