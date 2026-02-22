@@ -104,7 +104,8 @@ if(LINUX)
   # gcc will not accept `__int128` with `-pedantic`
   list(APPEND COMPILE_FLAGS -Wall -Wextra -Wno-ignored-attributes)
 elseif(WIN32)
-  list(APPEND COMPILE_FLAGS /Zc:preprocessor) # /Wall
+  # In Windows, Clang understands MSVC-like flags
+  list(APPEND COMPILE_FLAGS /WX /Zc:preprocessor)
 endif()
 
 # Functions -------------------------------------------------------------------------------------------------
