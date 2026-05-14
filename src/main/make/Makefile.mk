@@ -21,12 +21,6 @@
 # - CMAKE_C_COMPILER_LAUNCHER
 # - CMAKE_CXX_COMPILER_LAUNCHER
 #
-# Targets that automatically copy files; these are best added to `COMPILE_DEPS` before including this file:
-#
-# - make.cmd
-# - cmake/base.cmake
-# - cmake/generate-version.py
-#
 # CMake targets:
 #
 # - cmake-configure
@@ -166,24 +160,6 @@ endif
 
 # Predefined targets ----------------------------------------------------------------------------------------
 
-# Files copied automatically from Gaia ......................................................................
-#
-# These targets should be added to `COMPILE_DEPS` before including this file.
-#
-# ...........................................................................................................
-
-make.cmd: $(GAIA_DIR)/src/main/cmd/gaia-make.cmd
-	@echo ">" $@
-	@cp $< $@
-
-cmake/base.cmake: $(GAIA_DIR)/src/main/cmake/gaia-base.cmake
-	@echo ">" $@
-	@cp $< $@
-
-cmake/generate-version.py: $(GAIA_DIR)/src/main/cmake/gaia-generate-version.py
-	@echo ">" $@
-	@cp $< $@
-
 # CMake .....................................................................................................
 
 CMAKE_DEPS := CMakeLists.txt $(shell find src -name CMakeLists.txt) $(shell find cmake -type f)
@@ -194,7 +170,7 @@ $(BUILD_DIR)/compile_commands.json: $(COMPILE_DEPS) $(CMAKE_DEPS)
 
 compile_commands.json: $(BUILD_DIR)/compile_commands.json
 	@echo ">" $@
-	@filter-compile-commands.py --field file -i $< -o $@ $(PROJECT_NAME)/src
+	@gaia-filter-compile-commands --field file -i $< -o $@ $(PROJECT_NAME)/src
 
 .PHONY: cmake-configure
 cmake-configure: compile_commands.json

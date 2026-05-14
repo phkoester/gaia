@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 #
-# generate-version.py
-#
-# ONLY EDIT THE ORIGINAL FILE, WHICH IS `gaia-generate-version.py`.
+# gaia-generate-version
 #
 
 """
-Usage: generate-version.py -o OUTPUT_FILE NAME VERSION
+Usage: gaia-generate-version -o OUTPUT_FILE NAME VERSION
 """
 
 import argparse
