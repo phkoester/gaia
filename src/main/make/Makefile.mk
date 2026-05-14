@@ -16,6 +16,11 @@
 # - VERBOSE
 #     Produce verbose output
 #
+# CMake parameters:
+#
+# - CMAKE_C_COMPILER_LAUNCHER
+# - CMAKE_CXX_COMPILER_LAUNCHER
+#
 # Targets that automatically copy files; these are best added to `COMPILE_DEPS` before including this file:
 #
 # - make.cmd
