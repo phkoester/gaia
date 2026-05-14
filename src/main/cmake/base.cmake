@@ -1,7 +1,8 @@
 #
 # base.cmake
 #
-
+# To be included from the root `CMakeLists.txt` file.
+#
 
 # Check prerequisites ---------------------------------------------------------------------------------------
 

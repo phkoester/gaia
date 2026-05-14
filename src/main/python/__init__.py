@@ -1,5 +1,5 @@
 #
-# __init.py__ (root)
+# __init.py__
 #
 
 # EOF

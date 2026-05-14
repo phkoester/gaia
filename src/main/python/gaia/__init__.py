@@ -1,8 +1,6 @@
 #
 # __init.py__
 #
-# Module `gaia`.
-#
 
 import io
 import json5
