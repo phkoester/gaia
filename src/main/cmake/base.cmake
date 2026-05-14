@@ -1,8 +1,7 @@
 #
 # base.cmake
 #
-# ONLY EDIT THE ORIGINAL FILE, WHICH IS `gaia-base.cmake`.
-#
+
 
 # Check prerequisites ---------------------------------------------------------------------------------------
 
