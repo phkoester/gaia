@@ -284,6 +284,7 @@ FetchContent_Declare(
 # - unpack, copy to `C:\icu4c-VERSION-Win64-MSVC2022`
 # - set system variable `ICU_ROOT` to `C:\icu4c-VERSION-Win64-MSVC2022`
 # - add `C:\icu4c-VERSION-Win64-MSVC2022\bin64` to the system variable `PATH`
+# - when migrating to a new ICU version, use a fresh shell and clean everything
 #
 # ...........................................................................................................
 
