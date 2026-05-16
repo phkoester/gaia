@@ -215,8 +215,8 @@ AddVar(GAIA_BENCHMARK_VERSION STRING 1.9.5  "benchmark version") # https://githu
 AddVar(GAIA_BOOST_VERSION     STRING 1.90.0 "Boost version")     # https://github.com/boostorg/boost
 AddVar(GAIA_FMT_VERSION       STRING 12.1.0 "{fmt} version")     # https://github.com/fmtlib/fmt
 AddVar(GAIA_GTEST_VERSION     STRING 1.17.0 "GTest version")     # https://github.com/google/googletest
-# 78.2
-AddVar(GAIA_ICU_VERSION       STRING 75.1   "ICU version")       # sudo apt install libicu-dev
+# XXX 78.2
+AddVar(GAIA_ICU_VERSION       STRING 76.1   "ICU version")       # sudo apt install libicu-dev
 AddVar(GAIA_ROCKET_VERSION    STRING HEAD   "Rocket version")
 AddVar(GAIA_SCNLIB_VERSION    STRING master  "scnlib version")    # https://github.com/eliaskosunen/scnlib
 
