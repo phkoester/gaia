@@ -118,14 +118,8 @@ endif()
 
 # Functions -------------------------------------------------------------------------------------------------
 
-# AddExecutable(name srcFile...)
-function(AddExecutable name)
-  add_executable(${name})
-  target_sources(${name} PRIVATE ${ARGN})
-  target_compile_definitions(${name} PRIVATE ${COMPILE_DEFS})
-  target_compile_features(${name} PRIVATE ${COMPILE_FEATURES})
-  target_compile_options(${name} PRIVATE ${COMPILE_FLAGS})
-
+# CopyRuntimeFiles(name)
+function(CopyRuntimeFiles name)
   if($<TARGET_RUNTIME_DLLS:${name}>)
     add_custom_command(
       TARGET  ${name} POST_BUILD
@@ -134,6 +128,15 @@ function(AddExecutable name)
       COMMAND_EXPAND_LISTS
     )
   endif()
+endfunction()
+
+# AddExecutable(name srcFile...)
+function(AddExecutable name)
+  add_executable(${name})
+  target_sources(${name} PRIVATE ${ARGN})
+  target_compile_definitions(${name} PRIVATE ${COMPILE_DEFS})
+  target_compile_features(${name} PRIVATE ${COMPILE_FEATURES})
+  target_compile_options(${name} PRIVATE ${COMPILE_FLAGS})
 endfunction()
 
 # ParseArgs__(srcFiles env  srcFile... [ENVIRONMENT name=value...])
@@ -163,6 +166,7 @@ function(AddBench name dir)
     PRIVATE
       benchmark::benchmark benchmark::benchmark_main Rocket::rocket Rocket::rocket-bench
   )
+  CopyRuntimeFiles(${name})
 
   add_test(
     NAME              ${name}
@@ -190,6 +194,7 @@ function(AddTest name dir)
   target_link_libraries(${name}
     PRIVATE
       Rocket::rocket-test-main Rocket::rocket-test)
+  CopyRuntimeFiles(${name})
 
   string(JOIN " " configs ${CMAKE_CONFIGURATION_TYPES})
 
