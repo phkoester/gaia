@@ -120,27 +120,12 @@ endif()
 
 # CopyRuntimeFiles(name)
 function(CopyRuntimeFiles name)
-  if($<TARGET_RUNTIME_DLLS:${name}>)
-    add_custom_command(
-      TARGET  ${name} POST_BUILD
-      # Since CMake 4.2, there is `copy_if_newer`. If that is available, we can add this to `AddBench` and
-      # `AddTest`. For the time being, Visual Studio comes with CMake 4.1.1
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:${name}> $<TARGET_FILE_DIR:${name}>
-      COMMAND_EXPAND_LISTS
-    )
-  endif()
-endfunction()
-
-# NewCopyRuntimeFiles(name)
-function(NewCopyRuntimeFiles name)
-  if($<TARGET_RUNTIME_DLLS:${name}>)
-    add_custom_command(
-      TARGET  ${name} POST_BUILD
-      # `copy_if_newer` requires CMake 4.2
-      COMMAND ${CMAKE_COMMAND} -E copy_if_newer $<TARGET_RUNTIME_DLLS:${name}> $<TARGET_FILE_DIR:${name}>
-      COMMAND_EXPAND_LISTS
-    )
-  endif()
+  add_custom_command(
+    TARGET  ${name} POST_BUILD
+    # `copy_if_newer` requires CMake 4.2
+    COMMAND ${CMAKE_COMMAND} -E copy_if_newer $<TARGET_RUNTIME_DLLS:${name}> $<TARGET_FILE_DIR:${name}>
+    COMMAND_EXPAND_LISTS
+  )
 endfunction()
 
 # AddExecutable(name srcFile...)
