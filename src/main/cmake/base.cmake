@@ -120,12 +120,14 @@ endif()
 
 # CopyRuntimeFiles(name)
 function(CopyRuntimeFiles name)
-  add_custom_command(
-    TARGET  ${name} POST_BUILD
-    # `copy_if_newer` requires CMake 4.2
-    COMMAND ${CMAKE_COMMAND} -E copy_if_newer $<TARGET_RUNTIME_DLLS:${name}> $<TARGET_FILE_DIR:${name}>
-    COMMAND_EXPAND_LISTS
-  )
+  if(GAIA_OS_WINDOwS)
+    add_custom_command(
+      TARGET  ${name} POST_BUILD
+      # `copy_if_newer` requires CMake 4.2
+      COMMAND ${CMAKE_COMMAND} -E copy_if_newer $<TARGET_RUNTIME_DLLS:${name}> $<TARGET_FILE_DIR:${name}>
+      COMMAND_EXPAND_LISTS
+    )
+  endif()
 endfunction()
 
 # AddExecutable(name srcFile...)
