@@ -293,7 +293,7 @@ FetchContent_Declare(
 FetchContent_Declare(
   Rocket
   GIT_REPOSITORY https://github.com/phkoester/rocket.git
-  GIT_TAG        ${CRANK_ROCKET_VERSION}
+  GIT_TAG        ${GAIA_ROCKET_VERSION}
   GIT_PROGRESS   TRUE
   SYSTEM
   EXCLUDE_FROM_ALL
