@@ -120,10 +120,10 @@ endif()
 
 # CopyRuntimeFiles(name)
 function(CopyRuntimeFiles name)
-  if(GAIA_OS_WINDOwS)
+  if(GAIA_OS_WINDOWS)
     add_custom_command(
       TARGET  ${name} POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:${name}> $<TARGET_FILE_DIR:${name}>
+      COMMAND ${CMAKE_COMMAND} -E copy_if_newer $<TARGET_RUNTIME_DLLS:${name}> $<TARGET_FILE_DIR:${name}>
       COMMAND_EXPAND_LISTS
     )
   endif()
