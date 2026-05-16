@@ -118,7 +118,8 @@ endif()
 
 # Functions -------------------------------------------------------------------------------------------------
 
-function(CopyRuntimeDlls name)
+# CopyRuntimeFiles(name)
+function(CopyRuntimeFiles name)
   if(WIN32) # AND $<TARGET_RUNTIME_DLLS:${name}>
     add_custom_command(
       TARGET  ${name} POST_BUILD
@@ -130,8 +131,8 @@ function(CopyRuntimeDlls name)
   endif()
 endfunction()
 
-# CopyRuntimeFiles(name)
-function(CopyRuntimeFiles name)
+# NewCopyRuntimeFiles(name)
+function(NewCopyRuntimeFiles name)
   if($<TARGET_RUNTIME_DLLS:${name}>)
     add_custom_command(
       TARGET  ${name} POST_BUILD
@@ -195,7 +196,7 @@ function(AddBench name dir)
       ${env}
   )
 
-  CopyRuntimeDlls(${name})
+  CopyRuntimeFiles(${name})
 endfunction()
 
 # AddTest(name dir srcFile... [ENVIRONMENT name=value...])
@@ -225,7 +226,7 @@ function(AddTest name dir)
     ${envProps}
   )
 
-  CopyRuntimeDlls(${name})
+  CopyRuntimeFiles(${name})
 endfunction()
 
 # Dependency versions ---------------------------------------------------------------------------------------
