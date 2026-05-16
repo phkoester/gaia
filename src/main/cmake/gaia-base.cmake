@@ -1,56 +1,47 @@
 #
 # base.cmake
 #
-# To be included from a project's root `CMakeLists.txt` file.
+# ONLY EDIT THE ORIGINAL FILE, WHICH IS `gaia-base.cmake`.
 #
 
-# Check host tuple -------------------------------------------------------------------------------------------
+# Check prerequisites ---------------------------------------------------------------------------------------
 
 if(LINUX)
-  set(GAIA_OS linux)
   set(GAIA_OS_LINUX ON)
+else()
+  set(GAIA_OS_LINUX OFF)
 endif()
 if(WIN32)
-  set(GAIA_OS windows)
   set(GAIA_OS_WINDOWS ON)
+else()
+  set(GAIA_OS_WINDOWS OFF)
 endif()
-
 if(NOT(GAIA_OS_LINUX) AND NOT(GAIA_OS_WINDOWS))
   message(FATAL_ERROR "Unsupported OS ${CMAKE_SYSTEM_NAME}")
 endif()
 
-# Check C/C++ toolchain --------------------------------------------------------------------------------------
-
 if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
-  set(GAIA_C_COMPILER clang)
   set(GAIA_C_COMPILER_CLANG ON)
 endif()
 if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
-  set(GAIA_C_COMPILER gnu)
   set(GAIA_C_COMPILER_GNU ON)
 endif()
 if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
-  set(GAIA_C_COMPILER msvc)
   set(GAIA_C_COMPILER_MSVC ON)
 endif()
-
 if(NOT(GAIA_C_COMPILER_CLANG) AND NOT(GAIA_C_COMPILER_GNU) AND NOT(GAIA_C_COMPILER_MSVC))
   message(FATAL_ERROR "Unsupported C compiler ${CMAKE_C_COMPILER_ID}")
 endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  set(GAIA_CXX_COMPILER clang)
   set(GAIA_CXX_COMPILER_CLANG ON)
 endif()
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  set(GAIA_CXX_COMPILER gnu)
   set(GAIA_CXX_COMPILER_GNU ON)
 endif()
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-  set(GAIA_CXX_COMPILER mesvc)
   set(GAIA_CXX_COMPILER_MSVC ON)
 endif()
-
 if(NOT(GAIA_CXX_COMPILER_CLANG) AND NOT(GAIA_CXX_COMPILER_GNU) AND NOT(GAIA_CXX_COMPILER_MSVC))
   message(FATAL_ERROR "Unsupported C++ compiler ${CMAKE_CXX_COMPILER_ID}")
 endif()
@@ -109,11 +100,12 @@ set(COMPILE_FLAGS)
 
 # Set OS-specific compiler options --------------------------------------------------------------------------
 
-if(GAIA_OS_LINUX)
+if(LINUX)
   # gcc will not accept `__int128` with `-pedantic`
   list(APPEND COMPILE_FLAGS -Wall -Wextra -Wno-ignored-attributes)
-elseif(GAIA_OS_WINDOWS)
-  list(APPEND COMPILE_FLAGS /Zc:preprocessor) # /Wall
+elseif(WIN32)
+  # In Windows, Clang understands MSVC-like flags
+  list(APPEND COMPILE_FLAGS /WX /Zc:preprocessor)
 endif()
 
 # Functions -------------------------------------------------------------------------------------------------
@@ -125,18 +117,6 @@ function(CopyRuntimeDlls name)
       # Since CMake 4.2, there is `copy_if_newer`. If that is available, we can add this to `AddBench` and
       # `AddTest`. For the time being, Visual Studio comes with CMake 4.1.1
       COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:${name}> $<TARGET_FILE_DIR:${name}>
-      COMMAND_EXPAND_LISTS
-    )
-  endif()
-endfunction()
-
-# CopyRuntimeFiles(name)
-function(CopyRuntimeFiles name)
-  if($<TARGET_RUNTIME_DLLS:${name}>)
-    add_custom_command(
-      TARGET  ${name} POST_BUILD
-      # `copy_if_newer` requires CMake 4.2
-      COMMAND ${CMAKE_COMMAND} -E copy_if_newer $<TARGET_RUNTIME_DLLS:${name}> $<TARGET_FILE_DIR:${name}>
       COMMAND_EXPAND_LISTS
     )
   endif()
@@ -182,6 +162,7 @@ function(AddBench name dir)
   add_test(
     NAME              ${name}
     COMMAND           ${name}
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/bench/${dir}
   )
 
   string(JOIN " " configs ${CMAKE_CONFIGURATION_TYPES})
@@ -191,11 +172,8 @@ function(AddBench name dir)
       "BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}"
       "CONFIG=$<CONFIG>"
       "CONFIGS=${configs}"
-      "SOURCE_DIR=${CMAKE_SOURCE_DIR}/src/test/${dir}"
       ${env}
   )
-
-  CopyRuntimeDlls(${name})
 endfunction()
 
 # AddTest(name dir srcFile... [ENVIRONMENT name=value...])
@@ -221,106 +199,9 @@ function(AddTest name dir)
     PROPERTIES ENVIRONMENT "BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}"
     PROPERTIES ENVIRONMENT "CONFIG=$<CONFIG>"
     PROPERTIES ENVIRONMENT "CONFIGS=${configs}"
-    PROPERTIES ENVIRONMENT "SOURCE_DIR=${CMAKE_SOURCE_DIR}/src/test/${dir}"
     ${envProps}
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/src/test/${dir}
   )
-
-  CopyRuntimeDlls(${name})
 endfunction()
-
-# Dependency versions ---------------------------------------------------------------------------------------
-
-AddVar(GAIA_BENCHMARK_VERSION STRING 1.9.5  "benchmark version") # https://github.com/google/benchmark
-AddVar(GAIA_BOOST_VERSION     STRING 1.90.0 "Boost version")     # https://github.com/boostorg/boost
-AddVar(GAIA_FMT_VERSION       STRING 12.1.0 "{fmt} version")     # https://github.com/fmtlib/fmt
-AddVar(GAIA_GTEST_VERSION     STRING 1.17.0 "GTest version")     # https://github.com/google/googletest
-AddVar(GAIA_ICU_VERSION       STRING 78.2   "ICU version")       # sudo apt install libicu-dev
-AddVar(GAIA_ROCKET_VERSION    STRING HEAD   "Rocket version")
-AddVar(GAIA_SCNLIB_VERSION    STRING master  "scnlib version")   # https://github.com/eliaskosunen/scnlib
-
-# Dependency declarations -----------------------------------------------------------------------------------
-
-include(FetchContent)
-
-# Benchmark (when used, must follow GTest) ..................................................................
-
-FetchContent_Declare(
-  benchmark
-  GIT_REPOSITORY https://github.com/google/benchmark.git
-  GIT_TAG        v${GAIA_BENCHMARK_VERSION}
-  GIT_PROGRESS   TRUE
-  SYSTEM
-  EXCLUDE_FROM_ALL
-)
-
-# Boost .....................................................................................................
-
-FetchContent_Declare(
-  Boost
-  URL              https://github.com/boostorg/boost/releases/download/boost-${GAIA_BOOST_VERSION}/boost-${GAIA_BOOST_VERSION}-cmake.7z
-  SYSTEM
-  EXCLUDE_FROM_ALL
-)
-
-# fmt .......................................................................................................
-
-FetchContent_Declare(
-  fmt
-  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-  GIT_TAG        ${GAIA_FMT_VERSION}
-  GIT_PROGRESS   TRUE
-  SYSTEM
-  EXCLUDE_FROM_ALL
-)
-
-# GTest .....................................................................................................
-
-FetchContent_Declare(
-  GTest
-  GIT_REPOSITORY https://github.com/google/googletest.git
-  GIT_TAG        v${GAIA_GTEST_VERSION}
-  GIT_PROGRESS   TRUE
-  SYSTEM
-  EXCLUDE_FROM_ALL
-)
-
-# ICU .......................................................................................................
-#
-# ICU is not fully CMake-ready, so it must be installed manually.
-#
-# On Ubuntu, say
-#
-#   $ sudo apt install libicu-dev
-#
-# On Windows,
-#
-# - download <https://github.com/unicode-org/icu/releases/download/release-VERSION/icu4c-VERSION-Win64-MSVC2022.zip>
-# - unpack, copy to `C:\icu4c-VERSION-Win64-MSVC2022`
-# - set system variable `ICU_ROOT` to `C:\icu4c-VERSION-Win64-MSVC2022`
-# - add `C:\icu4c-VERSION-Win64-MSVC2022\bin64` to the system variable `PATH`
-#
-# ...........................................................................................................
-
-# Rocket ....................................................................................................
-
-FetchContent_Declare(
-  Rocket
-  GIT_REPOSITORY https://github.com/phkoester/rocket.git
-  GIT_TAG        ${CRANK_ROCKET_VERSION}
-  GIT_PROGRESS   TRUE
-  SYSTEM
-  EXCLUDE_FROM_ALL
-)
-
-# scnlib ....................................................................................................
-
-FetchContent_Declare(
-  scnlib
-  GIT_REPOSITORY https://github.com/eliaskosunen/scnlib.git
-  GIT_TAG        ${GAIA_SCNLIB_VERSION}
-  GIT_PROGRESS   TRUE
-  SYSTEM
-  EXCLUDE_FROM_ALL
-)
 
 # EOF
