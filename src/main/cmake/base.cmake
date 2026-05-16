@@ -120,7 +120,7 @@ endif()
 
 # CopyRuntimeFiles(name)
 function(CopyRuntimeFiles name)
-  if(WIN32) # AND $<TARGET_RUNTIME_DLLS:${name}>
+  if($<TARGET_RUNTIME_DLLS:${name}>)
     add_custom_command(
       TARGET  ${name} POST_BUILD
       # Since CMake 4.2, there is `copy_if_newer`. If that is available, we can add this to `AddBench` and
