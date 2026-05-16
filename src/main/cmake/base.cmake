@@ -1,47 +1,56 @@
 #
 # base.cmake
 #
-# To be included from the root `CMakeLists.txt` file.
+# To be included from a project's root `CMakeLists.txt` file.
 #
 
-# Check prerequisites ---------------------------------------------------------------------------------------
+# Check host tuple -------------------------------------------------------------------------------------------
 
 if(LINUX)
+  set(GAIA_OS linux)
   set(GAIA_OS_LINUX ON)
-else()
-  set(GAIA_OS_LINUX OFF)
 endif()
 if(WIN32)
+  set(GAIA_OS windows)
   set(GAIA_OS_WINDOWS ON)
-else()
-  set(GAIA_OS_WINDOWS OFF)
 endif()
+
 if(NOT(GAIA_OS_LINUX) AND NOT(GAIA_OS_WINDOWS))
   message(FATAL_ERROR "Unsupported OS ${CMAKE_SYSTEM_NAME}")
 endif()
 
+# Check C/C++ toolchain --------------------------------------------------------------------------------------
+
 if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+  set(GAIA_C_COMPILER clang)
   set(GAIA_C_COMPILER_CLANG ON)
 endif()
 if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
+  set(GAIA_C_COMPILER gnu)
   set(GAIA_C_COMPILER_GNU ON)
 endif()
 if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+  set(GAIA_C_COMPILER msvc)
   set(GAIA_C_COMPILER_MSVC ON)
 endif()
+
 if(NOT(GAIA_C_COMPILER_CLANG) AND NOT(GAIA_C_COMPILER_GNU) AND NOT(GAIA_C_COMPILER_MSVC))
   message(FATAL_ERROR "Unsupported C compiler ${CMAKE_C_COMPILER_ID}")
 endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+  set(GAIA_CXX_COMPILER clang)
   set(GAIA_CXX_COMPILER_CLANG ON)
 endif()
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  set(GAIA_CXX_COMPILER gnu)
   set(GAIA_CXX_COMPILER_GNU ON)
 endif()
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  set(GAIA_CXX_COMPILER mesvc)
   set(GAIA_CXX_COMPILER_MSVC ON)
 endif()
+
 if(NOT(GAIA_CXX_COMPILER_CLANG) AND NOT(GAIA_CXX_COMPILER_GNU) AND NOT(GAIA_CXX_COMPILER_MSVC))
   message(FATAL_ERROR "Unsupported C++ compiler ${CMAKE_CXX_COMPILER_ID}")
 endif()
@@ -100,10 +109,10 @@ set(COMPILE_FLAGS)
 
 # Set OS-specific compiler options --------------------------------------------------------------------------
 
-if(LINUX)
+if(GAIA_OS_LINUX)
   # gcc will not accept `__int128` with `-pedantic`
   list(APPEND COMPILE_FLAGS -Wall -Wextra -Wno-ignored-attributes)
-elseif(WIN32)
+elseif(GAIA_OS_WINDOWS)
   list(APPEND COMPILE_FLAGS /Zc:preprocessor) # /Wall
 endif()
 

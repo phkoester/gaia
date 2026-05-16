@@ -66,6 +66,7 @@ export PROJECT_NAME := $(notdir $(CURDIR))
 
 # Variables -------------------------------------------------------------------------------------------------
 
+GAIA_DEPS := $(wildcard $(GAIA_DIR)/bin/*) $(wildcard $(GAIA_DIR)/src/main/cmake/*) $(COMPILE_DEPS)
 BUILD_DEPS :=
 TEST_DEPS :=
 
@@ -164,7 +165,7 @@ endif
 
 CMAKE_DEPS := CMakeLists.txt $(shell find src -name CMakeLists.txt) $(shell find cmake -type f)
 
-$(BUILD_DIR)/compile_commands.json: $(COMPILE_DEPS) $(CMAKE_DEPS)
+$(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS) $(COMPILE_DEPS)
 	@$(call print-info,$@)
 	@cmake $(CMAKE_FLAGS) --preset $(CMAKE_PRESET)
 
@@ -204,12 +205,12 @@ endif
 CHECK_REPORT_FILE := $(BUILD_DIR)/check-report.txt
 
 # Parameters:
-#  - FILE a regex, e.g. `/io.cc` or `(io|boost)`
+#  - FILE a regex, e.g. `/io\.cc` or `(assert|io)`
 .PHONY: check
 check: compile_commands.json
 	@$(call print-info,$@)
 	@run-clang-tidy \
-	  -config-file=$(GAIA_DIR)/src/main/clang-tidy/clang-tidy-config.yaml \
+	  -config-file=$(GAIA_DIR)/src/main/clang-tidy/gaia-config.yaml \
           -j$(GAIA_NPROC_2_3) \
 	  -p. \
 	  $(CHECK_FILES) 2>&1 | tee $(CHECK_REPORT_FILE)

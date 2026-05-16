@@ -1,6 +1,8 @@
 ::
 :: gaia-make.cmd
 ::
+:: A simple build script calling CMake that may be used in Windows.
+::
 :: Usage:
 ::   gaia-make                                     (calls `configure` and `build`)
 ::   gaia-make info

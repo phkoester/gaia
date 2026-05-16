@@ -21,8 +21,8 @@ fi
 
 # Call other intialization scripts --------------------------------------------------------------------------
 
-source "$dir__/init-host-triple" || return 2
-source "$dir__/init-target-triple" || return 2
+source "$dir__/init-host-tuple" || return 2
+source "$dir__/init-target-tuple" || return 2
 source "$dir__/init-rust" || return 2
 
 # Detect Gaia version ---------------------------------------------------------------------------------------
@@ -86,7 +86,8 @@ if shell-is-interactive && [[ $SHLVL == 1 ]] && [[ ! $GAIA_REINIT ]]; then
   echo \#
   echo \# This is Gaia $GAIA_VERSION
   echo \#
-  echo \# "Detected host: $GAIA_HOST"
+  echo \# "Detected host          : $GAIA_HOST"
+  echo \# "Selected default target: $GAIA_TARGET"
   echo \#
   echo $ruler__
 fi

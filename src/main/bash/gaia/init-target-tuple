@@ -1,0 +1,66 @@
+#
+# init-target-tuple
+#
+# Selects the default target tuple for the current host tuple and sets Gaia environment variables
+# accordingly. These are
+#
+# - GAIA_TARGET_ARCH
+#   - x86_64
+# - GAIA_TARGET_VENDOR
+#   - pc
+# - GAIA_TARGET_OS
+#   - linux, windows
+# - GAIA_TARGET_ABI
+#   - gnu, msvc
+# - GAIA_TARGET (combines all of the above)
+#
+# Supported host tuples and their corresponding default target tuples are:
+#
+#   Host tuple          | Default target tuple
+#   ------------------- | --------------------
+#   `x86_64-pc-linux`   | `x86_64-unknown-linux-gnu`
+#   `x86_64-pc-windows` | `x86_64-pc-windows-msvc`
+#
+# Today, a tuple has up to 10 parts:
+#
+#   `tuple ::= arch [subarch] [_ endian] - vendor - os - libc [abi] [variant] [version] [- format]`
+#
+# As an example, `armv7k_be-arm-linux-gnueabihf6.3.3-macho` would be a 10-part tuple specifying:
+#
+#   Part      | Value   | Meaning
+#   ----------+---------+--------
+#   `arch`    | `arm`   | ARM
+#   `subarch` | `v7k`   | v7k
+#   `endian`  | `be`    | Big endian
+#   `vendor`  | `arm`   | ARM Ltd
+#   `os`      | `linux` | Linux
+#   `libc`    | `gnu`   | GNU (glibc)
+#   `abi`     | `eabi`  | EABI (embedded ABI)
+#   `variant` | `hf`    | Hardware floating point
+#   `version` | `6.33`  | Version 6.3.3
+#   `format`  | `macho` | Mach-O
+#
+
+# Select default target tuple -------------------------------------------------------------------------------
+
+unset GAIA_TARGET_ARCH GAIA_TARGET_VENDOR GAIA_TARGET_OS GAIA_TARGET_ABI GAIA_TARGET
+export GAIA_TARGET_ARCH GAIA_TARGET_VENDOR GAIA_TARGET_OS GAIA_TARGET_ABI GAIA_TARGET
+
+if [[ $GAIA_HOST == x86_64-pc-linux ]]; then
+  GAIA_TARGET_ARCH=x86_64
+  GAIA_TARGET_VENDOR=pc
+  GAIA_TARGET_OS=linux
+  GAIA_TARGET_ABI=gnu
+elif [[ $GAIA_HOST == x86_64-pc-windows ]]; then
+  GAIA_TARGET_ARCH=x86_64
+  GAIA_TARGET_VENDOR=pc
+  GAIA_TARGET_OS=windows
+  GAIA_TARGET_ABI=msvc
+else
+  echo init-target-tuple: error: Invalid host tuple: \`$GAIA_HOST\` > /dev/stderr
+  return 2
+fi
+
+GAIA_TARGET=$GAIA_TARGET_ARCH-$GAIA_TARGET_VENDOR-$GAIA_TARGET_OS-$GAIA_TARGET_ABI
+
+# EOF

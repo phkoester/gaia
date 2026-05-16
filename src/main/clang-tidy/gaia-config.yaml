@@ -1,5 +1,5 @@
 #
-# clang-tidy-config.yaml
+# gaia-config.yaml
 #
 
 Checks: [
@@ -22,15 +22,19 @@ Checks: [
   '-cppcoreguidelines-pro-type-reinterpret-cast',
   '-cppcoreguidelines-pro-type-union-access',
   '-cppcoreguidelines-special-member-functions',
+  '-cppcoreguidelines-use-enum-class',
   '-google-build-using-namespace',
   '-google-runtime-int',
   '-misc-include-cleaner',
   '-misc-non-private-member-variables-in-classes',
+  '-modernize-use-designated-initializers',
   '-modernize-use-trailing-return-type',
+  '-portability-avoid-pragma-once',
   '-readability-convert-member-functions-to-static',
   '-readability-identifier-length',
   '-readability-isolate-declaration',
   '-readability-magic-numbers',
+  '-readability-math-missing-parentheses',
   '-readability-simplify-boolean-expr',
 ]
 HeaderFilterRegex: '.*'

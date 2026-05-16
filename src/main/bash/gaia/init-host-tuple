@@ -1,0 +1,54 @@
+#
+# init-host-tuple
+#
+# Detects the host tuple and sets Gaia environment variables accordingly. These are
+#
+# - GAIA_HOST_ARCH
+#   - x86_64
+# - GAIA_HOST_VENDOR
+#   - pc
+# - GAIA_HOST_OS
+#   - linux, windows
+# - GAIA_HOST (combines all of the above)
+#
+# Until now, these host tuples are supported:
+#
+# - `x86_64-pc-linux-gnu`
+# - `x86_64-pc-windows-msvc`
+#
+
+# Detect host tuple ----------------------------------------------------------------------------------------
+
+unset GAIA_HOST_ARCH GAIA_HOST_VENDOR GAIA_HOST_OS GAIA_HOST
+export GAIA_HOST_ARCH GAIA_HOST_VENDOR GAIA_HOST_OS GAIA_HOST
+
+if [[ $OSTYPE == linux-gnu ]]; then
+  # Linux
+
+  if [[ ! $MACHTYPE =~ x86_64-.*-linux-gnu ]]; then
+    echo init-host-tuple: error: Invalid \`MACHTYPE\`: \`$MACHTYPE\` > /dev/stderr
+    return 2
+  fi
+
+  GAIA_HOST_ARCH=x86_64
+  GAIA_HOST_VENDOR=pc
+  GAIA_HOST_OS=linux
+elif [[ $OS == Windows_NT ]]; then
+  # Windows
+
+  if [[ $PROCESSOR_ARCHITECTURE != AMD64 ]]; then
+    echo init-host-tuple: error: Invalid \`PROCESSOR_ARCHITECTURE\`: \`$PROCESSOR_ARCHITECTURE\` > /dev/stderr
+    return 2
+  fi
+
+  GAIA_HOST_ARCH=x86_64
+  GAIA_HOST_VENDOR=pc
+  GAIA_HOST_OS=windows
+else
+  echo init-host-tuple: error: Cannot detect host tuple > /dev/stderr
+  return 2
+fi
+
+GAIA_HOST=$GAIA_HOST_ARCH-$GAIA_HOST_VENDOR-$GAIA_HOST_OS
+
+# EOF

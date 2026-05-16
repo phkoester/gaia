@@ -35,19 +35,8 @@ After that, to initialize Gaia, place this line in your `~/.bashrc`:
 source "$GAIA_DIR/src/main/bash/gaia/init"
 ```
 
-Now, when opening a terminal that loads your `.bashrc`, you should see a message like the following:
-
-```
-########################################
-#
-# This is Gaia 1.2.0
-#
-# Detected host: x86_64-pc-linux-gnu
-#
-########################################
-```
-
-This means that Gaia is successfully installed and configured.
+Now, when opening a terminal that loads your `.bashrc`, you should see a "This is Gaia" message. This means
+that Gaia is successfully installed and configured.
 
 ## License
 
