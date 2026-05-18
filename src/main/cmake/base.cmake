@@ -100,6 +100,7 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set(FETCHCONTENT_QUIET FALSE)
 
 set(BUILD_SHARED_LIBS_DEFAULT ${BUILD_SHARED_LIBS})
+set(CMAKE_CXX_FLAGS_DEFAULT "${CMAKE_CXX_FLAGS}")
 
 # Set compiler definitions, features, and options -----------------------------------------------------------
 
@@ -110,8 +111,10 @@ set(COMPILE_FLAGS)
 # Set OS-specific compiler options --------------------------------------------------------------------------
 
 if(GAIA_OS_LINUX)
-  # gcc will not accept `__int128` with `-pedantic`
-  list(APPEND COMPILE_FLAGS -Wall -Wextra -Wno-ignored-attributes)
+  list(APPEND COMPILE_FLAGS -Wall -Wextra)
+  if(GAIA_CXX_COMPILER_GNU)
+    list(APPEND COMPILE_FLAGS -Wno-ignored-attributes)
+  endif()
 elseif(GAIA_OS_WINDOWS)
   list(APPEND COMPILE_FLAGS /Zc:preprocessor) # /Wall
 endif()
