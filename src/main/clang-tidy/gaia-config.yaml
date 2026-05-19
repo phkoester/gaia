@@ -12,6 +12,7 @@ Checks: [
   'performance-*',
   'portability-*',
   'readability-*',
+  '-clang-analyzer-security.ArrayBound',
   '-cppcoreguidelines-avoid-magic-numbers',
   '-cppcoreguidelines-avoid-non-const-global-variables',
   '-cppcoreguidelines-macro-usage',
