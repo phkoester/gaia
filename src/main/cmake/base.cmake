@@ -93,7 +93,7 @@ endif()
 # General settings ------------------------------------------------------------------------------------------
 
 set(CMAKE_CXX_EXTENSIONS ON)
-set(CMAKE_CXX_STANDARD 26)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
@@ -105,7 +105,7 @@ set(CMAKE_CXX_FLAGS_DEFAULT "${CMAKE_CXX_FLAGS}")
 # Set compiler definitions, features, and options -----------------------------------------------------------
 
 set(COMPILE_DEFS)
-set(COMPILE_FEATURES cxx_std_26)
+set(COMPILE_FEATURES cxx_std_23)
 set(COMPILE_FLAGS)
 
 # Set OS-specific compiler options --------------------------------------------------------------------------
