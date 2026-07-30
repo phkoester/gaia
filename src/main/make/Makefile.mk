@@ -158,7 +158,7 @@ ifdef JOBS
     GMAKE_FLAGS += -j$(JOBS)
   endif
 else
-  GMAKE_FLAGS += -j$(GAIA_NPROC_2_3) -l$(GAIA_NPROC)
+  GMAKE_FLAGS += -j$(GAIA_NPROC_3_4) -l$(GAIA_NPROC)
 endif
 
 # Predefined targets ----------------------------------------------------------------------------------------
@@ -213,7 +213,7 @@ check: compile_commands.json
 	@$(call print-info,$@)
 	@run-clang-tidy \
 	  -config-file=$(GAIA_DIR)/src/main/clang-tidy/gaia-config.yaml \
-          -j$(GAIA_NPROC_2_3) \
+          -j$(GAIA_NPROC_3_4) \
 	  -p. \
 	  $(CHECK_FILES) 2>&1 | tee $(CHECK_REPORT_FILE)
 	@echo Report written to $(CHECK_REPORT_FILE)

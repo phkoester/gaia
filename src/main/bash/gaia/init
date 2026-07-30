@@ -45,10 +45,11 @@ export GAIA_BUILD_TYPE=${GAIA_BUILD_TYPE:-release}
 export GAIA_CXX_TOOLCHAIN=${GAIA_CXX_TOOLCHAIN:-llvm}
 export GAIA_EDITOR=${GAIA_EDITOR:-nano}
 export GAIA_NPROC=$(nproc)
-export GAIA_NPROC_1_3=$(($GAIA_NPROC / 3))
-export GAIA_NPROC_2_3=$((2 * $GAIA_NPROC / 3))
+export GAIA_NPROC_1_4=$(($GAIA_NPROC / 4))
+export GAIA_NPROC_1_2=$(($GAIA_NPROC / 2))
+export GAIA_NPROC_3_4=$((3 * $GAIA_NPROC / 4))
 
-export GAIA_MAKE_FLAGS="-j$GAIA_NPROC_2_3 -l$GAIA_NPROC"
+export GAIA_MAKE_FLAGS="-j$GAIA_NPROC_3_4 -l$GAIA_NPROC"
 
 if [[ $HOME ]]; then
   export GAIA_USER_DIR=$HOME
