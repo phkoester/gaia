@@ -18,7 +18,7 @@ elif [[ $1 == acp ]]; then
   fi
   git add .
   git commit -m"$m"
-  exec git push 
+  exec git push
 else
   exec git "$@"
 fi
