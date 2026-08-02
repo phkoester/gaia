@@ -16,8 +16,8 @@ elif [[ $1 == acp ]]; then
   if [[ ! $m ]]; then
     m="(No commit message.)"
   fi
-  if git status | grep -q "Changes not staged for commit:"; then
-    echo Adding ...
+  if git status | grep -Eq "(Untracked files:|Changes not staged for commit:)"; then
+    echo Adding unstaged ...
     git add .
   else
     echo Nothing to add
