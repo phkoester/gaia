@@ -14,11 +14,26 @@ elif [[ $1 == acp ]]; then
   shift
   eval $(cl-get-options m: "$@")
   if [[ ! $m ]]; then
-    shell-error -e2 Missing option: \`-m\`
+    m="(No commit message.)"
   fi
-  git add .
-  git commit -m"$m"
-  exec git push
+  if git status | grep -q "Changes not staged for commit:"; then
+    echo Adding ...
+    git add .
+  else
+    echo Nothing to add
+  fi
+  if git status | grep -q "Changes to be committed:"; then
+    echo Commiting ...
+    git commit -m"$m"
+  else
+    echo Nothing to commit
+  fi
+  if git status | grep -q "Your branch is ahead of 'origin/main' by 1 commit."; then
+    echo Pushing ...
+    exec git push
+  else
+    echo Nothing to push
+  fi
 else
   exec git "$@"
 fi

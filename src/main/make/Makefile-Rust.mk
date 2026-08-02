@@ -29,6 +29,7 @@ include $(GAIA_DIR)/src/main/make/Makefile-common.mk
 
 KATEX_HTML := $(realpath src/katex.html) # Local Rustdoc invocation needs an absolute path
 TARGET_DIR := target/$(GAIA_BUILD_TYPE)
+
 TEST_BIN_DIR := $(TARGET_DIR)/deps
 TEST_COVERAGE_DIR := $(TARGET_DIR)/coverage
 

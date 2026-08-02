@@ -29,14 +29,14 @@
 #
 # Targets:
 #
-#   - bench (GAIA_BUILD_TYPE, PATTERN)
-#   - build (GAIA_BUILD_TYPE, TARGET, VERBOSE)
-#   - check (GAIA_BUILD_TYPE, PATTERN)
-#   - clean
-#   - configure (GAIA_BUILD_TYPE)
-#   - doc (GAIA_BUILD_TYPE, VERBOSE)
-#   - run (ARGS, DEFAULT_RUN_TARGET, GAIA_BUILD_TYPE, TARGET)
-#   - test (GAIA_BUILD_TYPE, PATTERN, VERBOSE)
+# - bench (GAIA_BUILD_TYPE, PATTERN)
+# - build (GAIA_BUILD_TYPE, TARGET, VERBOSE)
+# - check (GAIA_BUILD_TYPE, PATTERN)
+# - clean
+# - configure (GAIA_BUILD_TYPE)
+# - doc (GAIA_BUILD_TYPE, VERBOSE)
+# - run (ARGS, DEFAULT_RUN_TARGET, GAIA_BUILD_TYPE, TARGET)
+# - test (GAIA_BUILD_TYPE, PATTERN, VERBOSE)
 #
 
 ifndef GAIA_DIR
