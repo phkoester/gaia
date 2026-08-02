@@ -1,26 +1,44 @@
 #
 # Makefile
 #
+# Parameters:
+#
+# - GAIA_DIR
+#
+# Targets:
+#
+# - test
+#
 
-# `build` must be the first target and build everything, including tests
-build: buildTest
+ifndef GAIA_DIR
+  $(error `GAIA_DIR` not set)
+endif
+include $(GAIA_DIR)/src/main/make/Makefile-bash.mk
 
-include src/main/make/Makefile.mk
+# Test: bash ------------------------------------------------------------------------------------------------
 
-all: test
+FILE := test/bash/gaia/test-cl.sh
+include src/main/make/test-script.mk
 
-buildMain:
+FILE := test/bash/gaia/test-path.sh
+include src/main/make/test-script.mk
 
-buildTest: buildMain
-	@$(call print-info,$@)
-	@+$(MAKE) $(MAKE_FLAGS) -f src/test/Makefile build
+FILE := test/bash/gaia/test-shell.sh
+include src/main/make/test-script.mk
 
-test: buildMain
-	@$(call print-info,$@)
-	@+$(MAKE) $(MAKE_FLAGS) -f src/test/Makefile test
+FILE := test/bash/gaia/test-string.sh
+include src/main/make/test-script.mk
 
-tests: buildMain
-	@$(call print-info,$@)
-	@+$(MAKE) $(MAKE_FLAGS) -f src/test/Makefile tests
+# Test: Python ----------------------------------------------------------------------------------------------
+
+FILE := test/python/gaia/test-list.py
+include src/main/make/test-script.mk
+
+FILE := test/python/gaia/test-string.py
+include src/main/make/test-script.mk
+
+# Targets ---------------------------------------------------------------------------------------------------
+
+test: $(TEST_DEPS)
 
 # EOF

@@ -2,8 +2,15 @@
 # .gitignore
 #
 
+/compile_commands.json
+/.cache/
+/build/
+/target/
+
 __pycache__/
 
-!/*.code-workspace
+*.log
+*.log.gz
+*.pyc
 
 # EOF
