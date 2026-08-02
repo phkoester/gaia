@@ -7,10 +7,9 @@
 /build/
 /target/
 
-__pycache__/
-
 *.log
 *.log.gz
 *.pyc
+__pycache__/
 
 # EOF
