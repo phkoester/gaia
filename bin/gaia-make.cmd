@@ -1,16 +1,18 @@
 ::
 :: gaia-make.cmd
 ::
-:: A simple build script calling CMake that may be used in Windows.
+:: To be included by a project's `make.cmd` file.
 ::
 :: Usage:
-::   gaia-make                                     (calls `configure` and `build`)
-::   gaia-make info
-::   gaia-make configure
+::   gaia-make                  calls `default`
+::   gaia-make bench [PATTERN]
 ::   gaia-make build [TARGET]
-::   gaia-make test [all | bench | test | PATTERN] (default: test)
-::   gaia-make test-terminal                       (for Rocket only)
 ::   gaia-make clean
+::   gaia-make configure
+::   gaia-make default          calls `configure` and `build`
+::   gaia-make info
+::   gaia-make test [PATTERN]
+::   gaia-make test-terminal    for Rocket only
 ::
 :: Parameters:
 ::
@@ -56,29 +58,28 @@ if defined VERBOSE (
   set CMAKE_TRAILING_FLAGS=-v
 )
 
-:: Print info -----------------------------------------------------------------------------------------------
-
-echo ########################################
-echo #
-echo # BUILD_TYPE   : %BUILD_TYPE%
-echo # CXX_TOOLCHAIN: %CXX_TOOLCHAIN%
-echo # VERBOSE      : %VERBOSE%
-echo #
-echo ########################################
-
 :: Parse command --------------------------------------------------------------------------------------------
 
 if "%~1" == "" (
-  call :configure
-  call :build
+  call :default
   goto :eof
-) else if "%1" == "info" (
+) else if "%1" == "bench" (
+  call :bench %2
+  goto :eof
+) else if "%1" == "build" (
+  call :build %2
+  goto :eof
+) else if "%1" == "clean" (
+  call :clean
   goto :eof
 ) else if "%1" == "configure" (
   call :configure
   goto :eof
-) else if "%1" == "build" (
-  call :build %2
+) else if "%1" == "default" (
+  call :default
+  goto :eof
+) else if "%1" == "info" (
+  call :info
   goto :eof
 ) else if "%1" == "test" (
   call :test %2
@@ -86,12 +87,49 @@ if "%~1" == "" (
 ) else if "%1" == "test-terminal" (
   call :test-terminal
   goto :eof
-) else if "%1" == "clean" (
-  call :clean
-  goto :eof
 ) else (
   echo %NAME%: Invalid command `%1` 1>&2
   exit /b 2
+)
+
+goto :eof
+
+:: bench ----------------------------------------------------------------------------------------------------
+
+:bench
+
+set PATTERN=%1
+if not defined PATTERN (
+  ctest --test-dir build\src\bench --preset windows-%BUILD_TYPE% -V
+) else (
+  ctest --test-dir build\src\bench --preset windows-%BUILD_TYPE% -R %PATTERN% -V
+)
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+goto :eof
+
+:: build ----------------------------------------------------------------------------------------------------
+
+:build
+
+set TARGET=%1
+if not defined TARGET (
+  cmake --build --preset windows-%BUILD_TYPE% %CMAKE_TRAILING_FLAGS%
+) else (
+  cmake --build --preset windows-%BUILD_TYPE% --target %TARGET% %CMAKE_TRAILING_FLAGS%
+)
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+goto :eof
+
+:: clean ----------------------------------------------------------------------------------------------------
+
+:clean
+
+if exist build\ (
+  echo Removing build directory. This may take a while ...
+  rmdir /q /s build
+  if %errorlevel% neq 0 exit /b %errorlevel%
 )
 
 goto :eof
@@ -105,16 +143,26 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 
 goto :eof
 
-:: build ----------------------------------------------------------------------------------------------------
+:: default --------------------------------------------------------------------------------------------------
 
-:build
+:default
 
-if [%1] == [] (
-  cmake --build --preset windows-%BUILD_TYPE% %CMAKE_TRAILING_FLAGS%
-) else (
-  cmake --build --preset windows-%BUILD_TYPE% --target %1 %CMAKE_TRAILING_FLAGS%
-)
-if %errorlevel% neq 0 exit /b %errorlevel%
+call :configure
+call :build
+
+goto :eof
+
+:: info -----------------------------------------------------------------------------------------------------
+
+:info
+
+echo ########################################
+echo #
+echo # BUILD_TYPE   : %BUILD_TYPE%
+echo # CXX_TOOLCHAIN: %CXX_TOOLCHAIN%
+echo # VERBOSE      : %VERBOSE%
+echo #
+echo ########################################
 
 goto :eof
 
@@ -122,17 +170,11 @@ goto :eof
 
 :test
 
-set TEST=%1
-if not defined TEST set TEST=test
-
-if %TEST% == all (
-  ctest --preset windows-%BUILD_TYPE%
-) else if %TEST% == bench (
-  ctest --test-dir build\src\bench --preset windows-%BUILD_TYPE% -V
-) else if %TEST% == test (
-  ctest --test-dir build\src\test --preset windows-%BUILD_TYPE%
+set PATTERN=%1
+if not defined PATTERN (
+  ctest --test-dir build\src\test --preset windows-%BUILD_TYPE% -V
 ) else (
-  ctest --preset windows-%BUILD_TYPE% -R %TEST% -V
+  ctest --test-dir build\src\test --preset windows-%BUILD_TYPE% -R %PATTERN% -V
 )
 if %errorlevel% neq 0 exit /b %errorlevel%
 
@@ -146,18 +188,6 @@ set ROCKET_TEST_TERMINAL=1
 
 build\src\test\%CONFIG%\test-rocket-system-terminal.exe
 build\src\test\%CONFIG%\test-rocket-unicode-Character.exe
-
-goto :eof
-
-:: clean ----------------------------------------------------------------------------------------------------
-
-:clean
-
-if exist build\ (
-  echo Removing build directory. This may take a while ...
-  rmdir /q /s build
-  if %errorlevel% neq 0 exit /b %errorlevel%
-)
 
 goto :eof
 
