@@ -54,8 +54,11 @@ if %CXX_TOOLCHAIN% == llvm set CMAKE_TOOLCHAIN_FLAG=-T ClangCL
 :: Configure verbose output ---------------------------------------------------------------------------------
 
 set CMAKE_TRAILING_FLAGS=
-if defined VERBOSE (
+set CTEST_FLAGS=
+
+if %VERBOSE% eq 1 (
   set CMAKE_TRAILING_FLAGS=-v
+  set CTEST_FLAGS=-V
 )
 
 :: Parse command --------------------------------------------------------------------------------------------
@@ -172,9 +175,9 @@ goto :eof
 
 set PATTERN=%1
 if not defined PATTERN (
-  ctest --test-dir build\src\test --preset windows-%BUILD_TYPE% -V
+  ctest --test-dir build\src\test --preset windows-%BUILD_TYPE% %CTEST_FLAGS%
 ) else (
-  ctest --test-dir build\src\test --preset windows-%BUILD_TYPE% -R %PATTERN% -V
+  ctest --test-dir build\src\test --preset windows-%BUILD_TYPE% -R %PATTERN% %CTEST_FLAGS%
 )
 if %errorlevel% neq 0 exit /b %errorlevel%
 
