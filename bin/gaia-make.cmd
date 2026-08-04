@@ -56,7 +56,7 @@ if %CXX_TOOLCHAIN% == llvm set CMAKE_TOOLCHAIN_FLAG=-T ClangCL
 set CMAKE_TRAILING_FLAGS=
 set CTEST_FLAGS=
 
-if %VERBOSE% equ 1 (
+if "%VERBOSE%" == "1" (
   set CMAKE_TRAILING_FLAGS=-v
   set CTEST_FLAGS=-V
 )
