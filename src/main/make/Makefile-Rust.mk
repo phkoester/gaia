@@ -83,7 +83,7 @@ else
 	@# Remove `.profraw` files
 	@rm -v $$(find -name "cargo-test-*.profraw")
 	@# Remove documentation-test executables
-	@rm -rv $(TEST_BIN_DIR)/src_*_rs_*
+	@rm -frv $(TEST_BIN_DIR)/src_*_rs_*
 	@echo Created $(TEST_COVERAGE_DIR)/html/index.html
 endif
 

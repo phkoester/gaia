@@ -12,14 +12,17 @@
 #
 # Targets:
 #
-# - default
 # - bench
 # - build
 # - check
+# - clean
+# - configure
+# - default
 # - doc
 # - info
 # - run
 # - test
+# - update
 # - validate
 # - version
 #
@@ -105,16 +108,17 @@ endif
 # Phony targets ---------------------------------------------------------------------------------------------
 
 .PHONY: \
-  default \
   bench \
   build \
   check \
   clean \
   configure \
+  default \
   doc \
   info \
   run \
   test \
+  update \
   validate \
   version
 
@@ -145,10 +149,13 @@ run: build
 
 test: build
 
+update:
+
 validate: build test check doc
 
 version:
 	@$(call print-target,$@)
 	@echo $(call print-version,.)
+	@gaia-git-version
 
 # EOF

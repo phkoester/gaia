@@ -173,22 +173,14 @@ doc-main:
 ifneq ($(wildcard src/main/Doxyfile),)
 	@$(call print-target,$@)
 	@doxygen $(DOXYGEN_FLAGS) src/main/Doxyfile
-  ifeq ($(GAIA_WSL),1)
-	@echo $$ wsl-open $(BUILD_DIR)/src/main/doc/html/index.html
-  else
 	@echo Created $(BUILD_DIR)/src/main/doc/html/index.html
-  endif
 endif
 
 doc-test:
 ifneq ($(wildcard src/test/Doxyfile),)
 	@$(call print-target,$@)
 	@doxygen $(DOXYGEN_FLAGS) src/test/Doxyfile
-  ifeq ($(GAIA_WSL),1)
-	@echo $$ wsl-open $(BUILD_DIR)/src/test/doc/html/index.html
-  else
 	@echo Created $(BUILD_DIR)/src/test/doc/html/index.html
-  endif
 endif
 
 # C-specific targets ----------------------------------------------------------------------------------------

@@ -1,0 +1,200 @@
+#!/usr/bin/env python3
+#
+# gaia-project
+#
+
+import argparse
+import gaia.log
+import gaia.list
+import gaia.shell
+import io
+import json5
+import os
+
+from gaia.shell import error
+from os import environ as env
+
+# Constants -------------------------------------------------------------------------------------------------
+
+DESCRIPTION = "Process projects, execute arguments as command line."
+
+EPILOG = """If no PROJECT is given, `all` is assumed.
+
+Examples:
+
+  gaia-build   # Execute command line `make` for all projects
+  gaia-build g # Execute command line `gaia-git` for all projects"""
+
+USAGE = "%(prog)s [OPTION]... [PROJECT]... [ARG]..."
+
+# Functions -------------------------------------------------------------------------------------------------
+
+def find_root_dir() -> str:
+  # Test current and parent directories
+  dir = os.getcwd()
+  while True:
+    if test_root_dir(dir):
+      return dir
+    if dir == "/":
+      break
+    dir = os.path.abspath(dir + "/..")
+
+  # Test `GAIA_PROJECT_DIR`
+  dir = env.get("GAIA_PROJECT_DIR")
+  if dir:
+    if test_root_dir(dir):
+      return dir
+
+  # Test `~/project`
+  dir = env["HOME"] + "/project"
+  if test_root_dir(dir):
+    return dir
+
+  raise RuntimeError("Cannot find root directory")
+
+def get_gaia_project_json(prj: str) -> dict[str, any]:
+  dir = get_project_dir(prj)
+  path = dir + "/gaia-project.json"
+  gaia.log.debug(f"{path=}")
+  with io.open(path, mode="r") as file:
+    o = json5.load(file)
+    return o
+
+def get_project_dir(prj: str) -> str:
+  return root_dir + "/" + prj
+
+def parse_args() -> list[str]:
+  ret = cl.args
+  if not ret:
+    ret = ["make"]
+  elif ret[0] == "g":
+    ret[0] = "gaia-git"
+  elif ret[0] == "m":
+    ret[0] = "make"
+  gaia.log.debug(f"{ret=}")
+  return ret
+
+def parse_cl() -> argparse.Namespace:
+  parser = argparse.ArgumentParser(
+    add_help=False,
+    description=DESCRIPTION,
+    epilog=EPILOG,
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+    prog="gaia-build",
+    usage=USAGE,
+  )
+
+  parser.add_argument("-h", "--help", action="help",
+      help="show this help message and exit")
+  parser.add_argument("-s", "--skip", action="store_true", dest="skip",
+      help="skip processing dependencies")
+
+  parser.add_argument("args", action="store", nargs="*", type=str)
+
+  return parser.parse_args()
+
+def parse_projects() -> list[str]:
+  ret = []
+  # Consume `args` as long as the first element matches a project or "all"
+  while True:
+    prj = cl.args and cl.args[0] or None
+    if not prj:
+      break
+    if prj == "all" or prj in projects:
+      ret.append(prj)
+      del cl.args[0]
+    else:
+      break
+  if not ret:
+    ret = ["all"]
+  gaia.log.debug(f"{ret=}, {cl.args=}")
+
+  # Resolve `all``
+  tmp = ret
+  ret = []
+  for prj in tmp:
+    if prj == "all":
+      for p in sorted(projects.keys()):
+        ret.append(p)
+    else:
+      ret.append(prj)
+  gaia.log.debug(f"Resolved `all`, {ret=}")
+
+  # Resolve dependencies
+  if not cl.skip:
+    tmp = ret
+    ret = []
+    for prj in tmp:
+      ret.extend(resolve(prj))
+    gaia.log.debug(f"Resolved dependencies, {ret=}")
+
+  # Eliminate duplicates
+  gaia.list.dedup(ret)
+  gaia.log.debug(f"Eliminated duplicates, {ret=}")
+
+  return ret
+
+def print_section(what: str, cl: list[str] = None) -> None:
+  str = 40 * "#" + "\n# \n# " + root_dir + "\n#\n# " + what
+  str+= " $ " + " ".join(cl)
+  str += "\n#\n" + 40 * "#"
+  print(str)
+
+def resolve(prj: str) -> list[str]:
+  def resolve0(prj: str, out: list[str]):
+    deps = projects[prj]
+    for dep in deps:
+      resolve0(dep, out) # Recursive call
+    if prj not in out:
+      ret.append(prj)
+
+  ret = []
+  resolve0(prj, ret)
+  return ret
+
+def test_root_dir(dir: str) -> bool:
+  if not os.path.isdir(dir):
+    return False
+  for file in os.listdir(dir):
+    subdir = dir + "/" + file
+    if os.path.isdir(subdir):
+      if os.path.isfile(subdir + "/gaia-project.json"):
+        return True
+  return False
+
+# Main ------------------------------------------------------------------------------------------------------
+
+# Parse command line
+cl = parse_cl()
+gaia.log.debug(f"{cl=}")
+
+# Find root dir
+root_dir = find_root_dir()
+gaia.shell.note(f"Using project root directory: {root_dir}")
+gaia.log.debug(f"{root_dir=}")
+
+# Collect projects and their dependencies from `gaia-project.json`
+projects = {}
+for prj in os.listdir(root_dir):
+  subdir = root_dir + "/" + prj
+  if os.path.isfile(subdir + "/gaia-project.json"):
+    projects[prj] = []
+    o = get_gaia_project_json(prj)
+    if "dependencies" in o:
+      projects[prj] = o["dependencies"]
+gaia.log.debug(f"{projects=}")
+
+# Parse projects and arguments
+prjs = parse_projects()
+gaia.log.debug(f"{prjs=}")
+args = parse_args()
+gaia.log.debug(f"{args=}")
+
+# Process projects, execute arguments
+for prj in prjs:
+  print_section(prj, args)
+  dir = get_project_dir(prj)
+  os.chdir(dir)
+  gaia.shell.run(args, check=True)
+
+# EOF
