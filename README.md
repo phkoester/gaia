@@ -24,9 +24,8 @@ In your `~/.bashrc`, export these variables:
 | Environment Variable      | Required? | Description
 | :------------------------ | :-------- | :----------
 | `GAIA_BUILD_TYPE`         | No        | Values: `debug`, `release` (default)
-| `GAIA_CXX_TOOLCHAIN`      | No        | Values: `gnu`, `llvm` (default)
+| `GAIA_CXX_TOOLCHAIN`      | No        | Values: `gnu` (default on Linux), `llvm`, `msvc` (default on Windows)
 | `GAIA_DIR`                | Yes       | Example: `~/project/gaia`
-| `GAIA_EDITOR`             | No        | Example: `nano` (default)
 | `GAIA_PROJECT_DIR`        | No        | Fallback directory where `gaia-build` looks for projects
 
 After that, to initialize Gaia, place this line in your `~/.bashrc`:

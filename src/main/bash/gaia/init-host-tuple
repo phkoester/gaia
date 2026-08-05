@@ -13,8 +13,8 @@
 #
 # Until now, these host tuples are supported:
 #
-# - `x86_64-pc-linux-gnu`
-# - `x86_64-pc-windows-msvc`
+# - `x86_64-pc-linux`
+# - `x86_64-pc-windows`
 #
 
 # Detect host tuple ----------------------------------------------------------------------------------------
@@ -24,6 +24,11 @@ export GAIA_HOST_ARCH GAIA_HOST_VENDOR GAIA_HOST_OS GAIA_HOST
 
 if [[ $OSTYPE == linux-gnu ]]; then
   # Linux
+
+  export GAIA_LINUX=1
+  if lsb_release -a | grep -q "Ubuntu"; then
+    export GAIA_UBUNTU=1
+  fi
 
   if [[ ! $MACHTYPE =~ x86_64-.*-linux-gnu ]]; then
     echo init-host-tuple: error: Invalid \`MACHTYPE\`: \`$MACHTYPE\` > /dev/stderr
@@ -35,6 +40,8 @@ if [[ $OSTYPE == linux-gnu ]]; then
   GAIA_HOST_OS=linux
 elif [[ $OS == Windows_NT ]]; then
   # Windows
+
+  export GAIA_WINDOWS=1
 
   if [[ $PROCESSOR_ARCHITECTURE != AMD64 ]]; then
     echo init-host-tuple: error: Invalid \`PROCESSOR_ARCHITECTURE\`: \`$PROCESSOR_ARCHITECTURE\` > /dev/stderr
