@@ -98,7 +98,10 @@ ifeq ($(filter $(MAKECMDGOALS),run),run)
     RUN_EXECUTABLE := $(shell find $(BUILD_DIR)/src -executable -name '$(RUN_TARGET)' -type f)
   endif
   ifdef GAIA_WINDOWS
-    RUN_EXECUTABLE := $(shell find $(BUILD_DIR)/src/main/$(CONFIG) -executable -name '$(RUN_TARGET).exe' -type f)
+    RUN_EXECUTABLE := \
+      $(shell find $(BUILD_DIR)/src/bench/$(CONFIG) -executable -name '$(RUN_TARGET).exe' -type f) \
+      $(shell find $(BUILD_DIR)/src/main/$(CONFIG) -executable -name '$(RUN_TARGET).exe' -type f) \
+      $(shell find $(BUILD_DIR)/src/test/$(CONFIG) -executable -name '$(RUN_TARGET).exe' -type f)
   endif
   ifeq ($(RUN_EXECUTABLE),)
     $(error Found no executable for target `$(RUN_TARGET)`)
