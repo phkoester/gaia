@@ -150,7 +150,7 @@ build: configure
 	  --build --preset $(BUILD_PRESET) \
 	  $(if $(TARGET),--target $(TARGET),) \
 	  $(CMAKE_TRAILING_FLAGS) \
-	  -- $(GMAKE_FLAGS)
+	  $(if $(GAIA_LINUX),-- $(GMAKE_FLAGS),)
 
 check:
 	@$(call print-target,$@)
