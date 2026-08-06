@@ -48,16 +48,17 @@ include $(GAIA_DIR)/src/main/make/Makefile-common.mk
 
 ifdef GAIA_LINUX
   export BUILD_DIR := build/$(GAIA_BUILD_TYPE)
-  export CONFIG :=
+  CONFIG :=
+  TEST_DIR := $(BUILD_DIR)/src/test
 endif
 ifdef GAIA_WINDOWS
   export BUILD_DIR := build
-
   ifeq ($(GAIA_BUILD_TYPE),debug)
     CONFIG := Debug
   else
     CONFIG := Release
   endif
+  TEST_DIR := $(BUILD_DIR)/src/test/$(CONFIG)
 endif
 
 CMAKE_DEPS := CMakeLists.txt $(shell find src -name CMakeLists.txt) $(shell find cmake -type f)
