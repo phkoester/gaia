@@ -46,9 +46,16 @@ include $(GAIA_DIR)/src/main/make/Makefile-common.mk
 
 # Constants -------------------------------------------------------------------------------------------------
 
+export BUILD_DIR := build/$(GAIA_BUILD_TYPE)
+
 CMAKE_DEPS := CMakeLists.txt $(shell find src -name CMakeLists.txt) $(shell find cmake -type f)
 
-export BUILD_DIR := build/$(GAIA_BUILD_TYPE)
+ifdef GAIA_LINUX
+  CONFIGURE_DEP := compile_commands.json
+endif
+ifdef GAIA_WINDOWS
+  CONFIGURE_DEP := build/cmake_install.cmake
+endif
 
 CHECK_FILES :=
 ifeq ($(filter $(MAKECMDGOALS),check),check)
@@ -158,7 +165,7 @@ clean:
 	@$(call print-target,$@)
 	@rm -frv build
 
-configure: compile_commands.json
+configure: $(CONFIGURE_DEP)
 
 doc: doc-main doc-test
 
