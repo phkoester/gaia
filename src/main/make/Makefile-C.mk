@@ -53,6 +53,12 @@ endif
 ifdef GAIA_WINDOWS
   export BUILD_DIR := build
   export EXECUTABLE_SUFFIX := .exe
+
+  ifeq ($(GAIA_BUILD_TYPE),debug)
+    CONFIG := Debug
+  else
+    CONFIG := Release
+  endif
 endif
 
 CMAKE_DEPS := CMakeLists.txt $(shell find src -name CMakeLists.txt) $(shell find cmake -type f)
@@ -231,6 +237,11 @@ endif
 
 list-targets: configure
 	@$(call print-target,$@)
+ifdef GAIA_LINUX
 	@cmake --build --preset $(BUILD_PRESET) --target help
+endif
+ifdef GAIA_WINDOWS
+	@cmake --build --config $(CONFIG)--preset $(BUILD_PRESET) --target help
+endif
 
 # EOF
