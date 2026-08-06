@@ -172,7 +172,6 @@ gaia.log.debug(f"{cl=}")
 # Find root dir
 root_dir = find_root_dir()
 gaia.shell.note(f"Using project root directory: {root_dir}")
-gaia.log.debug(f"{root_dir=}")
 
 # Collect projects and their dependencies from `gaia-project.json`
 projects = {}
