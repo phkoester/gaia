@@ -46,7 +46,12 @@ include $(GAIA_DIR)/src/main/make/Makefile-common.mk
 
 # Constants -------------------------------------------------------------------------------------------------
 
-export BUILD_DIR := build/$(GAIA_BUILD_TYPE)
+ifdef GAIA_LINUX
+  export BUILD_DIR := build/$(GAIA_BUILD_TYPE)
+endif
+ifdef GAIA_WINDOWS
+  export BUILD_DIR := build
+endif
 
 CMAKE_DEPS := CMakeLists.txt $(shell find src -name CMakeLists.txt) $(shell find cmake -type f)
 
