@@ -195,10 +195,10 @@ run:
 test:
 ifneq ($(wildcard $(BUILD_DIR)/src/test/),)
 	@$(call print-target,$@)
-	@ctest $(CTEST_FLAGS) --test-dir $(BUILD_DIR)/src/test $(if $(PATTERN),-R '$(PATTERN)',)
+	@ctest $(CTEST_FLAGS) --preset $(TEST_PRESET) --test-dir $(BUILD_DIR)/src/test $(if $(PATTERN),-R '$(PATTERN)',)
 endif
 
-# Auiliary targets ..........................................................................................
+# Auxiliary targets .........................................................................................
 
 doc-main:
 ifneq ($(wildcard src/main/Doxyfile),)
