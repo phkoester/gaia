@@ -48,11 +48,10 @@ include $(GAIA_DIR)/src/main/make/Makefile-common.mk
 
 ifdef GAIA_LINUX
   export BUILD_DIR := build/$(GAIA_BUILD_TYPE)
-  export EXECUTABLE_SUFFIX :=
+  export CONFIG :=
 endif
 ifdef GAIA_WINDOWS
   export BUILD_DIR := build
-  export EXECUTABLE_SUFFIX := .exe
 
   ifeq ($(GAIA_BUILD_TYPE),debug)
     CONFIG := Debug
@@ -93,7 +92,13 @@ ifeq ($(filter $(MAKECMDGOALS),run),run)
   else
     RUN_TARGET := $(TARGET)
   endif
-  RUN_EXECUTABLE := $(shell find $(BUILD_DIR)/src -executable -name '$(RUN_TARGET)$(EXECUTABLE_SUFFIX)' -type f)
+  RUN_EXECUTABLE :=
+  ifdef GAIA_LINUX
+    RUN_EXECUTABLE := $(shell find $(BUILD_DIR)/src -executable -name '$(RUN_TARGET)' -type f)
+  endif
+  ifdef GAIA_WINDOWS
+    RUN_EXECUTABLE := $(shell find $(BUILD_DIR)/src/main/$(CONFIG) -executable -name '$(RUN_TARGET).exe' -type f)
+  endif
   ifeq ($(RUN_EXECUTABLE),)
     $(error Found no executable for target `$(RUN_TARGET)`)
   endif
@@ -237,11 +242,6 @@ endif
 
 list-targets: configure
 	@$(call print-target,$@)
-ifdef GAIA_LINUX
 	@cmake --build --preset $(BUILD_PRESET) --target help
-endif
-ifdef GAIA_WINDOWS
-	@cmake --build --config $(CONFIG) --preset $(BUILD_PRESET) --target help
-endif
 
 # EOF
