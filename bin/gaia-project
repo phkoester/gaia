@@ -33,6 +33,7 @@ def find_root_dir() -> str:
   # Test current and parent directories
   dir = os.getcwd()
   while True:
+    gaia.log.debug(f"{dir=}")
     if test_root_dir(dir):
       return dir
     if dir == "/":
