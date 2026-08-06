@@ -48,9 +48,11 @@ include $(GAIA_DIR)/src/main/make/Makefile-common.mk
 
 ifdef GAIA_LINUX
   export BUILD_DIR := build/$(GAIA_BUILD_TYPE)
+  export EXECUTABLE_SUFFIX :=
 endif
 ifdef GAIA_WINDOWS
   export BUILD_DIR := build
+  export EXECUTABLE_SUFFIX := .exe
 endif
 
 CMAKE_DEPS := CMakeLists.txt $(shell find src -name CMakeLists.txt) $(shell find cmake -type f)
@@ -85,7 +87,7 @@ ifeq ($(filter $(MAKECMDGOALS),run),run)
   else
     RUN_TARGET := $(TARGET)
   endif
-  RUN_EXECUTABLE := $(shell find $(BUILD_DIR)/src -executable -name '$(RUN_TARGET)' -type f)
+  RUN_EXECUTABLE := $(shell find $(BUILD_DIR)/src -executable -name '$(RUN_TARGET)$(EXECUTABLE_SUFFIX)' -type f)
   ifeq ($(RUN_EXECUTABLE),)
     $(error Found no executable for target `$(RUN_TARGET)`)
   endif
