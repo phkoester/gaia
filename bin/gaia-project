@@ -46,7 +46,7 @@ def find_root_dir() -> str:
       return dir
 
   # Test `~/project`
-  dir = env["HOME"] + "/project"
+  dir = get_home_dir() + "/project"
   if test_root_dir(dir):
     return dir
 
@@ -59,6 +59,12 @@ def get_gaia_project_json(prj: str) -> dict[str, any]:
   with io.open(path, mode="r") as file:
     o = json5.load(file)
     return o
+
+def get_home_dir() -> str:
+  if env.get("GAIA_WINDOWS"):
+    return env.get("USERPROFILE")
+  else:
+    return env.get("HOME")
 
 def get_project_dir(prj: str) -> str:
   return root_dir + "/" + prj

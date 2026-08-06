@@ -5,8 +5,6 @@ in a Bash shell.
 
 **Note:** For the time being, it is not recommended for public use. Use it at your own risk.
 
-Supported project types are Bash, Python, C++, and Rust.
-
 Recommended readings:
 
 - [Text-File Guidelines](doc/text-file-guidelines.md)
