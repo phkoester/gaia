@@ -6,7 +6,7 @@
 # - GAIA_BUILD_TYPE
 #     The build type: `debug` or `release`
 # - GAIA_CXX_TOOLCHAIN
-#     The C++ toolchain: `gnu` or `llvm`
+#     The C++ toolchain: `gnu`, `llvm` or `msvc`
 # - GAIA_DIR
 # - GAIA_VERSION
 #
@@ -36,8 +36,8 @@ ifndef GAIA_VERSION
   $(error `GAIA_VERSION` not set)
 endif
 
-ifeq ($(filter $(GAIA_CXX_TOOLCHAIN),gnu llvm),)
-  $(error `GAIA_CXX_TOOLCHAIN`: Invalid value `$(GAIA_CXX_TOOLCHAIN)`; expected `gnu` or `llvm`)
+ifeq ($(filter $(GAIA_CXX_TOOLCHAIN),gnu llvm msvc),)
+  $(error `GAIA_CXX_TOOLCHAIN`: Invalid value `$(GAIA_CXX_TOOLCHAIN)`; expected `gnu`, `llvm`, or `msvc`)
 endif
 
 ifeq ($(filter $(GAIA_BUILD_TYPE),debug release),)
