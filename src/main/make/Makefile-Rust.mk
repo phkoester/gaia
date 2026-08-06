@@ -27,7 +27,8 @@ include $(GAIA_DIR)/src/main/make/Makefile-common.mk
 
 # Constants -------------------------------------------------------------------------------------------------
 
-KATEX_HTML := $(realpath src/katex.html) # Local Rustdoc invocation needs an absolute path
+# Local Rustdoc invocation needs an absolute path
+KATEX_HTML := $(realpath $(GAIA_DIR)/src/main/html/katex.html)
 TARGET_DIR := target/$(GAIA_BUILD_TYPE)
 
 TEST_BIN_DIR := $(TARGET_DIR)/deps
@@ -60,8 +61,8 @@ clean:
 
 doc:
 	@$(call print-target,$@)
-	@RUSTDOCFLAGS="--cfg docsrs --html-in-header $(KATEX_HTML)" cargo +nightly doc \
-	  $(CARGO_FLAGS) --all-features --no-deps
+	RUSTDOCFLAGS="--cfg docsrs --html-in-header $(KATEX_HTML)" \
+	  cargo +nightly doc $(CARGO_FLAGS) --all-features --no-deps
 
 run:
 	@$(call print-target,$@)

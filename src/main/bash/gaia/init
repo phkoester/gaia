@@ -54,13 +54,13 @@ export GAIA_MAKE_FLAGS="-j$GAIA_NPROC_3_4 -l$GAIA_NPROC"
 
 export PYTHONUTF8=1
 
-# Environment (Linux) ---------------------------------------------------------------------------------------
+# Environment (Linux) .......................................................................................
 
 if [[ $GAIA_LINUX ]]; then
   export GAIA_CXX_TOOLCHAIN=${GAIA_CXX_TOOLCHAIN:-gnu}
 fi
 
-# Environment (Windows) -------------------------------------------------------------------------------------
+# Environment (Windows) .....................................................................................
 
 if [[ $GAIA_WINDOWS ]]; then
   export GAIA_CXX_TOOLCHAIN=${GAIA_CXX_TOOLCHAIN:-msvc}
@@ -74,15 +74,13 @@ source "$dir__/init-functions" || return 2
 
 # Paths -----------------------------------------------------------------------------------------------------
 
-if [[ $SHLVL == 1 ]]; then
-  path-append PATH "$GAIA_DIR/bin"
-  export PATH
+path-append PATH "$GAIA_DIR/bin"
+export PATH
 
-  path-append PYTHONPATH "$GAIA_DIR/src/main/python"
-  export PYTHONPATH
-fi
+path-append PYTHONPATH "$GAIA_DIR/src/main/python"
+export PYTHONPATH
 
-# Paths (Windows) -------------------------------------------------------------------------------------------
+# Paths (Windows) ...........................................................................................
 
 if [[ $SHLVL == 1 && $GAIA_WINDOWS ]]; then
   # Move all `PATH`` entries for Microsoft Visual Studio to the top, so Microsoft's `link.exe` is found first
