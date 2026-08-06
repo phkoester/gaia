@@ -66,14 +66,16 @@ if [[ $GAIA_WINDOWS ]]; then
   export GAIA_CXX_TOOLCHAIN=${GAIA_CXX_TOOLCHAIN:-msvc}
   export USER=$USERNAME
 
-  # Move all `PATH`` entries for Microaoft Visual Studio to the top, so Microsoft's `link.exe` is found first
+  # Move all `PATH`` entries for Microsoft Visual Studio to the top, so Microsoft's `link.exe` is found first
 
+  echo OLD PATH: $PATH
   tmp=$(mktemp)
   path-list PATH | grep "Microsoft Visual Studio" | tac > $tmp # List in reverse order
   while IFS= read -r path || [[ -n "$path" ]]; do
     path-prepend PATH "$path"
   done < $tmp
   rm $tmp
+  echo NEW PATH: $PATH
 fi
 
 # Aliases and functions -------------------------------------------------------------------------------------
