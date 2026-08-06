@@ -241,7 +241,7 @@ ifdef GAIA_LINUX
 	@cmake --build --preset $(BUILD_PRESET) --target help
 endif
 ifdef GAIA_WINDOWS
-	@cmake --build --config $(CONFIG)--preset $(BUILD_PRESET) --target help
+	@cmake --build --config $(CONFIG) --preset $(BUILD_PRESET) --target help
 endif
 
 # EOF
