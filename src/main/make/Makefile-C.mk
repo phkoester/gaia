@@ -125,9 +125,6 @@ endif
 # Configure CTest -------------------------------------------------------------------------------------------
 
 CTEST_FLAGS := --output-on-failure
-ifdef GAIA_WINDOWS
-  CTEST_FLAGS += --test-dir build/src/test
-endif
 ifeq ($(VERBOSE),1)
   CTEST_FLAGS += -V
 endif
