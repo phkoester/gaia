@@ -47,24 +47,25 @@ export GAIA_NPROC_1_4=$(($GAIA_NPROC / 4))
 export GAIA_NPROC_1_2=$(($GAIA_NPROC / 2))
 export GAIA_NPROC_3_4=$((3 * $GAIA_NPROC / 4))
 
-[[ $GAIA_LINUX ]] && export GAIA_CXX_TOOLCHAIN=${GAIA_CXX_TOOLCHAIN:-gnu}
-[[ $GAIA_WINDOWS ]] && export GAIA_CXX_TOOLCHAIN=${GAIA_CXX_TOOLCHAIN:-msvc}
-
 export GAIA_MAKE_FLAGS="-j$GAIA_NPROC_3_4 -l$GAIA_NPROC"
-
-if [[ $HOME ]]; then
-  export GAIA_USER_DIR=$HOME
-elif [[ $USERPROFILE ]]; then
-  export GAIA_USER_DIR=$USERPROFILE
-else
-  echo init: error: Cannot determine \`GAIA_USER_DIR\` > /dev/stderr
-  return 2
-fi
 
 [[ -d /mnt/wsl ]] && export GAIA_WSL=1
 [[ -d /mnt/wslg ]] && export GAIA_WSLG=1
 
 export PYTHONUTF8=1
+
+# Environment (Linux) ---------------------------------------------------------------------------------------
+
+if [[ $GAIA_LINUX ]]; then
+  export GAIA_CXX_TOOLCHAIN=${GAIA_CXX_TOOLCHAIN:-gnu}
+fi
+
+# Environment (Windows) -------------------------------------------------------------------------------------
+
+if [[ $GAIA_WINDOWS ]]; then
+  export GAIA_CXX_TOOLCHAIN=${GAIA_CXX_TOOLCHAIN:-msvc}
+  export USER=$USERNAME
+fi
 
 # Aliases and functions -------------------------------------------------------------------------------------
 
