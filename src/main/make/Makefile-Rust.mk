@@ -30,7 +30,7 @@ include $(GAIA_DIR)/src/main/make/Makefile-common.mk
 # Local Rustdoc invocation needs an absolute path
 KATEX_HTML := $(realpath $(GAIA_DIR)/src/main/html/katex.html)
 ifdef GAIA_WiNDOWS
-  KATEX_HTML := $(cygpath -w $(KATEX_HTML))
+  KATEX_HTML := $(shell cygpath -w $(KATEX_HTML))
 endif
 
 TARGET_DIR := target/$(GAIA_BUILD_TYPE)
