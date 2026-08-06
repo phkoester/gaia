@@ -182,6 +182,7 @@ endif
 
 # Auiliary targets ..........................................................................................
 
+ifdef GAIA_LINUX
 $(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS)
 	@$(call print-target,$@)
 	@cmake $(CMAKE_FLAGS) --preset $(CONFIGURE_PRESET)
@@ -189,6 +190,13 @@ $(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS)
 compile_commands.json: $(BUILD_DIR)/compile_commands.json
 	@echo ">" $@
 	@gaia-filter-compile-commands --field file -i $< -o $@ $(PROJECT_NAME)/src
+endif
+
+ifdef GAIA_WINDOWS
+build/cmake_install.cmake: $(GAIA_DEPS) $(CMAKE_DEPS)
+	@$(call print-target,$@)
+	@cmake $(CMAKE_FLAGS) --preset $(CONFIGURE_PRESET)
+endif
 
 doc-main:
 ifneq ($(wildcard src/main/Doxyfile),)
