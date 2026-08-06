@@ -81,8 +81,6 @@ endif
 
 # Configure CMake -------------------------------------------------------------------------------------------
 
-CMAKE_PRESET := linux-$(GAIA_BUILD_TYPE)
-
 CMAKE_FLAGS :=
 
 CMAKE_TRAILING_FLAGS :=
@@ -90,11 +88,27 @@ ifeq ($(VERBOSE),1)
   CMAKE_TRAILING_FLAGS += -v
 endif
 
+ifdef GAIA_LINUX
+  CONFIGURE_PRESET := linux-$(GAIA_BUILD_TYPE)
+  BUILD_PRESET := linux-$(GAIA_BUILD_TYPE)
+endif
+ifdef GAIA_WINDOWS
+  CONFIGURE_PRESET := windows
+  BUILD_PRESET := windows-$(GAIA_BUILD_TYPE)
+endif
+
 # Configure CTest -------------------------------------------------------------------------------------------
 
 CTEST_FLAGS := --output-on-failure
 ifeq ($(VERBOSE),1)
   CTEST_FLAGS += -V
+endif
+
+ifdef GAIA_LINUX
+  TEST_PRESET := linux-$(GAIA_BUILD_TYPE)
+endif
+ifdef GAIA_WINDOWS
+  TEST_PRESET := windows-$(GAIA_BUILD_TYPE)
 endif
 
 # Configure Doxygen -----------------------------------------------------------------------------------------
@@ -126,7 +140,7 @@ endif
 build: configure
 	@$(call print-target,$@)
 	@cmake $(CMAKE_FLAGS) \
-	  --build --preset $(CMAKE_PRESET) \
+	  --build --preset $(BUILD_PRESET) \
 	  $(if $(TARGET),--target $(TARGET),) \
 	  $(CMAKE_TRAILING_FLAGS) \
 	  -- $(GMAKE_FLAGS)
@@ -163,7 +177,7 @@ endif
 
 $(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS)
 	@$(call print-target,$@)
-	@cmake $(CMAKE_FLAGS) --preset $(CMAKE_PRESET)
+	@cmake $(CMAKE_FLAGS) --preset $(CONFIGURE_PRESET)
 
 compile_commands.json: $(BUILD_DIR)/compile_commands.json
 	@echo ">" $@
@@ -187,6 +201,6 @@ endif
 
 list-targets: configure
 	@$(call print-target,$@)
-	@cmake --build --preset $(CMAKE_PRESET) --target help
+	@cmake --build --preset $(BUILD_PRESET) --target help
 
 # EOF
