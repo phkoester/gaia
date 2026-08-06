@@ -182,22 +182,6 @@ endif
 
 # Auiliary targets ..........................................................................................
 
-ifdef GAIA_LINUX
-$(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS)
-	@$(call print-target,$@)
-	@cmake $(CMAKE_FLAGS) --preset $(CONFIGURE_PRESET)
-
-compile_commands.json: $(BUILD_DIR)/compile_commands.json
-	@echo ">" $@
-	@gaia-filter-compile-commands --field file -i $< -o $@ $(PROJECT_NAME)/src
-endif
-
-ifdef GAIA_WINDOWS
-build/cmake_install.cmake: $(GAIA_DEPS) $(CMAKE_DEPS)
-	@$(call print-target,$@)
-	@cmake $(CMAKE_FLAGS) --preset $(CONFIGURE_PRESET)
-endif
-
 doc-main:
 ifneq ($(wildcard src/main/Doxyfile),)
 	@$(call print-target,$@)
@@ -210,6 +194,30 @@ ifneq ($(wildcard src/test/Doxyfile),)
 	@$(call print-target,$@)
 	@doxygen $(DOXYGEN_FLAGS) src/test/Doxyfile
 	@echo Created $(BUILD_DIR)/src/test/doc/html/index.html
+endif
+
+# Auxiliary targets (Linux) .................................................................................
+
+ifdef GAIA_LINUX
+
+$(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS)
+	@$(call print-target,$@)
+	@cmake $(CMAKE_FLAGS) --preset $(CONFIGURE_PRESET)
+
+compile_commands.json: $(BUILD_DIR)/compile_commands.json
+	@echo ">" $@
+	@gaia-filter-compile-commands --field file -i $< -o $@ $(PROJECT_NAME)/src
+
+endif
+
+# Auxiliary targets (Windows) ...............................................................................
+
+ifdef GAIA_WINDOWS
+
+build/cmake_install.cmake: $(GAIA_DEPS) $(CMAKE_DEPS)
+	@$(call print-target,$@)
+	@cmake $(CMAKE_FLAGS) --preset $(CONFIGURE_PRESET)
+
 endif
 
 # C-specific targets ----------------------------------------------------------------------------------------
