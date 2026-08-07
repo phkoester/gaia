@@ -34,8 +34,8 @@ endif
 
 TARGET_DIR := target/$(GAIA_BUILD_TYPE)
 
+COVERAGE_DIR := $(TARGET_DIR)/code-coverage
 TEST_BIN_DIR := $(TARGET_DIR)/deps
-TEST_COVERAGE_DIR := $(TARGET_DIR)/code-coverage
 
 # Configure Cargo -------------------------------------------------------------------------------------------
 
@@ -78,19 +78,19 @@ test:
 ifneq ($(COVERAGE),1)
 	@cargo test $(CARGO_FLAGS)
 else
-	@rm -rf $(TEST_COVERAGE_DIR)
+	@rm -rf $(COVERAGE_DIR)
 	@CARGO_INCREMENTAL=0 \
 	    LLVM_PROFILE_FILE=cargo-test-%p-%m.profraw \
 	    RUSTDOCFLAGS="-C instrument-coverage -Z unstable-options --persist-doctests $(TEST_BIN_DIR)" \
 	    RUSTFLAGS="-C instrument-coverage" \
    	    cargo +nightly test $(CARGO_FLAGS)
 	@grcov --binary-path $(TEST_BIN_DIR) -s . -t html --branch --ignore-not-existing \
-	  -o $(TEST_COVERAGE_DIR)/html .
+	  -o $(COVERAGE_DIR)/html .
 	@# Remove `.profraw` files
 	@rm -v $$(find -name "cargo-test-*.profraw")
 	@# Remove documentation-test executables
 	@rm -frv $(TEST_BIN_DIR)/src_*_rs_*
-	@echo Created $(TEST_COVERAGE_DIR)/html/index.html
+	@echo Created $(COVERAGE_DIR)/html/index.html
 endif
 
 # Rust-specific targets -------------------------------------------------------------------------------------

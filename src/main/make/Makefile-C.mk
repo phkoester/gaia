@@ -55,6 +55,7 @@ ifdef GAIA_WINDOWS
   else
     CONFIG := Release
   endif
+  COVERAGE_DIR := $(BUILD_DIR)/code-coverage/$(CONFIG)
   EXECUTABLE_DIRS := \
     $(BUILD_DIR)/src/bench/$(CONFIG) \
     $(BUILD_DIR)/src/main/$(CONFIG) \
@@ -63,6 +64,7 @@ ifdef GAIA_WINDOWS
 else
   export BUILD_DIR := build/$(GAIA_BUILD_TYPE)
   CONFIG :=
+  COVERAGE_DIR := $(BUILD_DIR)/code-coverage
   EXECUTABLE_DIRS :=
   TEST_DIR := $(BUILD_DIR)/src/test
 endif
@@ -211,11 +213,21 @@ run:
 	@echo $$ $(RUN_EXECUTABLE) $(ARGS)
 	@$(RUN_EXECUTABLE) $(ARGS)
 
-# @todo Support code coverage using the COVERAGE parameter
 test:
 ifneq ($(wildcard $(BUILD_DIR)/src/test/),)
 	@$(call print-target,$@)
 	@ctest $(CTEST_FLAGS) --preset $(TEST_PRESET) --test-dir $(BUILD_DIR)/src/test $(if $(PATTERN),-R '$(PATTERN)',)
+  ifeq ($(COVERAGE),1)
+	@mkdir -p $(COVERAGE_DIR)
+	@echo CURDIR: $(CURDIR)
+	@lcov --capture --directory $(BUILD_DIR)/src \
+	  --ignore-errors inconsistent,inconsistent --output-file $(COVERAGE_DIR)/app.info
+	@genhtml --ignore-errors inconsistent \
+	  -o $(COVERAGE_DIR)/html $(COVERAGE_DIR)/app.info
+	@find -name "*.gcda" -type f -delete
+	@rm $(COVERAGE_DIR)/app.info
+	@echo Created $(COVERAGE_DIR)/html/index.html
+  endif
 endif
 
 # Auxiliary targets .........................................................................................

@@ -85,6 +85,7 @@ endfunction()
 
 AddVar(BUILD_SHARED_LIBS BOOL OFF "Build shared libraries")
 AddVar(BUILD_TESTING     BOOL ON  "Enable testing and build tests")
+AddVar(COVERAGE          BOOL OFF "Enable code coverage")
 
 if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
   AddVar(CMAKE_BUILD_TYPE STRING Release "The build type")
@@ -97,16 +98,24 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+set(CTEST_COVERAGE_COMMAND /usr/bin/gcov) # XXX
 set(FETCHCONTENT_QUIET FALSE)
 
 set(BUILD_SHARED_LIBS_DEFAULT ${BUILD_SHARED_LIBS})
 set(CMAKE_CXX_FLAGS_DEFAULT "${CMAKE_CXX_FLAGS}")
 
-# Set compiler definitions, features, and options -----------------------------------------------------------
+# Set compiler and linker options ---------------------------------------------------------------------------
 
 set(COMPILE_DEFS)
 set(COMPILE_FEATURES cxx_std_23)
 set(COMPILE_FLAGS)
+
+set(LINK_FLAGS)
+
+if(COVERAGE)
+  list(APPEND COMPILE_FLAGS -coverage)
+  list(APPEND LINK_FLAGS -coverage)
+endif()
 
 # Set OS-specific compiler options --------------------------------------------------------------------------
 
@@ -147,6 +156,7 @@ function(AddExecutable name)
   target_compile_definitions(${name} PRIVATE ${COMPILE_DEFS})
   target_compile_features(${name} PRIVATE ${COMPILE_FEATURES})
   target_compile_options(${name} PRIVATE ${COMPILE_FLAGS})
+  target_link_options(${name} PRIVATE ${LINK_FLAGS})
 endfunction()
 
 # CopyRuntimeFiles(name)
@@ -217,6 +227,14 @@ function(AddTest name dir)
     PROPERTIES ENVIRONMENT "SOURCE_DIR=${CMAKE_SOURCE_DIR}/src/test/${dir}"
     ${envProps}
   )
+endfunction()
+
+# AddLibrary(name ...), like add_library()
+function(AddLibrary name)
+  add_library(${name} ${ARGN})
+  target_compile_features(${name} PRIVATE ${COMPILE_FEATURES})
+  target_compile_options(${name} PRIVATE ${COMPILE_FLAGS})
+  target_link_options(${name} PRIVATE ${LINK_FLAGS})
 endfunction()
 
 # UnixPath(in out)
