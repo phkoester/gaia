@@ -5,7 +5,9 @@
 # Usage: gaia-stem PATH
 #
 
-name=$(basename "$1")
-echo ${name%.*}
+for arg in "$@"; do
+  name=$(basename "$arg")
+  echo ${name%.*}
+done
 
 # EOF
