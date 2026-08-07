@@ -262,7 +262,7 @@ endif
 list-targets: configure
 	@$(call print-target,$@)
 ifdef GAIA_WINDOWS
-	@find $(EXECUTABLE_DIRS) -name "*.exe" -type f -o -name "*.lib" -type f | gaia-stem | sort -u
+	@gaia-stem $(find $(EXECUTABLE_DIRS) -name "*.exe" -type f -o -name "*.lib" -type f) | sort -u
 else
 	@cmake --build --preset $(BUILD_PRESET) --target help
 endif
