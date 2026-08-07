@@ -2,7 +2,7 @@
 #
 # gaia-stem
 #
-# Usage: gaia-stem PATH
+# Usage: gaia-stem [PATH]...
 #
 
 for arg in "$@"; do

@@ -211,6 +211,7 @@ run:
 	@echo $$ $(RUN_EXECUTABLE) $(ARGS)
 	@$(RUN_EXECUTABLE) $(ARGS)
 
+# @todo Support code coverage using the COVERAGE parameter
 test:
 ifneq ($(wildcard $(BUILD_DIR)/src/test/),)
 	@$(call print-target,$@)
