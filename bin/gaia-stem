@@ -6,7 +6,6 @@
 #
 
 name=$(basename $1)
-name=${name%.*}
-echo $name
+echo ${name%.*}
 
 # EOF
