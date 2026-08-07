@@ -119,6 +119,25 @@ elseif(GAIA_OS_WINDOWS)
   list(APPEND COMPILE_FLAGS /Zc:preprocessor) # /Wall
 endif()
 
+# Private functions -----------------------------------------------------------------------------------------
+
+# ParseArgs__(outSrcFiles outEnv srcFile... [ENVIRONMENT name=value]...)
+function(ParseArgs__ outSrcFiles outEnv)
+  set(srcFiles)
+  set(env)
+  set(appendTo srcFiles)
+  foreach(it IN LISTS ARGN)
+    if(it STREQUAL "ENVIRONMENT")
+      set(appendTo env)
+    else()
+      list(APPEND ${appendTo} ${it})
+    endif()
+  endforeach()
+
+  set(${outSrcFiles} ${srcFiles} PARENT_SCOPE)
+  set(${outEnv} ${env} PARENT_SCOPE)
+endfunction()
+
 # Functions -------------------------------------------------------------------------------------------------
 
 # AddExecutable(name srcFile...)
@@ -140,23 +159,6 @@ function(CopyRuntimeFiles name)
       COMMAND_EXPAND_LISTS
     )
   endif()
-endfunction()
-
-# ParseArgs__(srcFiles env srcFile... [ENVIRONMENT name=value...])
-function(ParseArgs__ srcFiles__ env__)
-  set(srcFiles)
-  set(env)
-  set(appendTo srcFiles)
-  foreach(it IN LISTS ARGN)
-    if(it STREQUAL "ENVIRONMENT")
-      set(appendTo env)
-    else()
-      list(APPEND ${appendTo} ${it})
-    endif()
-  endforeach()
-
-  set(${srcFiles__} ${srcFiles} PARENT_SCOPE)
-  set(${env__} ${env} PARENT_SCOPE)
 endfunction()
 
 # AddBench(name dir srcFile... [ENVIRONMENT name=value...])
@@ -220,10 +222,10 @@ endfunction()
 # UnixPath(in out)
 function(UnixPath in out)
   if(GAIA_OS_WINDOWS)
-    execute_process(COMMAND cygpath -u ${in} OUTPUT_VARIABLE out)
-    string(STRIP ${out} out)
-    message(STATUS "********** UnixPath: ${in} -> ${out}") # XXX
-    set(${out} ${out} PARENT_SCOPE)
+    execute_process(COMMAND cygpath -u ${in} OUTPUT_VARIABLE out__)
+    string(STRIP ${out__} out__)
+    message(STATUS "********** UnixPath: ${in} -> ${out__}") # XXX
+    set(${out} ${out__} PARENT_SCOPE)
   else()
     set(${out} ${in} PARENT_SCOPE)
   endif()
