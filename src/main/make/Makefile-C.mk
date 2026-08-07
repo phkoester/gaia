@@ -7,9 +7,11 @@
 #     Arguments to pass to the run target
 # - DEFAULT_RUN_TARGET
 #     The default target to run
-# - GAIA_DIR
 # - GAIA_BUILD_TYPE
 #     The build type: `debug` or `release`
+# - GAIA_CXX_TOOLCHAIN
+#     The C++ toolchain: `gnu`, `llvm` or `msvc`
+# - GAIA_DIR
 # - JOBS
 #     The number of jobs for GNU Make (0: none, N: N jobs, default: 3/4)
 # - PATTERN
@@ -46,11 +48,6 @@ include $(GAIA_DIR)/src/main/make/Makefile-common.mk
 
 # Constants -------------------------------------------------------------------------------------------------
 
-ifdef GAIA_LINUX
-  export BUILD_DIR := build/$(GAIA_BUILD_TYPE)
-  CONFIG :=
-  TEST_DIR := $(BUILD_DIR)/src/test
-endif
 ifdef GAIA_WINDOWS
   export BUILD_DIR := build
   ifeq ($(GAIA_BUILD_TYPE),debug)
@@ -58,7 +55,16 @@ ifdef GAIA_WINDOWS
   else
     CONFIG := Release
   endif
+  EXECUTABLE_DIRS := \
+    $(BUILD_DIR)/src/bench/$(CONFIG) \
+    $(BUILD_DIR)/src/main/$(CONFIG) \
+    $(BUILD_DIR)/src/test/$(CONFIG)
   TEST_DIR := $(BUILD_DIR)/src/test/$(CONFIG)
+else
+  export BUILD_DIR := build/$(GAIA_BUILD_TYPE)
+  CONFIG :=
+  EXECUTABLE_DIRS :=
+  TEST_DIR := $(BUILD_DIR)/src/test
 endif
 
 CMAKE_DEPS := CMakeLists.txt $(shell find src -name CMakeLists.txt) $(shell find cmake -type f)
@@ -90,15 +96,10 @@ ifeq ($(filter $(MAKECMDGOALS),run),run)
       TARGET := $(DEFAULT_RUN_TARGET)
     endif
   endif
-  RUN_EXECUTABLE :=
-  ifdef GAIA_LINUX
-    RUN_EXECUTABLE := $(shell find $(BUILD_DIR)/src -executable -name '$(TARGET)' -type f)
-  endif
   ifdef GAIA_WINDOWS
-    RUN_EXECUTABLE := \
-      $(shell find $(BUILD_DIR)/src/bench/$(CONFIG) -executable -name '$(TARGET).exe' -type f) \
-      $(shell find $(BUILD_DIR)/src/main/$(CONFIG) -executable -name '$(TARGET).exe' -type f) \
-      $(shell find $(BUILD_DIR)/src/test/$(CONFIG) -executable -name '$(TARGET).exe' -type f)
+    RUN_EXECUTABLE := $(shell find $(EXECUTABLE_DIRS) -executable -name '$(TARGET).exe' -type f)
+  else
+    RUN_EXECUTABLE := $(shell find $(BUILD_DIR)/src -executable -name '$(TARGET)' -type f)
   endif
   ifeq ($(RUN_EXECUTABLE),)
     $(error Found no executable for target `$(TARGET)`)
@@ -260,6 +261,9 @@ endif
 
 list-targets: configure
 	@$(call print-target,$@)
+ifdef GAIA_WINDOWS
+	@@find $(EXECUTABLE_DIRS) name "*.lib" -o -name "*.exe" -type f -exec gaia-stem {} \;
+else
 	@cmake --build --preset $(BUILD_PRESET) --target help
-
+endif
 # EOF

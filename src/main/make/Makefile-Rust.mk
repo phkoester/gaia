@@ -35,7 +35,7 @@ endif
 TARGET_DIR := target/$(GAIA_BUILD_TYPE)
 
 TEST_BIN_DIR := $(TARGET_DIR)/deps
-TEST_COVERAGE_DIR := $(TARGET_DIR)/coverage
+TEST_COVERAGE_DIR := $(TARGET_DIR)/code-coverage
 
 # Configure Cargo -------------------------------------------------------------------------------------------
 

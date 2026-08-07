@@ -8,7 +8,6 @@
 # - GAIA_CXX_TOOLCHAIN
 #     The C++ toolchain: `gnu`, `llvm` or `msvc`
 # - GAIA_DIR
-# - GAIA_VERSION
 #
 # Targets:
 #
@@ -31,9 +30,6 @@
 
 ifndef GAIA_DIR
   $(error `GAIA_DIR` not set)
-endif
-ifndef GAIA_VERSION
-  $(error `GAIA_VERSION` not set)
 endif
 
 ifeq ($(filter $(GAIA_CXX_TOOLCHAIN),gnu llvm msvc),)

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#
+# gaia-stem
+#
+# Usage: gaia-stem PATH
+#
+
+name=$(basename $1)
+name=${name%.*}
+echo $name
+
+# EOF
