@@ -31,6 +31,7 @@ USAGE = "%(prog)s [OPTION]... [PROJECT]... [ARG]..."
 
 def find_root_dir() -> str:
   # Test current and parent directories
+  gaia.log.debug("Test current and parent directories");
   dir = os.getcwd()
   while True:
     gaia.log.debug(f"{dir=}")
@@ -41,12 +42,14 @@ def find_root_dir() -> str:
     dir = os.path.abspath(dir + "/..")
 
   # Test `GAIA_PROJECT_DIR`
+  gaia.log.debug("Test `GAIA_PROJECT_DIR`");
   dir = env.get("GAIA_PROJECT_DIR")
   if dir:
     if test_root_dir(dir):
       return dir
 
   # Test `~/project`
+  gaia.log.debug("Test `~/project`");
   dir = env.get("HOME") + "/project"
   if test_root_dir(dir):
     return dir
@@ -154,6 +157,7 @@ def resolve(prj: str) -> list[str]:
   return ret
 
 def test_root_dir(dir: str) -> bool:
+  gaia.log.debug(f"test_root_dir: {dir=}");
   if not os.path.isdir(dir):
     return False
   for file in os.listdir(dir):
@@ -171,6 +175,7 @@ gaia.log.debug(f"{cl=}")
 
 # Find root dir
 root_dir = find_root_dir()
+gaia.log.debug(f"{root_dir=}")
 gaia.shell.note(f"Using project root directory: {root_dir}")
 
 # Collect projects and their dependencies from `gaia-project.json`
