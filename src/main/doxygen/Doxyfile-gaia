@@ -1,10 +1,10 @@
 #
-# Doxyfile.gaia
+# Doxyfile-gaia
 #
 
-@INCLUDE = $(GAIA_DIR)/src/main/doxygen/Doxyfile.default
+@INCLUDE = $(GAIA_DIR)/src/main/doxygen/Doxyfile-default
 
-@INCLUDE = $(GAIA_DIR)/src/main/doxygen/Doxyfile.aliases
+@INCLUDE = $(GAIA_DIR)/src/main/doxygen/Doxyfile-aliases
 
 # TAGFILES --------------------------------------------------------------------------------------------------
 #

@@ -9,9 +9,9 @@
 # - GAIA_BUILD_TYPE
 #     The build type: `debug` or `release`
 #
-# Targets:
+# Targets (parameters):
 #
-# - bench
+# - bench (GAIA_BUILD_TYPE)
 # - build (GAIA_BUILD_TYPE)
 # - check (GAIA_BUILD_TYPE)
 # - clean
@@ -50,6 +50,7 @@ bench:
 	@$(call print-target,$@)
 	@cargo +nightly bench
 
+# @todo Build specific target using the TARGET parameter
 build:
 	@$(call print-target,$@)
 	@cargo build $(CARGO_FLAGS)
@@ -67,6 +68,7 @@ doc:
 	RUSTDOCFLAGS="--cfg docsrs --html-in-header $(KATEX_HTML)" \
 	  cargo +nightly doc $(CARGO_FLAGS) --all-features --no-deps
 
+# @todo Run specific target using the TARGET parameter
 run:
 	@$(call print-target,$@)
 	@cargo run $(CARGO_FLAGS)

@@ -29,7 +29,7 @@
 # - CMAKE_CXX_COMPILER_LAUNCHER
 #     May be set to `ccache`
 #
-# Targets:
+# Targets (parameters):
 #
 # - bench (GAIA_BUILD_TYPE, PATTERN)
 # - build (GAIA_BUILD_TYPE, TARGET, VERBOSE)
