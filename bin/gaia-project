@@ -159,12 +159,15 @@ def resolve(prj: str) -> list[str]:
 def test_root_dir(dir: str) -> bool:
   gaia.log.debug(f"test_root_dir: {dir=}");
   if not os.path.isdir(dir):
+    gaia.log.debug(f"test_root_dir: {dir=} is not a root directory")
     return False
   for file in os.listdir(dir):
     subdir = dir + "/" + file
     if os.path.isdir(subdir):
       if os.path.isfile(subdir + "/gaia-project.json"):
+        gaia.log.debug(f"test_root_dir: {dir=} is a root directory")
         return True
+  gaia.log.debug(f"test_root_dir: {dir=} is not a root directory")
   return False
 
 # Main ------------------------------------------------------------------------------------------------------
