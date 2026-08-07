@@ -82,29 +82,26 @@ endif
 CHECK_REPORT_FILE := $(BUILD_DIR)/check-report.txt
 
 RUN_EXECUTABLE :=
-RUN_TARGET :=
 ifeq ($(filter $(MAKECMDGOALS),run),run)
   ifeq ($(TARGET),)
     ifeq ($(DEFAULT_RUN_TARGET),)
       $(error `DEFAULT_RUN_TARGET` not set)
     else
-      RUN_TARGET := $(DEFAULT_RUN_TARGET)
+      TARGET := $(DEFAULT_RUN_TARGET)
     endif
-  else
-    RUN_TARGET := $(TARGET)
   endif
   RUN_EXECUTABLE :=
   ifdef GAIA_LINUX
-    RUN_EXECUTABLE := $(shell find $(BUILD_DIR)/src -executable -name '$(RUN_TARGET)' -type f)
+    RUN_EXECUTABLE := $(shell find $(BUILD_DIR)/src -executable -name '$(TARGET)' -type f)
   endif
   ifdef GAIA_WINDOWS
     RUN_EXECUTABLE := \
-      $(shell find $(BUILD_DIR)/src/bench/$(CONFIG) -executable -name '$(RUN_TARGET).exe' -type f) \
-      $(shell find $(BUILD_DIR)/src/main/$(CONFIG) -executable -name '$(RUN_TARGET).exe' -type f) \
-      $(shell find $(BUILD_DIR)/src/test/$(CONFIG) -executable -name '$(RUN_TARGET).exe' -type f)
+      $(shell find $(BUILD_DIR)/src/bench/$(CONFIG) -executable -name '$(TARGET).exe' -type f) \
+      $(shell find $(BUILD_DIR)/src/main/$(CONFIG) -executable -name '$(TARGET).exe' -type f) \
+      $(shell find $(BUILD_DIR)/src/test/$(CONFIG) -executable -name '$(TARGET).exe' -type f)
   endif
   ifeq ($(RUN_EXECUTABLE),)
-    $(error Found no executable for target `$(RUN_TARGET)`)
+    $(error Found no executable for target `$(TARGET)`)
   endif
 endif
 
