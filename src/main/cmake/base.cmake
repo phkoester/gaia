@@ -4,7 +4,7 @@
 # To be included from a project's root `CMakeLists.txt` file.
 #
 
-# Check host tuple -------------------------------------------------------------------------------------------
+# Check host tuple ------------------------------------------------------------------------------------------
 
 if(LINUX)
   set(GAIA_OS linux)
@@ -19,7 +19,7 @@ if(NOT(GAIA_OS_LINUX) AND NOT(GAIA_OS_WINDOWS))
   message(FATAL_ERROR "Unsupported OS ${CMAKE_SYSTEM_NAME}")
 endif()
 
-# Check C/C++ toolchain --------------------------------------------------------------------------------------
+# Check C/C++ toolchain -------------------------------------------------------------------------------------
 
 if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
   set(GAIA_C_COMPILER clang)
