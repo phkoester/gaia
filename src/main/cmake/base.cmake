@@ -142,7 +142,7 @@ function(CopyRuntimeFiles name)
   endif()
 endfunction()
 
-# ParseArgs__(srcFiles env  srcFile... [ENVIRONMENT name=value...])
+# ParseArgs__(srcFiles env srcFile... [ENVIRONMENT name=value...])
 function(ParseArgs__ srcFiles__ env__)
   set(srcFiles)
   set(env)
@@ -215,6 +215,18 @@ function(AddTest name dir)
     PROPERTIES ENVIRONMENT "SOURCE_DIR=${CMAKE_SOURCE_DIR}/src/test/${dir}"
     ${envProps}
   )
+endfunction()
+
+# UnixPath(in out)
+function(UnixPath in out)
+  if(GAIA_OS_WINDOWS)
+    execute_process(COMMAND cygpath -u ${in} OUTPUT_VARIABLE out)
+    string(STRIP ${out} out)
+    message(STATUS "********** UnixPath: ${in} -> ${out}") # XXX
+    set(${out} ${out} PARENT_SCOPE)
+  else()
+    set(${out} ${in} PARENT_SCOPE)
+  endif()
 endfunction()
 
 # Dependency versions ---------------------------------------------------------------------------------------
