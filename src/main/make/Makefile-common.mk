@@ -94,17 +94,6 @@ upper = $(shell echo $1 | tr a-z A-Z)
 # $3: version
 write-version-header = $(shell python3 -c 'import gaia; gaia.write_version_header("$1", "$2", "$3")')
 
-# Select C and C++ compilers --------------------------------------------------------------------------------
-
-ifeq ($(GAIA_CXX_TOOLCHAIN),gnu)
-  export CC := gcc
-  export CXX := g++
-endif
-ifeq ($(GAIA_CXX_TOOLCHAIN),llvm)
-  export CC := clang
-  export CXX := clang++
-endif
-
 # Phony targets ---------------------------------------------------------------------------------------------
 
 .PHONY: \

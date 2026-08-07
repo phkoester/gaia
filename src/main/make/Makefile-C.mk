@@ -105,6 +105,23 @@ ifeq ($(filter $(MAKECMDGOALS),run),run)
   endif
 endif
 
+# Select C and C++ compilers --------------------------------------------------------------------------------
+
+export CMAKE_TOOLCHAIN_FLAG :=
+
+ifeq ($(GAIA_CXX_TOOLCHAIN),gnu)
+  export CC := gcc
+  export CXX := g++
+endif
+ifeq ($(GAIA_CXX_TOOLCHAIN),llvm)
+  export CC := clang
+  export CXX := clang++
+
+  ifdef GAIA_WINDOWS
+    CMAKE_TOOLCHAIN_FLAG := -T ClangCL
+  endif
+endif
+
 # Configure CMake -------------------------------------------------------------------------------------------
 
 CMAKE_FLAGS :=
@@ -235,7 +252,7 @@ ifdef GAIA_WINDOWS
 
 build/cmake_install.cmake: $(GAIA_DEPS) $(CMAKE_DEPS)
 	@$(call print-target,$@)
-	@cmake $(CMAKE_FLAGS) --preset $(CONFIGURE_PRESET)
+	@cmake $(CMAKE_FLAGS) $(CMAKE_TOOLCHAIN_FLAG) --preset $(CONFIGURE_PRESET)
 
 endif
 
