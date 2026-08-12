@@ -6,12 +6,21 @@
 
 [[ ! $GAIA_WSL ]] && return
 
-# USAGE: wsl-env NAME
+# Usage: wsl-env NAME
 wsl-env() {
   wslpath $(cmd.exe /c echo %$1% 2>/dev/null) | tr -d '\r'
 }
 
-# Usage: wsl-open
+# Usage: wsl-mount-google-drive
+wsl-mount-google-drive() {
+  [[ ! -d /mnt/g ]] && sudo mkdir /mnt/g
+  if [[ ! -d "/mnt/g/Meine Ablage" ]]; then
+    echo 'Mounting GoogleDrive as `mnt/g` ...'
+    sudo mount -t drvfs G: /mnt/g
+  fi
+}
+
+# Usage: wsl-open FILE
 wsl-open() {
   eval $(cl-get-options-f $FUNCNAME "" "$@")
   eval $(cl-get-args-f $FUNCNAME FILE)

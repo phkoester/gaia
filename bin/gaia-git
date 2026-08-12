@@ -7,6 +7,8 @@ source "$GAIA_DIR/src/main/bash/gaia/init" || exit 2
 
 set -e
 
+ssh-init
+
 if [[ $1 == "" ]]; then
   exec git status
 elif [[ $1 == acp ]]; then
