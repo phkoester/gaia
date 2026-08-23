@@ -25,7 +25,7 @@ elif [[ $1 == acp ]]; then
     echo Nothing to add
   fi
   if git status | grep -q "Changes to be committed:"; then
-    echo Commiting ...
+    echo Committing ...
     git commit -m"$m"
   else
     echo Nothing to commit
