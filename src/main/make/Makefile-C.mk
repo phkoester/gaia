@@ -19,6 +19,8 @@
 #     - Check only source files matching PATTERN
 # - TARGET
 #     The target to build or run
+# - VALGRIND
+#     If set to 1, run executables and tests with valgrind
 # - VERBOSE
 #     If set to 1, produce verbose output
 #
@@ -37,7 +39,7 @@
 # - clean
 # - configure (GAIA_BUILD_TYPE)
 # - doc (GAIA_BUILD_TYPE, VERBOSE)
-# - run (ARGS, DEFAULT_RUN_TARGET, GAIA_BUILD_TYPE, TARGET)
+# - run (ARGS, DEFAULT_RUN_TARGET, GAIA_BUILD_TYPE, TARGET, VALGRIND, VERBOSE)
 # - test (GAIA_BUILD_TYPE, PATTERN, VERBOSE)
 #
 
@@ -125,6 +127,19 @@ ifeq ($(GAIA_CXX_TOOLCHAIN),llvm)
   endif
 endif
 
+# Configure valgrind ----------------------------------------------------------------------------------------
+
+VALGRIND_FLAGS :=
+ifeq ($(VERBOSE),1)
+  VALGRIND_FLAGS += --leak-check=full --show-leak-kinds=all --track-origins=yes --vgdb=no
+endif
+
+ifeq ($(VALGRIND),1)
+  ifdef GAIA_WINDOWS
+    $(error valgrind is not available on Windows)
+  endif
+endif
+
 # Configure CMake -------------------------------------------------------------------------------------------
 
 CMAKE_FLAGS :=
@@ -146,6 +161,9 @@ endif
 # Configure CTest -------------------------------------------------------------------------------------------
 
 CTEST_FLAGS := --output-on-failure
+ifeq ($(VALGRIND),1)
+  CTEST_FLAGS += -T memcheck
+endif
 ifeq ($(VERBOSE),1)
   CTEST_FLAGS += -V
 endif
@@ -210,8 +228,13 @@ doc: doc-main doc-test
 
 run:
 	@$(call print-target,$@)
+ifneq ($(VALGRIND),1)
 	@echo $$ $(RUN_EXECUTABLE) $(ARGS)
 	@$(RUN_EXECUTABLE) $(ARGS)
+else
+	@echo $$ valgrind $(VALGRIND_FLAGS) $(RUN_EXECUTABLE) $(ARGS)
+	@valgrind $(VALGRIND_FLAGS) $(RUN_EXECUTABLE) $(ARGS)
+endif
 
 test:
 ifneq ($(wildcard $(BUILD_DIR)/src/test/),)

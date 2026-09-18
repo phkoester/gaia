@@ -93,7 +93,7 @@ else
 	@rm -frv $(TEST_BIN_DIR)/src_*_rs_*
 	@echo Created $(COVERAGE_DIR)/html/index.html
   else
-	$(error `grcov` is not avaible on Windows)
+	$(error grcov is not available on Windows)
   endif
 endif
 
