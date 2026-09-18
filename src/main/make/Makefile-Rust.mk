@@ -78,6 +78,7 @@ test:
 ifneq ($(COVERAGE),1)
 	@cargo test $(CARGO_FLAGS)
 else
+  ifndef GAIA_WINDOWS
 	@rm -rf $(COVERAGE_DIR)
 	@CARGO_INCREMENTAL=0 \
 	    LLVM_PROFILE_FILE=cargo-test-%p-%m.profraw \
@@ -91,6 +92,9 @@ else
 	@# Remove documentation-test executables
 	@rm -frv $(TEST_BIN_DIR)/src_*_rs_*
 	@echo Created $(COVERAGE_DIR)/html/index.html
+  else
+	$(error `grcov` is not avaible on Windows)
+  endif
 endif
 
 # Rust-specific targets -------------------------------------------------------------------------------------
