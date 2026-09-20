@@ -127,6 +127,14 @@ ifeq ($(GAIA_CXX_TOOLCHAIN),llvm)
   endif
 endif
 
+# Configure lcov --------------------------------------------------------------------------------------------
+
+ifeq ($(COVERAGE),1)
+  ifdef GAIA_WINDOWS
+    $(error lcov is not supported on Windows)
+  endif
+endif
+
 # Configure valgrind ----------------------------------------------------------------------------------------
 
 VALGRIND_FLAGS :=
@@ -238,16 +246,12 @@ ifneq ($(wildcard $(BUILD_DIR)/src/test/),)
 	@$(call print-target,$@)
 	@ctest $(CTEST_FLAGS) --preset $(TEST_PRESET) --test-dir $(BUILD_DIR)/src/test $(if $(PATTERN),-R '$(PATTERN)',)
   ifeq ($(COVERAGE),1)
-    ifndef GAIA_WINDOWS
 	@mkdir -p $(COVERAGE_DIR)
 	@lcov --capture --directory $(BUILD_DIR)/src \
 	  --ignore-errors inconsistent --output-file $(COVERAGE_DIR)/app.info
 	@genhtml --ignore-errors inconsistent -o $(COVERAGE_DIR)/html $(COVERAGE_DIR)/app.info
 	@rm $(COVERAGE_DIR)/app.info
 	@echo Created $(COVERAGE_DIR)/html/index.html
-    else
-      $(error lcov is not supported on Windows)
-    endif
   endif
 endif
 
