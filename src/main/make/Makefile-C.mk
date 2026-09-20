@@ -239,8 +239,7 @@ ifneq ($(wildcard $(BUILD_DIR)/src/test/),)
 	@ctest $(CTEST_FLAGS) --preset $(TEST_PRESET) --test-dir $(BUILD_DIR)/src/test $(if $(PATTERN),-R '$(PATTERN)',)
   ifeq ($(COVERAGE),1)
 	@mkdir -p $(COVERAGE_DIR)
-	@lcov --capture --directory $(BUILD_DIR)/src \
-	  --ignore-errors inconsistent --output-file $(COVERAGE_DIR)/app.info
+	@lcov --capture --directory $(BUILD_DIR)/src --output-file $(COVERAGE_DIR)/app.info
 	@genhtml --ignore-errors inconsistent \
 	  -o $(COVERAGE_DIR)/html $(COVERAGE_DIR)/app.info
 	@# find -name "*.gcda" -type f -delete
