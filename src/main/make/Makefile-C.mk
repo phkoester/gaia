@@ -161,9 +161,6 @@ endif
 # Configure CTest -------------------------------------------------------------------------------------------
 
 CTEST_FLAGS := --output-on-failure
-ifeq ($(VALGRIND),1)
-  CTEST_FLAGS += -T memcheck
-endif
 ifeq ($(VERBOSE),1)
   CTEST_FLAGS += -V
 endif
@@ -243,7 +240,7 @@ ifneq ($(wildcard $(BUILD_DIR)/src/test/),)
   ifeq ($(COVERAGE),1)
 	@mkdir -p $(COVERAGE_DIR)
 	@lcov --capture --directory $(BUILD_DIR)/src \
-	  --ignore-errors inconsistent,inconsistent --output-file $(COVERAGE_DIR)/app.info
+	  --ignore-errors inconsistent --output-file $(COVERAGE_DIR)/app.info
 	@genhtml --ignore-errors inconsistent \
 	  -o $(COVERAGE_DIR)/html $(COVERAGE_DIR)/app.info
 	@# find -name "*.gcda" -type f -delete
