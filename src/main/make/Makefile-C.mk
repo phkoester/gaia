@@ -14,13 +14,13 @@
 # - GAIA_DIR
 # - JOBS
 #     The number of jobs for GNU Make (0: none, N: N jobs, default: 3/4)
+# - MEMCHECK
+#     If set to 1, run executables with a memory checker, e.g. valgrind
 # - PATTERN
 #     - Run only benchmarks or tests matching PATTERN
 #     - Check only source files matching PATTERN
 # - TARGET
 #     The target to build or run
-# - VALGRIND
-#     If set to 1, run executables and tests with valgrind
 # - VERBOSE
 #     If set to 1, produce verbose output
 #
@@ -39,7 +39,7 @@
 # - clean
 # - configure (GAIA_BUILD_TYPE)
 # - doc (GAIA_BUILD_TYPE, VERBOSE)
-# - run (ARGS, DEFAULT_RUN_TARGET, GAIA_BUILD_TYPE, TARGET, VALGRIND, VERBOSE)
+# - run (ARGS, DEFAULT_RUN_TARGET, GAIA_BUILD_TYPE, MEMCHECK, TARGET, VERBOSE)
 # - test (GAIA_BUILD_TYPE, PATTERN, VERBOSE)
 #
 
@@ -131,7 +131,7 @@ endif
 
 ifeq ($(COVERAGE),1)
   ifdef GAIA_WINDOWS
-    $(error lcov is not supported on Windows)
+    $(error `COVERAGE=1` is not supported on Windows)
   endif
 endif
 
@@ -139,12 +139,12 @@ endif
 
 VALGRIND_FLAGS :=
 ifeq ($(VERBOSE),1)
-  VALGRIND_FLAGS += --leak-check=full --show-leak-kinds=all --track-origins=yes --vgdb=no
+  VALGRIND_FLAGS += --leak-check=full --show-leak-kinds=all --suppressions=$(GAIA_DIR)/src/main/valgrind/gaia-valgrind.supp --track-origins=yes --vgdb=no
 endif
 
-ifeq ($(VALGRIND),1)
+ifeq ($(MEMCHECK),1)
   ifdef GAIA_WINDOWS
-    $(error valgrind is not available on Windows)
+    $(error `MEMCHECK=1` is not available on Windows)
   endif
 endif
 
@@ -233,7 +233,7 @@ doc: doc-main doc-test
 
 run:
 	@$(call print-target,$@)
-ifneq ($(VALGRIND),1)
+ifneq ($(MEMCHECK),1)
 	@echo $$ $(RUN_EXECUTABLE) $(ARGS)
 	@$(RUN_EXECUTABLE) $(ARGS)
 else
@@ -244,7 +244,7 @@ endif
 test:
 ifneq ($(wildcard $(BUILD_DIR)/src/test/),)
 	@$(call print-target,$@)
-	@ctest $(CTEST_FLAGS) --preset $(TEST_PRESET) --test-dir $(BUILD_DIR)/src/test $(if $(PATTERN),-R '$(PATTERN)',)
+	ctest $(CTEST_FLAGS) --preset $(TEST_PRESET) --test-dir $(BUILD_DIR)/src/test $(if $(PATTERN),-R '$(PATTERN)',)
   ifeq ($(COVERAGE),1)
 	@mkdir -p $(COVERAGE_DIR)
 	@lcov --capture --directory $(BUILD_DIR)/src \

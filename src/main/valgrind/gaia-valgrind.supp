@@ -1,0 +1,18 @@
+#
+# gaia-valgrind.supp
+#
+
+{
+   libstdcxx_locale_still_reachable
+   Memcheck:Leak
+   match-leak-kinds: reachable
+# Any allocator (`operator new`, `malloc` via `duplocale`, ...) and intermediate frames
+   ...
+# std::locale::_Impl::_Impl(...)
+   fun:_ZNSt6locale5_ImplC*
+# std::locale::locale(...)
+   fun:_ZNSt6localeC*
+   ...
+}
+
+# EOF
