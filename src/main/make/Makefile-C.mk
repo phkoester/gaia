@@ -10,7 +10,7 @@
 # - GAIA_BUILD_TYPE
 #     The build type: `debug` or `release`
 # - GAIA_CXX_TOOLCHAIN
-#     The C++ toolchain: `gnu`, `llvm` or `msvc`
+#     The C++ toolchain: `gnu`, `llvm`, or `msvc`
 # - GAIA_DIR
 # - JOBS
 #     The number of jobs for GNU Make (0: none, N: N jobs, default: 3/4)

@@ -22,7 +22,7 @@ In your `~/.bashrc`, export these variables:
 | Environment Variable      | Required? | Description
 | :------------------------ | :-------- | :----------
 | `GAIA_BUILD_TYPE`         | No        | Values: `debug`, `release` (default)
-| `GAIA_CXX_TOOLCHAIN`      | No        | Values: `gnu` (default on Linux), `llvm`, `msvc` (default on Windows)
+| `GAIA_CXX_TOOLCHAIN`      | No        | Values: `gnu` (default on Linux), `llvm` (default on Windows), `msvc`
 | `GAIA_DIR`                | Yes       | Example: `~/project/gaia`
 | `GAIA_PROJECT_DIR`        | No        | Fallback directory where `gaia-build` looks for projects
 
