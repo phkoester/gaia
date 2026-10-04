@@ -120,7 +120,7 @@ endif()
 
 if(GAIA_OS_LINUX)
   # Linux
-  list(APPEND COMPILE_FLAGS -Wall -Wextra)
+  list(APPEND COMPILE_FLAGS -Wall -Werror -Wextra)
   if(GAIA_CXX_COMPILER_GNU)
     # Linux, GNU
     list(APPEND COMPILE_FLAGS -Wno-ignored-attributes)
@@ -128,7 +128,7 @@ if(GAIA_OS_LINUX)
 elseif(GAIA_OS_WINDOWS)
   if(GAIA_CXX_COMPILER_CLANG)
     # Windows, Clang
-    list(APPEND COMPILE_FLAGS -Wno-character-conversion -Wno-invalid-specialization)
+    list(APPEND COMPILE_FLAGS -Werror -Wno-character-conversion -Wno-invalid-specialization)
   endif()
   if(GAIA_CXX_COMPILER_MSVC)
     # Windows, MSVC
