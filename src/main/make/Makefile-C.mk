@@ -237,8 +237,8 @@ ifneq ($(MEMCHECK),1)
 	@echo $$ $(RUN_EXECUTABLE) $(ARGS)
 	@$(RUN_EXECUTABLE) $(ARGS)
 else
-	@echo $$ valgrind $(VALGRIND_FLAGS) $(RUN_EXECUTABLE) $(ARGS)
-	@valgrind $(VALGRIND_FLAGS) $(RUN_EXECUTABLE) $(ARGS)
+	@echo $$ ROCKET_EXIT=1 valgrind $(VALGRIND_FLAGS) $(RUN_EXECUTABLE) $(ARGS)
+	@ROCKET_EXIT=1 valgrind $(VALGRIND_FLAGS) $(RUN_EXECUTABLE) $(ARGS)
 endif
 
 test:
