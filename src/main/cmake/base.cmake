@@ -253,7 +253,7 @@ AddVar(GAIA_BENCHMARK_VERSION STRING 1.9.5  "benchmark version")    # https://gi
 AddVar(GAIA_BOOST_VERSION     STRING 1.92.0 "Boost version")        # https://github.com/boostorg/boost
 AddVar(GAIA_FMT_VERSION       STRING 12.1.0 "{fmt} version")        # https://github.com/fmtlib/fmt
 AddVar(GAIA_GTEST_VERSION     STRING 1.17.0 "GTest version")        # https://github.com/google/googletest
-# With Boost 1.93, this one might no longer be needed
+# With Boost 1.93, this one should no longer be needed
 AddVar(GAIA_INT128_VERSION    STRING 4.1.0  "Boost.int128 version") # https://github.com/boostorg/int128
 AddVar(GAIA_ICU_VERSION       STRING 78.2   "ICU version")          # sudo apt install libicu-dev
 AddVar(GAIA_ROCKET_VERSION    STRING HEAD   "Rocket version")
