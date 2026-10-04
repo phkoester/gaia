@@ -119,12 +119,21 @@ endif()
 # Set OS-specific compiler options --------------------------------------------------------------------------
 
 if(GAIA_OS_LINUX)
+  # Linux
   list(APPEND COMPILE_FLAGS -Wall -Wextra)
   if(GAIA_CXX_COMPILER_GNU)
+    # Linux, GNU
     list(APPEND COMPILE_FLAGS -Wno-ignored-attributes)
   endif()
 elseif(GAIA_OS_WINDOWS)
-  list(APPEND COMPILE_FLAGS /Zc:preprocessor) # /Wall
+  if(GAIA_CXX_COMPILER_CLANG)
+    # Windows, Clang
+    list(APPEND COMPILE_FLAGS -Wall -Wextra -Wno-invalid-specialization)
+  endif()
+  if(GAIA_CXX_COMPILER_MSVC)
+    # Windows, MSVC
+    list(APPEND COMPILE_FLAGS /Zc:preprocessor)
+  endif()
 endif()
 
 # Private functions -----------------------------------------------------------------------------------------
