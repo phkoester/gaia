@@ -249,13 +249,15 @@ endfunction()
 
 # Dependency versions ---------------------------------------------------------------------------------------
 
-AddVar(GAIA_BENCHMARK_VERSION STRING 1.9.5  "benchmark version") # https://github.com/google/benchmark
-AddVar(GAIA_BOOST_VERSION     STRING 1.92.0 "Boost version")     # https://github.com/boostorg/boost
-AddVar(GAIA_FMT_VERSION       STRING 12.1.0 "{fmt} version")     # https://github.com/fmtlib/fmt
-AddVar(GAIA_GTEST_VERSION     STRING 1.17.0 "GTest version")     # https://github.com/google/googletest
-AddVar(GAIA_ICU_VERSION       STRING 78.2   "ICU version")       # sudo apt install libicu-dev
+AddVar(GAIA_BENCHMARK_VERSION STRING 1.9.5  "benchmark version")    # https://github.com/google/benchmark
+AddVar(GAIA_BOOST_VERSION     STRING 1.92.0 "Boost version")        # https://github.com/boostorg/boost
+AddVar(GAIA_FMT_VERSION       STRING 12.1.0 "{fmt} version")        # https://github.com/fmtlib/fmt
+AddVar(GAIA_GTEST_VERSION     STRING 1.17.0 "GTest version")        # https://github.com/google/googletest
+# With Boost 1.93, this one might no longer be needed
+AddVar(GAIA_INT128_VERSION    STRING 4.1.0  "Boost.int128 version") # https://github.com/boostorg/int128
+AddVar(GAIA_ICU_VERSION       STRING 78.2   "ICU version")          # sudo apt install libicu-dev
 AddVar(GAIA_ROCKET_VERSION    STRING HEAD   "Rocket version")
-AddVar(GAIA_SCNLIB_VERSION    STRING master "scnlib version")    # https://github.com/eliaskosunen/scnlib
+AddVar(GAIA_SCNLIB_VERSION    STRING master "scnlib version")       # https://github.com/eliaskosunen/scnlib
 
 # Dependency declarations -----------------------------------------------------------------------------------
 
@@ -267,7 +269,6 @@ FetchContent_Declare(
   benchmark
   GIT_REPOSITORY https://github.com/google/benchmark.git
   GIT_TAG        v${GAIA_BENCHMARK_VERSION}
-  # XXX
   GIT_PROGRESS   TRUE
   SYSTEM
   EXCLUDE_FROM_ALL
@@ -278,6 +279,7 @@ FetchContent_Declare(
 FetchContent_Declare(
   Boost
   URL              https://github.com/boostorg/boost/releases/download/boost-${GAIA_BOOST_VERSION}/boost-${GAIA_BOOST_VERSION}-cmake.7z
+  GIT_PROGRESS   TRUE
   SYSTEM
   EXCLUDE_FROM_ALL
 )
@@ -321,6 +323,17 @@ FetchContent_Declare(
 # - when migrating to a new ICU version, use a fresh shell and clean everything
 #
 # ...........................................................................................................
+
+# int128 ....................................................................................................
+
+FetchContent_Declare(
+  int128
+  GIT_REPOSITORY https://github.com/boostorg/int128.git
+  GIT_TAG        v${GAIA_INT128_VERSION}
+  GIT_PROGRESS   TRUE
+  SYSTEM
+  EXCLUDE_FROM_ALL
+)
 
 # Rocket ....................................................................................................
 
