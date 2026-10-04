@@ -250,7 +250,7 @@ endfunction()
 # Dependency versions ---------------------------------------------------------------------------------------
 
 AddVar(GAIA_BENCHMARK_VERSION STRING 1.9.5  "benchmark version") # https://github.com/google/benchmark
-AddVar(GAIA_BOOST_VERSION     STRING 1.90.0 "Boost version")     # https://github.com/boostorg/boost
+AddVar(GAIA_BOOST_VERSION     STRING 1.92.0 "Boost version")     # https://github.com/boostorg/boost
 AddVar(GAIA_FMT_VERSION       STRING 12.1.0 "{fmt} version")     # https://github.com/fmtlib/fmt
 AddVar(GAIA_GTEST_VERSION     STRING 1.17.0 "GTest version")     # https://github.com/google/googletest
 AddVar(GAIA_ICU_VERSION       STRING 78.2   "ICU version")       # sudo apt install libicu-dev
