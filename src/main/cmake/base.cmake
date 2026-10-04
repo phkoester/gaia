@@ -255,7 +255,7 @@ AddVar(GAIA_FMT_VERSION       STRING 12.1.0 "{fmt} version")     # https://githu
 AddVar(GAIA_GTEST_VERSION     STRING 1.17.0 "GTest version")     # https://github.com/google/googletest
 AddVar(GAIA_ICU_VERSION       STRING 78.2   "ICU version")       # sudo apt install libicu-dev
 AddVar(GAIA_ROCKET_VERSION    STRING HEAD   "Rocket version")
-AddVar(GAIA_SCNLIB_VERSION    STRING master  "scnlib version")   # https://github.com/eliaskosunen/scnlib
+AddVar(GAIA_SCNLIB_VERSION    STRING master "scnlib version")    # https://github.com/eliaskosunen/scnlib
 
 # Dependency declarations -----------------------------------------------------------------------------------
 
@@ -267,6 +267,7 @@ FetchContent_Declare(
   benchmark
   GIT_REPOSITORY https://github.com/google/benchmark.git
   GIT_TAG        v${GAIA_BENCHMARK_VERSION}
+  # XXX
   GIT_PROGRESS   TRUE
   SYSTEM
   EXCLUDE_FROM_ALL
