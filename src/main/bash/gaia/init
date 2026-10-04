@@ -63,7 +63,7 @@ fi
 # Environment (Windows) .....................................................................................
 
 if [[ $GAIA_WINDOWS ]]; then
-  export GAIA_CXX_TOOLCHAIN=${GAIA_CXX_TOOLCHAIN:-msvc}
+  export GAIA_CXX_TOOLCHAIN=${GAIA_CXX_TOOLCHAIN:-llvm}
   export USER=$USERNAME
 fi
 
