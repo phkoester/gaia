@@ -218,7 +218,7 @@ check:
 	@$(call print-target,$@)
 	@run-clang-tidy \
 	  -config-file=$(GAIA_DIR)/src/main/clang-tidy/gaia-config.yaml \
-         -j$(GAIA_NPROC_3_4) \
+	  -j$(GAIA_NPROC_3_4) \
 	  -p. \
 	  $(CHECK_FILES) 2>&1 | tee $(CHECK_REPORT_FILE)
 	@echo Report written to $(CHECK_REPORT_FILE)
@@ -261,8 +261,8 @@ doc-main:
 ifneq ($(wildcard src/main/Doxyfile),)
 	@$(call print-target,$@)
 	@doxygen $(DOXYGEN_FLAGS) src/main/Doxyfile 2>&1 | grep -v \
-          -e "warning: Incomplete input: scope for class" \
-          -e "warning: documented symbol 'T std::experimental::.*' was not declared or defined" || \
+	  -e "warning: Incomplete input: scope for class" \
+	  -e "warning: documented symbol 'T std::experimental::.*' was not declared or defined" || \
           true
 	@echo Created $(BUILD_DIR)/src/main/doc/html/index.html
 endif
@@ -271,8 +271,8 @@ doc-test:
 ifneq ($(wildcard src/test/Doxyfile),)
 	@$(call print-target,$@)
 	@doxygen $(DOXYGEN_FLAGS) src/test/Doxyfile 2>&1 | grep -v \
-          -e "warning: Incomplete input: scope for class" \
-          -e "warning: documented symbol 'T std::experimental::.*' was not declared or defined" || \
+	  -e "warning: Incomplete input: scope for class" \
+	  -e "warning: documented symbol 'T std::experimental::.*' was not declared or defined" || \
           true
 	@echo Created $(BUILD_DIR)/src/test/doc/html/index.html
 endif
