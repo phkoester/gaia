@@ -47,7 +47,7 @@ ALIASES += member_op_asgmt_move="Assigns the rvalue @p rhs to this instance. \
 ALIASES += member_op_cast{1}="Conversion operator for type \1. \
 @return a value of type \1"
 
-ALIASES += member_op_dereference="Dereference operator."
+ALIASES += member_op_deref="Dereference operator."
 
 ALIASES += member_op_arrow="Arrow operator."
 
