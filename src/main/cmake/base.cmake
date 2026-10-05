@@ -128,7 +128,7 @@ if(GAIA_OS_LINUX)
 elseif(GAIA_OS_WINDOWS)
   if(GAIA_CXX_COMPILER_CLANG)
     # Windows, Clang
-    list(APPEND COMPILE_FLAGS -Werror -Wno-character-conversion -Wno-invalid-specialization)
+    list(APPEND COMPILE_FLAGS -Werror)
   endif()
   if(GAIA_CXX_COMPILER_MSVC)
     # Windows, MSVC
