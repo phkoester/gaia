@@ -102,9 +102,6 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 set(FETCHCONTENT_QUIET FALSE)
 
-set(BUILD_SHARED_LIBS_DEFAULT ${BUILD_SHARED_LIBS})
-set(CMAKE_CXX_FLAGS_DEFAULT "${CMAKE_CXX_FLAGS}")
-
 # Set compiler and linker options ---------------------------------------------------------------------------
 
 set(COMPILE_DEFS)
