@@ -57,6 +57,8 @@ endif()
 
 # CMPs ------------------------------------------------------------------------------------------------------
 
+# Get rid off a warning from libcbor
+set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 # "More read-only target properties now error when trying to set them."
 if(POLICY CMP0160)
   cmake_policy(SET CMP0160 NEW)
@@ -265,7 +267,8 @@ AddVar(GAIA_GTEST_VERSION     STRING 1.17.0 "GTest version")        # https://gi
 # With Boost 1.93, this one should no longer be needed
 AddVar(GAIA_INT128_VERSION    STRING 4.1.0  "Boost.int128 version") # https://github.com/boostorg/int128
 AddVar(GAIA_ICU_VERSION       STRING 78.2   "ICU version")          # sudo apt install libicu-dev
-AddVar(GAIA_ROCKET_VERSION    STRING HEAD   "Rocket version")
+AddVar(GAIA_LIBCBOR_VERSION   STRING 0.14.0 "libcbor version")      # https://github.com/PJK/libcbor
+AddVar(GAIA_ROCKET_VERSION    STRING HEAD   "Rocket version")       # https://github.com/phkoester/rocket
 AddVar(GAIA_SCNLIB_VERSION    STRING master "scnlib version")       # https://github.com/eliaskosunen/scnlib
 
 # Dependency declarations -----------------------------------------------------------------------------------
@@ -339,6 +342,17 @@ FetchContent_Declare(
   int128
   GIT_REPOSITORY https://github.com/boostorg/int128.git
   GIT_TAG        v${GAIA_INT128_VERSION}
+  GIT_PROGRESS   TRUE
+  SYSTEM
+  EXCLUDE_FROM_ALL
+)
+
+# libcbor ...................................................................................................
+
+FetchContent_Declare(
+  libcbor
+  GIT_REPOSITORY https://github.com/PJK/libcbor.git
+  GIT_TAG        v${GAIA_LIBCBOR_VERSION}
   GIT_PROGRESS   TRUE
   SYSTEM
   EXCLUDE_FROM_ALL
