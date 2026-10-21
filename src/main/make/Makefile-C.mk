@@ -217,7 +217,7 @@ build: configure
 check:
 	@$(call print-target,$@)
 	@run-clang-tidy \
-	  -config-file=$(GAIA_DIR)/src/main/clang-tidy/gaia-config.yaml \
+	  -config-file=$(GAIA_DIR)/src/main/clang-tidy/clang-tidy-config.yaml \
 	  -j$(GAIA_NPROC_3_4) \
 	  -p. \
 	  $(CHECK_FILES) 2>&1 | tee $(CHECK_REPORT_FILE)
