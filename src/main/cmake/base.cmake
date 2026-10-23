@@ -267,6 +267,7 @@ AddVar(GAIA_ICU_VERSION       STRING 78.2   "ICU version")          # sudo apt i
 AddVar(GAIA_LIBCBOR_VERSION   STRING 0.14.0 "libcbor version")      # https://github.com/PJK/libcbor
 AddVar(GAIA_ROCKET_VERSION    STRING HEAD   "Rocket version")       # https://github.com/phkoester/rocket
 AddVar(GAIA_SCNLIB_VERSION    STRING master "scnlib version")       # https://github.com/eliaskosunen/scnlib
+AddVar(GAIA_WXWIDGETS_VERSION STRING 3.3.4  "wxWidgets version")    # https://github.com/wxWidgets/wxWidgets
 
 # Dependency declarations -----------------------------------------------------------------------------------
 
@@ -372,6 +373,17 @@ FetchContent_Declare(
   scnlib
   GIT_REPOSITORY https://github.com/eliaskosunen/scnlib.git
   GIT_TAG        ${GAIA_SCNLIB_VERSION}
+  GIT_PROGRESS   TRUE
+  SYSTEM
+  EXCLUDE_FROM_ALL
+)
+
+# wxWidgets .................................................................................................
+
+FetchContent_Declare(
+  wxWidgets
+  GIT_REPOSITORY https://github.com/wxWidgets/wxWidgets.git
+  GIT_TAG        v${GAIA_WXWIDGETS_VERSION}
   GIT_PROGRESS   TRUE
   SYSTEM
   EXCLUDE_FROM_ALL
