@@ -60,6 +60,9 @@ ifdef GAIA_WINDOWS
   COVERAGE_DIR := $(BUILD_DIR)/code-coverage/$(CONFIG)
   EXECUTABLE_DIRS := \
     $(BUILD_DIR)/src/bench/$(CONFIG) \
+    $(BUILD_DIR)/src/bin/$(CONFIG) \
+    $(BUILD_DIR)/src/example/$(CONFIG) \
+    $(BUILD_DIR)/src/experimental/$(CONFIG) \
     $(BUILD_DIR)/src/main/$(CONFIG) \
     $(BUILD_DIR)/src/test/$(CONFIG)
   TEST_DIR := $(BUILD_DIR)/src/test/$(CONFIG)
