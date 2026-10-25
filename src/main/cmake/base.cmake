@@ -168,7 +168,7 @@ endfunction()
 
 # CopyRuntimeFiles(name)
 function(CopyRuntimeFiles name)
-  if(GAIA_OS_WINDOWS AND BUILD_SHARED_LIBS)
+  if(GAIA_OS_WINDOWS)
     # `copy_if_newer` requires CMake 4.2
     add_custom_command(
       TARGET  ${name} POST_BUILD
@@ -184,7 +184,10 @@ function(AddBench name dir)
 
   list(TRANSFORM srcFiles PREPEND "${dir}/")
   AddExecutable(${name} ${srcFiles})
-  target_link_libraries(${name} PRIVATE benchmark::benchmark_main Rocket::rocket-bench)
+  target_link_libraries(${name}
+    PRIVATE
+      benchmark::benchmark benchmark::benchmark_main Rocket::rocket Rocket::rocket-bench
+  )
   CopyRuntimeFiles(${name})
 
   add_test(
@@ -210,7 +213,9 @@ function(AddTest name dir)
 
   list(TRANSFORM srcFiles PREPEND "${dir}/")
   AddExecutable(${name} ${srcFiles})
-  target_link_libraries(${name} PRIVATE Rocket::rocket-test-main Rocket::rocket-test)
+  target_link_libraries(${name}
+    PRIVATE
+      Rocket::rocket-test-main Rocket::rocket-test)
   CopyRuntimeFiles(${name})
 
   string(JOIN " " configs ${CMAKE_CONFIGURATION_TYPES})
@@ -234,7 +239,6 @@ endfunction()
 # AddLibrary(name ...), like add_library()
 function(AddLibrary name)
   add_library(${name} ${ARGN})
-  target_compile_definitions(${name} PRIVATE ${COMPILE_DEFS})
   target_compile_features(${name} PRIVATE ${COMPILE_FEATURES})
   target_compile_options(${name} PRIVATE ${COMPILE_FLAGS})
   target_link_options(${name} PRIVATE ${LINK_FLAGS})
