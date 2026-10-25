@@ -184,10 +184,7 @@ function(AddBench name dir)
 
   list(TRANSFORM srcFiles PREPEND "${dir}/")
   AddExecutable(${name} ${srcFiles})
-  target_link_libraries(${name}
-    PRIVATE
-      benchmark::benchmark benchmark::benchmark_main Rocket::rocket Rocket::rocket-bench
-  )
+  target_link_libraries(${name} PRIVATE benchmark::benchmark_main Rocket::rocket-bench)
   CopyRuntimeFiles(${name})
 
   add_test(
@@ -213,9 +210,7 @@ function(AddTest name dir)
 
   list(TRANSFORM srcFiles PREPEND "${dir}/")
   AddExecutable(${name} ${srcFiles})
-  target_link_libraries(${name}
-    PRIVATE
-      Rocket::rocket-test-main Rocket::rocket-test)
+  target_link_libraries(${name} PRIVATE Rocket::rocket-test-main Rocket::rocket-test)
   CopyRuntimeFiles(${name})
 
   string(JOIN " " configs ${CMAKE_CONFIGURATION_TYPES})
