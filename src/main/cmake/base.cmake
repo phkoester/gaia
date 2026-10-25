@@ -105,6 +105,9 @@ set(FETCHCONTENT_QUIET FALSE)
 # Set compiler and linker options ---------------------------------------------------------------------------
 
 set(COMPILE_DEFS)
+if(BUILD_SHARED_LIBS)
+  list(APPEND COMPILE_DEFS ROCKET_SHARED_LIB)
+endif()
 set(COMPILE_FEATURES cxx_std_23)
 set(COMPILE_FLAGS)
 
@@ -168,7 +171,7 @@ endfunction()
 
 # CopyRuntimeFiles(name)
 function(CopyRuntimeFiles name)
-  if(GAIA_OS_WINDOWS)
+  if(GAIA_OS_WINDOWS AND NOT BUILD_SHARED_LIBS)
     # `copy_if_newer` requires CMake 4.2
     add_custom_command(
       TARGET  ${name} POST_BUILD
