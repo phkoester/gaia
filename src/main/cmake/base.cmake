@@ -171,7 +171,7 @@ endfunction()
 
 # CopyRuntimeFiles(name)
 function(CopyRuntimeFiles name)
-  if(GAIA_OS_WINDOWS AND NOT BUILD_SHARED_LIBS)
+  if(GAIA_OS_WINDOWS AND BUILD_SHARED_LIBS)
     # `copy_if_newer` requires CMake 4.2
     add_custom_command(
       TARGET  ${name} POST_BUILD
