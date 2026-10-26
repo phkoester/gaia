@@ -74,7 +74,7 @@ else
   TEST_DIR := $(BUILD_DIR)/src/test
 endif
 
-CMAKE_DEPS := CMakeLists.txt $(shell find src -name CMakeLists.txt) $(shell find cmake -type f)
+CMAKE_DEPS := CMakeLists.txt $(shell find src -name CMakeLists.txt)
 
 ifdef GAIA_LINUX
   CONFIGURE_DEP := compile_commands.json
