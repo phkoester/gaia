@@ -123,6 +123,10 @@ if(GAIA_OS_LINUX)
   if(GAIA_CXX_COMPILER_GNU)
     # Linux, GNU
     list(APPEND COMPILE_FLAGS -Wno-ignored-attributes)
+    if(CMAKE_BUILD_TYPE STREQUAL "Release")
+      # Linux, GNU, Release
+      list(APPEND COMPILE_FLAGS -Wno-maybe-uninitialized)
+    endif()
   endif()
 elseif(GAIA_OS_WINDOWS)
   if(GAIA_CXX_COMPILER_CLANG)
