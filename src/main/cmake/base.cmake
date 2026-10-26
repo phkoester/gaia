@@ -128,7 +128,7 @@ elseif(GAIA_OS_WINDOWS)
   # Windows
   if(GAIA_CXX_COMPILER_CLANG)
     # Windows, Clang
-    list(APPEND COMPILE_FLAGS -Werror)
+    list(APPEND COMPILE_FLAGS -Werror) # `-Wall` and `-Wextra` seem to be too much noise on Windows
   endif()
   if(GAIA_CXX_COMPILER_MSVC)
     # Windows, MSVC
