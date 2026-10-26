@@ -75,13 +75,13 @@ function(AddVar name type default doc)
   if(NOT DEFINED ${name})
     if(NOT $ENV{${name}} STREQUAL "")
       set(${name} $ENV{${name}} CACHE ${type} "${doc}")
-      message(STATUS "Setting ${name} by environment: ${${name}}")
+      message(STATUS "Gaia: Setting ${name} by environment: ${${name}}")
     else()
       set(${name} ${default} CACHE ${type} "${doc}")
-      message(STATUS "Setting ${name} to default: ${${name}}")
+      message(STATUS "Gaia: Setting ${name} to default: ${${name}}")
     endif()
   else()
-    message(STATUS "Found ${name}: ${${name}}")
+    message(STATUS "Gaia: Found ${name}: ${${name}}")
   endif()
 endfunction()
 
@@ -168,7 +168,7 @@ endfunction()
 
 # CopyRuntimeFiles(name)
 function(CopyRuntimeFiles name)
-  if(GAIA_OS_WINDOWS)
+  if(GAIA_OS_WINDOWS AND BUILD_SHARED_LIBS)
     # `copy_if_newer` requires CMake 4.2
     add_custom_command(
       TARGET  ${name} POST_BUILD
@@ -184,10 +184,7 @@ function(AddBench name dir)
 
   list(TRANSFORM srcFiles PREPEND "${dir}/")
   AddExecutable(${name} ${srcFiles})
-  target_link_libraries(${name}
-    PRIVATE
-      benchmark::benchmark benchmark::benchmark_main Rocket::rocket Rocket::rocket-bench
-  )
+  target_link_libraries(${name} PRIVATE benchmark::benchmark_main Rocket::rocket-bench)
   CopyRuntimeFiles(${name})
 
   add_test(
@@ -213,9 +210,7 @@ function(AddTest name dir)
 
   list(TRANSFORM srcFiles PREPEND "${dir}/")
   AddExecutable(${name} ${srcFiles})
-  target_link_libraries(${name}
-    PRIVATE
-      Rocket::rocket-test-main Rocket::rocket-test)
+  target_link_libraries(${name} PRIVATE Rocket::rocket-test-main Rocket::rocket-test)
   CopyRuntimeFiles(${name})
 
   string(JOIN " " configs ${CMAKE_CONFIGURATION_TYPES})
