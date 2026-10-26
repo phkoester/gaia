@@ -75,13 +75,13 @@ function(AddVar name type default doc)
   if(NOT DEFINED ${name})
     if(NOT $ENV{${name}} STREQUAL "")
       set(${name} $ENV{${name}} CACHE ${type} "${doc}")
-      message(STATUS "Gaia: Setting ${name} by environment: ${${name}}")
+      message(STATUS "gaia: Setting ${name} by environment: ${${name}}")
     else()
       set(${name} ${default} CACHE ${type} "${doc}")
-      message(STATUS "Gaia: Setting ${name} to default: ${${name}}")
+      message(STATUS "gaia: Setting ${name} to default: ${${name}}")
     endif()
   else()
-    message(STATUS "Gaia: Found ${name}: ${${name}}")
+    message(STATUS "gaia: Found ${name}: ${${name}}")
   endif()
 endfunction()
 
@@ -123,15 +123,12 @@ if(GAIA_OS_LINUX)
   if(GAIA_CXX_COMPILER_GNU)
     # Linux, GNU
     list(APPEND COMPILE_FLAGS -Wno-ignored-attributes)
-    if(CMAKE_BUILD_TYPE STREQUAL "Release")
-      # Linux, GNU, Release
-      list(APPEND COMPILE_FLAGS -Wno-maybe-uninitialized)
-    endif()
   endif()
 elseif(GAIA_OS_WINDOWS)
+  # Windows
   if(GAIA_CXX_COMPILER_CLANG)
     # Windows, Clang
-    list(APPEND COMPILE_FLAGS -Werror)
+    list(APPEND COMPILE_FLAGS -Wall -Werror -Wextra) # XXX Watch this, it used to be `-Werror`
   endif()
   if(GAIA_CXX_COMPILER_MSVC)
     # Windows, MSVC
