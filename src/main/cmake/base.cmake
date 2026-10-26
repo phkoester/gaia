@@ -157,16 +157,6 @@ endfunction()
 
 # Functions -------------------------------------------------------------------------------------------------
 
-# AddExecutable(name srcFile...)
-function(AddExecutable name)
-  add_executable(${name})
-  target_sources(${name} PRIVATE ${ARGN})
-  target_compile_definitions(${name} PRIVATE ${COMPILE_DEFS})
-  target_compile_features(${name} PRIVATE ${COMPILE_FEATURES})
-  target_compile_options(${name} PRIVATE ${COMPILE_FLAGS})
-  target_link_options(${name} PRIVATE ${LINK_FLAGS})
-endfunction()
-
 # CopyRuntimeFiles(name)
 function(CopyRuntimeFiles name)
   if(GAIA_OS_WINDOWS AND BUILD_SHARED_LIBS)
@@ -177,6 +167,16 @@ function(CopyRuntimeFiles name)
       COMMAND_EXPAND_LISTS
     )
   endif()
+endfunction()
+
+# AddExecutable(name srcFile...)
+function(AddExecutable name)
+  add_executable(${name})
+  target_sources(${name} PRIVATE ${ARGN})
+  target_compile_definitions(${name} PRIVATE ${COMPILE_DEFS})
+  target_compile_features(${name} PRIVATE ${COMPILE_FEATURES})
+  target_compile_options(${name} PRIVATE ${COMPILE_FLAGS})
+  target_link_options(${name} PRIVATE ${LINK_FLAGS})
 endfunction()
 
 # AddBench(name dir srcFile... [ENVIRONMENT name=value...])
@@ -250,139 +250,5 @@ function(UnixPath in out)
     set(${out} ${in} PARENT_SCOPE)
   endif()
 endfunction()
-
-# Dependency versions ---------------------------------------------------------------------------------------
-
-AddVar(GAIA_BENCHMARK_VERSION STRING 1.9.5  "benchmark version")    # https://github.com/google/benchmark
-AddVar(GAIA_BOOST_VERSION     STRING 1.92.0 "Boost version")        # https://github.com/boostorg/boost
-AddVar(GAIA_FMT_VERSION       STRING 12.2.0 "{fmt} version")        # https://github.com/fmtlib/fmt
-AddVar(GAIA_GTEST_VERSION     STRING 1.17.0 "GTest version")        # https://github.com/google/googletest
-# With Boost 1.93, this one should no longer be needed
-AddVar(GAIA_INT128_VERSION    STRING 4.1.0  "Boost.int128 version") # https://github.com/boostorg/int128
-AddVar(GAIA_ICU_VERSION       STRING 78.2   "ICU version")          # sudo apt install libicu-dev
-AddVar(GAIA_LIBCBOR_VERSION   STRING 0.14.0 "libcbor version")      # https://github.com/PJK/libcbor
-AddVar(GAIA_ROCKET_VERSION    STRING HEAD   "Rocket version")       # https://github.com/phkoester/rocket
-AddVar(GAIA_SCNLIB_VERSION    STRING master "scnlib version")       # https://github.com/eliaskosunen/scnlib
-AddVar(GAIA_WXWIDGETS_VERSION STRING 3.3.4  "wxWidgets version")    # https://github.com/wxWidgets/wxWidgets
-
-# Dependency declarations -----------------------------------------------------------------------------------
-
-include(FetchContent)
-
-# Benchmark (when used, must follow GTest) ..................................................................
-
-FetchContent_Declare(
-  benchmark
-  GIT_REPOSITORY https://github.com/google/benchmark.git
-  GIT_TAG        v${GAIA_BENCHMARK_VERSION}
-  GIT_PROGRESS   TRUE
-  SYSTEM
-  EXCLUDE_FROM_ALL
-)
-
-# Boost .....................................................................................................
-
-FetchContent_Declare(
-  Boost
-  URL              https://github.com/boostorg/boost/releases/download/boost-${GAIA_BOOST_VERSION}/boost-${GAIA_BOOST_VERSION}-cmake.7z
-  GIT_PROGRESS   TRUE
-  SYSTEM
-  EXCLUDE_FROM_ALL
-)
-
-# fmt .......................................................................................................
-
-FetchContent_Declare(
-  fmt
-  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-  GIT_TAG        ${GAIA_FMT_VERSION}
-  GIT_PROGRESS   TRUE
-  SYSTEM
-  EXCLUDE_FROM_ALL
-)
-
-# GTest .....................................................................................................
-
-FetchContent_Declare(
-  GTest
-  GIT_REPOSITORY https://github.com/google/googletest.git
-  GIT_TAG        v${GAIA_GTEST_VERSION}
-  GIT_PROGRESS   TRUE
-  SYSTEM
-  EXCLUDE_FROM_ALL
-)
-
-# ICU .......................................................................................................
-#
-# ICU is not fully CMake-ready, so it must be installed manually.
-#
-# On Ubuntu, say
-#
-#   $ sudo apt install libicu-dev
-#
-# On Windows,
-#
-# - download <https://github.com/unicode-org/icu/releases/download/release-VERSION/icu4c-VERSION-Win64-MSVC2022.zip>
-# - unpack, copy to `C:\icu4c-VERSION-Win64-MSVC2022`
-# - set system variable `ICU_ROOT` to `C:\icu4c-VERSION-Win64-MSVC2022`
-# - add `C:\icu4c-VERSION-Win64-MSVC2022\bin64` to the system variable `PATH`
-# - when migrating to a new ICU version, use a fresh shell and clean everything
-#
-# ...........................................................................................................
-
-# int128 ....................................................................................................
-
-FetchContent_Declare(
-  int128
-  GIT_REPOSITORY https://github.com/boostorg/int128.git
-  GIT_TAG        v${GAIA_INT128_VERSION}
-  GIT_PROGRESS   TRUE
-  SYSTEM
-  EXCLUDE_FROM_ALL
-)
-
-# libcbor ...................................................................................................
-
-FetchContent_Declare(
-  libcbor
-  GIT_REPOSITORY https://github.com/PJK/libcbor.git
-  GIT_TAG        v${GAIA_LIBCBOR_VERSION}
-  GIT_PROGRESS   TRUE
-  SYSTEM
-  EXCLUDE_FROM_ALL
-)
-
-# Rocket ....................................................................................................
-
-FetchContent_Declare(
-  Rocket
-  GIT_REPOSITORY https://github.com/phkoester/rocket.git
-  GIT_TAG        ${GAIA_ROCKET_VERSION}
-  GIT_PROGRESS   TRUE
-  SYSTEM
-  EXCLUDE_FROM_ALL
-)
-
-# scnlib ....................................................................................................
-
-FetchContent_Declare(
-  scnlib
-  GIT_REPOSITORY https://github.com/eliaskosunen/scnlib.git
-  GIT_TAG        ${GAIA_SCNLIB_VERSION}
-  GIT_PROGRESS   TRUE
-  SYSTEM
-  EXCLUDE_FROM_ALL
-)
-
-# wxWidgets .................................................................................................
-
-FetchContent_Declare(
-  wxWidgets
-  GIT_REPOSITORY https://github.com/wxWidgets/wxWidgets.git
-  GIT_TAG        v${GAIA_WXWIDGETS_VERSION}
-  GIT_PROGRESS   TRUE
-  SYSTEM
-  EXCLUDE_FROM_ALL
-)
 
 # EOF
