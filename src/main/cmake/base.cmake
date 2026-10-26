@@ -128,7 +128,7 @@ elseif(GAIA_OS_WINDOWS)
   # Windows
   if(GAIA_CXX_COMPILER_CLANG)
     # Windows, Clang
-    list(APPEND COMPILE_FLAGS -Wall -Werror -Wextra -Wno-c++98-compat) # XXX Watch this, it used to be `-Werror`
+    list(APPEND COMPILE_FLAGS -Werror)
   endif()
   if(GAIA_CXX_COMPILER_MSVC)
     # Windows, MSVC
