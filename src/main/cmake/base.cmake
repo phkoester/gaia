@@ -16,7 +16,7 @@ if(WIN32)
 endif()
 
 if(NOT(GAIA_OS_LINUX) AND NOT(GAIA_OS_WINDOWS))
-  message(FATAL_ERROR "Unsupported OS ${CMAKE_SYSTEM_NAME}")
+  message(FATAL_ERROR "gaia: Unsupported OS ${CMAKE_SYSTEM_NAME}")
 endif()
 
 # Check C/C++ toolchain -------------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
 endif()
 
 if(NOT(GAIA_C_COMPILER_CLANG) AND NOT(GAIA_C_COMPILER_GNU) AND NOT(GAIA_C_COMPILER_MSVC))
-  message(FATAL_ERROR "Unsupported C compiler ${CMAKE_C_COMPILER_ID}")
+  message(FATAL_ERROR "gaia: Unsupported C compiler ${CMAKE_C_COMPILER_ID}")
 endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -52,7 +52,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 endif()
 
 if(NOT(GAIA_CXX_COMPILER_CLANG) AND NOT(GAIA_CXX_COMPILER_GNU) AND NOT(GAIA_CXX_COMPILER_MSVC))
-  message(FATAL_ERROR "Unsupported C++ compiler ${CMAKE_CXX_COMPILER_ID}")
+  message(FATAL_ERROR "gaia: Unsupported C++ compiler ${CMAKE_CXX_COMPILER_ID}")
 endif()
 
 # CMPs ------------------------------------------------------------------------------------------------------
