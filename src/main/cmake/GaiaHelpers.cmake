@@ -6,8 +6,8 @@
 
 # Private functions -----------------------------------------------------------------------------------------
 
-# ParseArgs__(outSrcFiles outEnv srcFile... [ENVIRONMENT name=value]...)
-function(ParseArgs__ outSrcFiles outEnv)
+# GaiaParseArgs__(outSrcFiles outEnv srcFile... [ENVIRONMENT name=value]...)
+function(GaiaParseArgs__ outSrcFiles outEnv)
   set(srcFiles)
   set(env)
   set(appendTo srcFiles)
@@ -25,14 +25,14 @@ endfunction()
 
 # Functions -------------------------------------------------------------------------------------------------
 
-# AddBench(name dir srcFile... [ENVIRONMENT name=value...])
-function(AddBench name dir)
-  ParseArgs__(srcFiles env ${ARGN})
+# GaiaAddBench(name dir srcFile... [ENVIRONMENT name=value...])
+function(GaiaAddBench name dir)
+  GaiaParseArgs__(srcFiles env ${ARGN})
 
   list(TRANSFORM srcFiles PREPEND "${dir}/")
-  AddExecutable(${name} ${srcFiles})
+  GaiaAddExecutable(${name} ${srcFiles})
   target_link_libraries(${name} PRIVATE benchmark::benchmark_main Rocket::rocket-bench)
-  CopyRuntimeFiles(${name})
+  GaiaCopyRuntimeFiles(${name})
 
   add_test(
     NAME    ${name}
@@ -51,8 +51,8 @@ function(AddBench name dir)
   )
 endfunction()
 
-# AddExecutable(name srcFile...)
-function(AddExecutable name)
+# GaiaAddExecutable(name srcFile...)
+function(GaiaAddExecutable name)
   add_executable(${name})
   target_sources(${name} PRIVATE ${ARGN})
   target_compile_definitions(${name} PRIVATE ${COMPILE_DEFS})
@@ -61,8 +61,8 @@ function(AddExecutable name)
   target_link_options(${name} PRIVATE ${LINK_FLAGS})
 endfunction()
 
-# AddLibrary(name ...), like add_library()
-function(AddLibrary name)
+# GaiaAddLibrary(name ...), like add_library()
+function(GaiaAddLibrary name)
   add_library(${name} ${ARGN})
   target_compile_definitions(${name} PRIVATE ${COMPILE_DEFS})
   target_compile_features(${name} PRIVATE ${COMPILE_FEATURES})
@@ -70,14 +70,14 @@ function(AddLibrary name)
   target_link_options(${name} PRIVATE ${LINK_FLAGS})
 endfunction()
 
-# AddTest(name dir srcFile... [ENVIRONMENT name=value...])
-function(AddTest name dir)
-  ParseArgs__(srcFiles env ${ARGN})
+# GaiaAddTest(name dir srcFile... [ENVIRONMENT name=value...])
+function(GaiaAddTest name dir)
+  GaiaParseArgs__(srcFiles env ${ARGN})
 
   list(TRANSFORM srcFiles PREPEND "${dir}/")
-  AddExecutable(${name} ${srcFiles})
+  GaiaAddExecutable(${name} ${srcFiles})
   target_link_libraries(${name} PRIVATE Rocket::rocket-test-main Rocket::rocket-test)
-  CopyRuntimeFiles(${name})
+  GaiaCopyRuntimeFiles(${name})
 
   string(JOIN " " configs ${CMAKE_CONFIGURATION_TYPES})
 
@@ -97,26 +97,26 @@ function(AddTest name dir)
   )
 endfunction()
 
-# AddVar(name type default doc)
+# GaiaAddVar(name type default doc)
 #
 # Adds a CMMake variable. If it is already set, it is left unchanged. Otherwise, if there is an environment
 # variable with the same name, it is used. As a fallback, the default value is used.
-function(AddVar name type default doc)
+function(GaiaAddVar name type default doc)
   if(NOT DEFINED ${name})
     if(NOT $ENV{${name}} STREQUAL "")
       set(${name} $ENV{${name}} CACHE ${type} "${doc}")
-      message(STATUS "${PROJECT_NAME}: Setting ${name} by environment: ${${name}}")
+      GaiaStatus("Setting ${name} by environment: ${${name}}")
     else()
       set(${name} ${default} CACHE ${type} "${doc}")
-      message(STATUS "${PROJECT_NAME}: Setting ${name} to default: ${${name}}")
+      GaiaStatus("Setting ${name} to default: ${${name}}")
     endif()
   else()
-    message(STATUS "${PROJECT_NAME}: Found ${name}: ${${name}}")
+    GaiaStatus("Found ${name}: ${${name}}")
   endif()
 endfunction()
 
-# CopyRuntimeFiles(name)
-function(CopyRuntimeFiles name)
+# GaiaCopyRuntimeFiles(name)
+function(GaiaCopyRuntimeFiles name)
   if(GAIA_OS_WINDOWS AND BUILD_SHARED_LIBS)
     # `copy_if_newer` requires CMake 4.2
     add_custom_command(
@@ -127,8 +127,18 @@ function(CopyRuntimeFiles name)
   endif()
 endfunction()
 
-# UnixPath(in out)
-function(UnixPath in out)
+# GaiaFatalError(msg)
+function(GaiaFatalError msg)
+  message(FATAL_ERROR "${PROJECT_NAME}: ${msg}")
+endfunction()
+
+# GaiaStatus(msg)
+function(GaiaStatus msg)
+  message(STATUS "${PROJECT_NAME}: ${msg}")
+endfunction()
+
+# GaiaUnixPath(in out)
+function(GaiaUnixPath in out)
   if(GAIA_OS_WINDOWS)
     execute_process(COMMAND cygpath -u ${in} OUTPUT_VARIABLE localOut)
     string(STRIP ${localOut} localOut)

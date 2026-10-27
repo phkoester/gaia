@@ -4,7 +4,7 @@
 # To be included from a project's root `CMakeLists.txt` file.
 #
 
-include(GaiaHelpers.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/GaiaHelpers.cmake)
 
 # Prerequisites ---------------------------------------------------------------------------------------------
 
@@ -22,7 +22,7 @@ if(WIN32)
 endif()
 
 if(NOT(GAIA_OS_LINUX) AND NOT(GAIA_OS_WINDOWS))
-  message(FATAL_ERROR "gaia: Unsupported OS ${CMAKE_SYSTEM_NAME}")
+  GaiaFatalError("Unsupported OS ${CMAKE_SYSTEM_NAME}")
 endif()
 
 # Check C/C++ toolchain -------------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
 endif()
 
 if(NOT(GAIA_C_COMPILER_CLANG) AND NOT(GAIA_C_COMPILER_GNU) AND NOT(GAIA_C_COMPILER_MSVC))
-  message(FATAL_ERROR "gaia: Unsupported C compiler ${CMAKE_C_COMPILER_ID}")
+  GaiaFatalError("Unsupported C compiler ${CMAKE_C_COMPILER_ID}")
 endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -58,7 +58,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 endif()
 
 if(NOT(GAIA_CXX_COMPILER_CLANG) AND NOT(GAIA_CXX_COMPILER_GNU) AND NOT(GAIA_CXX_COMPILER_MSVC))
-  message(FATAL_ERROR "gaia: Unsupported C++ compiler ${CMAKE_CXX_COMPILER_ID}")
+  GaiaFatalError("Unsupported C++ compiler ${CMAKE_CXX_COMPILER_ID}")
 endif()
 
 # CMPs ------------------------------------------------------------------------------------------------------
@@ -70,12 +70,12 @@ if(POLICY CMP0160)
   cmake_policy(SET CMP0160 NEW)
 endif()
 
-AddVar(BUILD_SHARED_LIBS BOOL OFF "Build shared libraries")
-AddVar(BUILD_TESTING     BOOL ON  "Enable testing and build tests")
-AddVar(COVERAGE          BOOL OFF "Enable code coverage")
+GaiaAddVar(BUILD_SHARED_LIBS BOOL OFF "Build shared libraries")
+GaiaAddVar(BUILD_TESTING     BOOL ON  "Enable testing and build tests")
+GaiaAddVar(COVERAGE          BOOL OFF "Enable code coverage")
 
 if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
-  AddVar(CMAKE_BUILD_TYPE STRING Release "The build type")
+  GaiaAddVar(CMAKE_BUILD_TYPE STRING Release "The build type")
 endif()
 
 # General settings ------------------------------------------------------------------------------------------
