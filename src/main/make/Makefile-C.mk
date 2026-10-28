@@ -247,7 +247,6 @@ else
 endif
 
 test:
-ifneq ($(wildcard $(BUILD_DIR)/src/test/),)
 	@$(call print-target,$@)
 	ctest $(CTEST_FLAGS) --preset $(TEST_PRESET) --test-dir $(BUILD_DIR)/src/test $(if $(PATTERN),-R '$(PATTERN)',)
   ifeq ($(COVERAGE),1)
@@ -258,7 +257,6 @@ ifneq ($(wildcard $(BUILD_DIR)/src/test/),)
 	@rm $(COVERAGE_DIR)/app.info
 	@echo Created $(COVERAGE_DIR)/html/index.html
   endif
-endif
 
 # Auxiliary targets .........................................................................................
 
