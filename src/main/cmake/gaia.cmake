@@ -8,7 +8,11 @@ include(${CMAKE_CURRENT_LIST_DIR}/GaiaHelpers.cmake)
 
 # Prerequisites ---------------------------------------------------------------------------------------------
 
-find_package(Python3 3.8 REQUIRED COMPONENTS Interpreter)
+if(WIN32)
+  # On Windows, output compromises the console mode of Git SDK Bash
+  set(quiet__ QUIET)
+endif()
+find_package(Python3 3.8 ${quiet__} REQUIRED COMPONENTS Interpreter)
 
 # Check host tuple ------------------------------------------------------------------------------------------
 
