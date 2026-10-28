@@ -5,6 +5,8 @@
 #
 # - ARGS
 #     Arguments to pass to the run target
+# - CONFIGURE_DEPS
+#     Targets to make before configuring
 # - DEFAULT_RUN_TARGET
 #     The default target to run
 # - GAIA_BUILD_TYPE
@@ -230,7 +232,7 @@ clean:
 	@$(call print-target,$@)
 	@rm -frv build
 
-configure: $(CONFIGURE_DEP)
+configure: $(CONFIGURE_DEP) $(CONFIGURE_DEPS)
 
 doc: doc-main doc-test
 
