@@ -9,11 +9,14 @@ include(${CMAKE_CURRENT_LIST_DIR}/GaiaHelpers.cmake)
 # Prerequisites ---------------------------------------------------------------------------------------------
 
 if(WIN32)
-  if($ENV{DevEnvDir} STREQUAL "")
+  if("$ENV{DevEnvDir}" STREQUAL "")
     GaiaFatalError("Developer Command Prompt for Microsoft Visual Studio is required")
   endif()
-  if(NOT $ENV{MSYSTEM} STREQUAL "MSYS" OR NOT $ENV{SHELL} MATCHES "bash\.exe$")
-    GaiaFatalError("Bash shell from Git SDK is required")
+  if(NOT "$ENV{MSYSTEM}" STREQUAL "MSYS")
+    GaiaFatalError("MSYS from Git SDK is required")
+  endif()
+  if(NOT $ENV{SHELL} MATCHES "bash\.exe$")
+    GaiaFatalError("Bash from Git SDK is required")
   endif()
 endif()
 
