@@ -9,10 +9,15 @@ include(${CMAKE_CURRENT_LIST_DIR}/GaiaHelpers.cmake)
 # Prerequisites ---------------------------------------------------------------------------------------------
 
 if(WIN32)
-  # On Windows, output compromises the console mode of Git SDK Bash
-  set(quiet__ QUIET)
+  if($ENV{DevEnvDir} STREQUAL "")
+    GaiaFatalError("Developer Command Prompt for Microsoft Visual Studio is required")
+  endif()
+  if(NOT $ENV{MSYSTEM} STREQUAL "MSYS" OR NOT $ENV{SHELL} MATCHES "bash\.exe$")
+    GaiaFatalError("Bash shell from Git SDK is required")
+  endif()
 endif()
-find_package(Python3 3.8 ${quiet__} REQUIRED COMPONENTS Interpreter)
+
+find_package(Python3 3.8 REQUIRED COMPONENTS Interpreter)
 
 # Check host tuple ------------------------------------------------------------------------------------------
 
@@ -94,18 +99,10 @@ set(FETCHCONTENT_QUIET FALSE)
 # Set compiler and linker options ---------------------------------------------------------------------------
 
 set(COMPILE_DEFS)
+
 set(COMPILE_FEATURES cxx_std_23)
+
 set(COMPILE_FLAGS)
-
-set(LINK_FLAGS)
-
-if(COVERAGE)
-  list(APPEND COMPILE_FLAGS -coverage)
-  list(APPEND LINK_FLAGS -coverage)
-endif()
-
-# Set OS-specific compiler options --------------------------------------------------------------------------
-
 if(GAIA_OS_LINUX)
   # Linux
   list(APPEND COMPILE_FLAGS -Wall -Werror -Wextra)
@@ -123,6 +120,13 @@ elseif(GAIA_OS_WINDOWS)
     # Windows, MSVC
     list(APPEND COMPILE_FLAGS /bigobj /Zc:preprocessor)
   endif()
+endif()
+
+set(LINK_FLAGS)
+
+if(COVERAGE)
+  list(APPEND COMPILE_FLAGS -coverage)
+  list(APPEND LINK_FLAGS -coverage)
 endif()
 
 # EOF
