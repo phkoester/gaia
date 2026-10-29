@@ -16,7 +16,7 @@ if(NOT DEFINED GAIA_MASTER_PROJECT)
   endif()
 endif()
 
-project(gaia VERSION 1.2.0)
+project(gaia VERSION 1.2.1)
 
 # Prerequisites ---------------------------------------------------------------------------------------------
 
