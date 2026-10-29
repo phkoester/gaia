@@ -196,7 +196,7 @@ endfunction()
 if(WIN32) # `GAIA_OS_WINDOWS` isn't available yet
 
 # GaiaWindowsUnixPath(in out)
-function(GaiaUnixPath in out)
+function(GaiaWindowsUnixPath in out)
   execute_process(COMMAND cygpath -u "${in}" OUTPUT_VARIABLE localOut)
   string(STRIP ${localOut} localOut)
   set(${out} "${localOut}" PARENT_SCOPE)
