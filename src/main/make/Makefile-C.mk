@@ -52,7 +52,7 @@ include $(GAIA_DIR)/src/main/make/Makefile-common.mk
 
 # Constants -------------------------------------------------------------------------------------------------
 
-ifdef GAIA_WINDOWS
+ifdef GAIA_OS_WINDOWS
   export BUILD_DIR := build
   ifeq ($(GAIA_BUILD_TYPE),debug)
     CONFIG := Debug
@@ -78,10 +78,10 @@ endif
 
 CMAKE_DEPS := CMakeLists.txt $(shell find src -name CMakeLists.txt)
 
-ifdef GAIA_LINUX
+ifdef GAIA_OS_LINUX
   CONFIGURE_DEP := compile_commands.json
 endif
-ifdef GAIA_WINDOWS
+ifdef GAIA_OS_WINDOWS
   CONFIGURE_DEP := build/cmake_install.cmake
 endif
 
@@ -105,7 +105,7 @@ ifeq ($(filter $(MAKECMDGOALS),run),run)
       TARGET := $(DEFAULT_RUN_TARGET)
     endif
   endif
-  ifdef GAIA_WINDOWS
+  ifdef GAIA_OS_WINDOWS
     RUN_EXECUTABLE := $(shell find $(EXECUTABLE_DIRS) -executable -name '$(TARGET).exe' -type f)
   else
     RUN_EXECUTABLE := $(shell find $(BUILD_DIR)/src -executable -name '$(TARGET)' -type f)
@@ -127,7 +127,7 @@ ifeq ($(GAIA_CXX_TOOLCHAIN),llvm)
   export CC := clang
   export CXX := clang++
 
-  ifdef GAIA_WINDOWS
+  ifdef GAIA_OS_WINDOWS
     CMAKE_TOOLCHAIN_FLAG := -T ClangCL
   endif
 endif
@@ -135,7 +135,7 @@ endif
 # Configure lcov --------------------------------------------------------------------------------------------
 
 ifeq ($(COVERAGE),1)
-  ifdef GAIA_WINDOWS
+  ifdef GAIA_OS_WINDOWS
     $(error `COVERAGE=1` is not supported on Windows)
   endif
 endif
@@ -148,7 +148,7 @@ ifeq ($(VERBOSE),1)
 endif
 
 ifeq ($(MEMCHECK),1)
-  ifdef GAIA_WINDOWS
+  ifdef GAIA_OS_WINDOWS
     $(error `MEMCHECK=1` is not available on Windows)
   endif
 endif
@@ -162,11 +162,11 @@ ifeq ($(VERBOSE),1)
   CMAKE_TRAILING_FLAGS += -v
 endif
 
-ifdef GAIA_LINUX
+ifdef GAIA_OS_LINUX
   CONFIGURE_PRESET := linux-$(GAIA_BUILD_TYPE)
   BUILD_PRESET := linux-$(GAIA_BUILD_TYPE)
 endif
-ifdef GAIA_WINDOWS
+ifdef GAIA_OS_WINDOWS
   CONFIGURE_PRESET := windows
   BUILD_PRESET := windows-$(GAIA_BUILD_TYPE)
 endif
@@ -178,10 +178,10 @@ ifeq ($(VERBOSE),1)
   CTEST_FLAGS += -V
 endif
 
-ifdef GAIA_LINUX
+ifdef GAIA_OS_LINUX
   TEST_PRESET := linux-$(GAIA_BUILD_TYPE)
 endif
-ifdef GAIA_WINDOWS
+ifdef GAIA_OS_WINDOWS
   TEST_PRESET := windows-$(GAIA_BUILD_TYPE)
 endif
 
@@ -217,7 +217,7 @@ build: configure
 	  --build --preset $(BUILD_PRESET) \
 	  $(if $(TARGET),--target $(TARGET),) \
 	  $(CMAKE_TRAILING_FLAGS) \
-	  $(if $(GAIA_LINUX),-- $(GMAKE_FLAGS),)
+	  $(if $(GAIA_OS_LINUX),-- $(GMAKE_FLAGS),)
 
 check:
 	@$(call print-target,$@)
@@ -282,7 +282,7 @@ endif
 
 # Auxiliary targets (Linux) .................................................................................
 
-ifdef GAIA_LINUX
+ifdef GAIA_OS_LINUX
 
 $(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS)
 	@$(call print-target,$@)
@@ -296,7 +296,7 @@ endif
 
 # Auxiliary targets (Windows) ...............................................................................
 
-ifdef GAIA_WINDOWS
+ifdef GAIA_OS_WINDOWS
 
 build/cmake_install.cmake: $(GAIA_DEPS) $(CMAKE_DEPS)
 	@$(call print-target,$@)
@@ -308,7 +308,7 @@ endif
 
 list-targets: configure
 	@$(call print-target,$@)
-ifdef GAIA_WINDOWS
+ifdef GAIA_OS_WINDOWS
 	@gaia-stem $(shell find $(EXECUTABLE_DIRS) -name "*.exe" -type f -o -name "*.lib" -type f) | sort -u
 else
 	@cmake --build --preset $(BUILD_PRESET) --target help

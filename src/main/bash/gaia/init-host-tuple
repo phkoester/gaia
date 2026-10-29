@@ -25,7 +25,7 @@ export GAIA_HOST_ARCH GAIA_HOST_VENDOR GAIA_HOST_OS GAIA_HOST
 if [[ $OSTYPE == linux-gnu ]]; then
   # Linux
 
-  export GAIA_LINUX=1
+  export GAIA_OS_LINUX=1
   if lsb_release -a | grep -q "Ubuntu"; then
     export GAIA_UBUNTU=1
   fi
@@ -41,7 +41,7 @@ if [[ $OSTYPE == linux-gnu ]]; then
 elif [[ $OS == Windows_NT ]]; then
   # Windows
 
-  export GAIA_WINDOWS=1
+  export GAIA_OS_WINDOWS=1
 
   if [[ $PROCESSOR_ARCHITECTURE != AMD64 ]]; then
     echo init-host-tuple: error: Invalid \`PROCESSOR_ARCHITECTURE\`: \`$PROCESSOR_ARCHITECTURE\` > /dev/stderr

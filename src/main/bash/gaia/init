@@ -56,13 +56,13 @@ export PYTHONUTF8=1
 
 # Environment (Linux) .......................................................................................
 
-if [[ $GAIA_LINUX ]]; then
+if [[ $GAIA_OS_LINUX ]]; then
   export GAIA_CXX_TOOLCHAIN=${GAIA_CXX_TOOLCHAIN:-gnu}
 fi
 
 # Environment (Windows) .....................................................................................
 
-if [[ $GAIA_WINDOWS ]]; then
+if [[ $GAIA_OS_WINDOWS ]]; then
   export GAIA_CXX_TOOLCHAIN=${GAIA_CXX_TOOLCHAIN:-llvm}
   export USER=$USERNAME
 fi
@@ -82,7 +82,7 @@ export PYTHONPATH
 
 # Paths (Windows) ...........................................................................................
 
-if [[ $SHLVL == 1 && $GAIA_WINDOWS ]]; then
+if [[ $SHLVL == 1 && $GAIA_OS_WINDOWS ]]; then
   # Move all `PATH`` entries for Microsoft Visual Studio to the top, so Microsoft's `link.exe` is found first
 
   tmp=$(mktemp)

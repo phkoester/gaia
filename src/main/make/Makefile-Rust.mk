@@ -28,7 +28,7 @@ include $(GAIA_DIR)/src/main/make/Makefile-common.mk
 # Constants -------------------------------------------------------------------------------------------------
 
 KATEX_HTML := $(GAIA_DIR)/src/main/html/katex.html
-ifdef GAIA_WINDOWS
+ifdef GAIA_OS_WINDOWS
   KATEX_HTML := $(shell cygpath -w $(KATEX_HTML))
 endif
 
@@ -78,7 +78,7 @@ test:
 ifneq ($(COVERAGE),1)
 	@cargo test $(CARGO_FLAGS)
 else
-  ifndef GAIA_WINDOWS
+  ifndef GAIA_OS_WINDOWS
 	@rm -rf $(COVERAGE_DIR)
 	@CARGO_INCREMENTAL=0 \
 	    LLVM_PROFILE_FILE=cargo-test-%p-%m.profraw \
