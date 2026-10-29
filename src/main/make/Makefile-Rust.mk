@@ -62,6 +62,7 @@ check:
 clean:
 	@$(call print-target,$@)
 	@cargo clean
+	@rm -frv $(shell find -name __pycache__ -type d)
 
 doc:
 	@$(call print-target,$@)

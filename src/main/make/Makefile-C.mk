@@ -231,6 +231,7 @@ check:
 clean:
 	@$(call print-target,$@)
 	@rm -frv build
+	@rm -frv $(shell find -name __pycache__ -type d)
 
 configure: $(CONFIGURE_DEP) $(CONFIGURE_DEPS)
 
