@@ -106,7 +106,7 @@ ifeq ($(filter $(MAKECMDGOALS),run),run)
     endif
   endif
   ifdef GAIA_OS_WINDOWS
-    RUN_EXECUTABLE := $(shell find $(EXECUTABLE_DIRS) -executable -name '$(TARGET).exe' -type f)
+    RUN_EXECUTABLE := $(shell find $(EXECUTABLE_DIRS) -executable -name '$(TARGET).exe' -type f 2>/dev/null)
   else
     RUN_EXECUTABLE := $(shell find $(BUILD_DIR)/src -executable -name '$(TARGET)' -type f)
   endif

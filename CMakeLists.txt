@@ -24,7 +24,7 @@ find_package(Python3 3.8 REQUIRED COMPONENTS Interpreter)
 GaiaDetectPython()
 
 if(WIN32)
-  if("$ENV{DevEnvDir}" STREQUAL "")
+  if(NOT DEFINED ENV{DevEnvDir})
     GaiaFatalError("On Windows, the Developer Command Prompt from Microsoft Visual Studio is required")
   endif()
 endif()
@@ -81,6 +81,10 @@ if(NOT(GAIA_CXX_COMPILER_CLANG) AND NOT(GAIA_CXX_COMPILER_GNU) AND NOT(GAIA_CXX_
 endif()
 
 # Configuration ---------------------------------------------------------------------------------------------
+
+GaiaAddVar(BUILD_SHARED_LIBS BOOL OFF "Build shared libraries")
+GaiaAddVar(BUILD_TESTING     BOOL ON  "Enable testing and build tests")
+GaiaAddVar(COVERAGE          BOOL OFF "Enable coverage and build coverage reports")
 
 if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
   GaiaAddVar(CMAKE_BUILD_TYPE STRING Release "The build type")

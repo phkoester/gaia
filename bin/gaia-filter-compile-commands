@@ -45,7 +45,7 @@ def filter_compile_commands(input_file, output_file, pattern, field='file', inve
     print(f"Error: Invalid JSON in '{input_file}': {e}", file=sys.stderr)
     return 1
   except Exception as e:
-    print(f"Error: Failed to read '{input_file}': {e}", file=sys.stderr)
+    print(f"Error: Cannot read '{input_file}': {e}", file=sys.stderr)
     return 1
 
   if not isinstance(data, list):
@@ -101,7 +101,7 @@ def filter_compile_commands(input_file, output_file, pattern, field='file', inve
     with open(output_path, 'w', encoding='utf-8') as f:
       json.dump(filtered_data, f, indent=2)
   except Exception as e:
-    print(f"error: Failed to write `{output_path}`: {e}", file=sys.stderr)
+    print(f"error: Cannot write `{output_path}`: {e}", file=sys.stderr)
     return 1
 
   # kept_count = len(filtered_data)

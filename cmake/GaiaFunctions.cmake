@@ -103,7 +103,7 @@ endfunction()
 # variable with the same name, it is used. As a fallback, the default value is used.
 function(GaiaAddVar name type default doc)
   if(NOT DEFINED ${name})
-    if(NOT $ENV{${name}} STREQUAL "")
+    if(DEFINED ENV{${name}})
       set(${name} $ENV{${name}} CACHE ${type} "${doc}")
       GaiaStatus("Setting ${name} by environment: ${${name}}")
     else()
@@ -130,11 +130,15 @@ endfunction()
 # GaiaDetectPython()
 #
 # Sets the cache variable `Python3_EXECUTABLE`. Then sets the cache variable `GAIA_PYTHON_NATIVE_WINDOWS`
-# from the path separator returned by `Python3_EXECUTABLE`. A native Windows Python reports `\`. An MSYS
-# Python reports `/`, just like a Linux Python.
+# from the path separator returned by `Python3_EXECUTABLE`. A native Windows Python interpreter reports `\`.
+# Other Python interpreters report `/`.
 function(GaiaDetectPython)
+  if(DEFINED CACHE{Python3_EXECUTABLE})
+    return()
+  endif()
+
   set(CACHE{Python3_EXECUTABLE} VALUE ${Python3_EXECUTABLE})
-  if(WIN32)
+  if(NOT WIN32)
     set(CACHE{GAIA_PYTHON_NATIVE_WINDOWS} VALUE OFF)
     return()
   endif()
@@ -147,17 +151,17 @@ function(GaiaDetectPython)
     RESULT_VARIABLE result
   )
   if(NOT result EQUAL 0)
-    GaiaFatalError("Could not run ${Python3_EXECUTABLE}: ${error}")
+    GaiaFatalError("Could not run `${Python3_EXECUTABLE}`: ${error}")
   endif()
 
   if(sep STREQUAL "backslash")
     set(CACHE{GAIA_PYTHON_NATIVE_WINDOWS} VALUE ON)
-    GaiaStatus("Python 3 uses Windows paths: ${Python3_EXECUTABLE}")
+    GaiaStatus("Python 3 uses Windows paths: `${Python3_EXECUTABLE}`")
   elseif(sep STREQUAL "slash")
     set(CACHE{GAIA_PYTHON_NATIVE_WINDOWS} VALUE OFF)
-    GaiaStatus("Python 3 uses Unix paths: ${Python3_EXECUTABLE}")
+    GaiaStatus("Python 3 uses Unix paths: `${Python3_EXECUTABLE}`")
   else()
-    GaiaFatalError("Invalid path separator from ${Python3_EXECUTABLE}: `${sep}`")
+    GaiaFatalError("Invalid path separator from `${Python3_EXECUTABLE}`: `${sep}`")
   endif()
 endfunction()
 
@@ -168,14 +172,17 @@ endfunction()
 
 # GaiaPythonPath(in out)
 #
-# Converts `in` into a path that the configured Python 3 understands. Native Windows Python gets backslashes.
-# MSYS Python gets a Unix path with forward slashes, just like Linux.
+# Converts `in` into a path that the configured Python 3 understands. Native Windows Python gets a Windows
+# path. MSYS Python gets a Unix path from `cygpath -u`. Other Python interpreters get the path as is.
 function(GaiaPythonPath in out)
   if(GAIA_PYTHON_NATIVE_WINDOWS)
     file(TO_NATIVE_PATH "${in}" localOut)
     set(${out} "${localOut}" PARENT_SCOPE)
+  elseif(GAIA_OS_WINDOWS AND $ENV{MSYSTEM} STREQUAL "MSYS")
+    GaiaUnixPath(${in} localOut)
+    set(${out} "${localOut}" PARENT_SCOPE)
   else()
-    set(${out} "${in}" PARENT_SCOPE)
+    set(${out} ${in} PARENT_SCOPE)
   endif()
 endfunction()
 
@@ -186,10 +193,10 @@ endfunction()
 
 # GaiaUnixPath(in out)
 function(GaiaUnixPath in out)
-  if(GAIA_OS_WINDOWS)
+  if(GAIA_OS_WINDOWS AND $ENV{MSYSTEM} STREQUAL "MSYS")
     execute_process(COMMAND cygpath -u ${in} OUTPUT_VARIABLE localOut)
     string(STRIP ${localOut} localOut)
-    set(${out} ${localOut} PARENT_SCOPE)
+    set(${out} "${localOut}" PARENT_SCOPE)
   else()
     set(${out} ${in} PARENT_SCOPE)
   endif()
