@@ -13,6 +13,9 @@ macOS would be a welcome addition and shouldn't be too hard to do, but that's no
 
 ## Set Up the Shell
 
+This section is only for developers who want to use Gaia on the shell directly. If you only consume Gaia via
+a transitive CMake dependency, you can skip this chapter.
+
 ### Linux
 
 On Linux, Gaia runs on the standard Bash. In the following examples, `apt` will be assumed to be the system's

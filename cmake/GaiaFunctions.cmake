@@ -99,10 +99,10 @@ endfunction()
 
 # GaiaAddVar(name type default doc)
 #
-# Adds a CMMake variable. If it is already set, it is left unchanged. Otherwise, if there is an environment
-# variable with the same name, it is used. As a fallback, the default value is used.
+# Adds a CMake cache variable. If it is already set, it is left unchanged. Otherwise, if there is an
+# environment variable with the same name, it is used. As a fallback, the default value is used.
 function(GaiaAddVar name type default doc)
-  if(NOT DEFINED ${name})
+  if(NOT DEFINED CACHE{name})
     if(DEFINED ENV{${name}})
       set(${name} $ENV{${name}} CACHE ${type} "${doc}")
       GaiaStatus("Setting ${name} by environment: ${${name}}")
@@ -178,7 +178,7 @@ function(GaiaPythonPath in out)
   if(GAIA_PYTHON_NATIVE_WINDOWS)
     file(TO_NATIVE_PATH "${in}" localOut)
     set(${out} "${localOut}" PARENT_SCOPE)
-  elseif(GAIA_OS_WINDOWS AND $ENV{MSYSTEM} STREQUAL "MSYS")
+  elseif(GAIA_OS_WINDOWS AND "$ENV{MSYSTEM}" STREQUAL "MSYS")
     GaiaUnixPath(${in} localOut)
     set(${out} "${localOut}" PARENT_SCOPE)
   else()
@@ -193,7 +193,7 @@ endfunction()
 
 # GaiaUnixPath(in out)
 function(GaiaUnixPath in out)
-  if(GAIA_OS_WINDOWS AND $ENV{MSYSTEM} STREQUAL "MSYS")
+  if(GAIA_OS_WINDOWS AND "$ENV{MSYSTEM}" STREQUAL "MSYS")
     execute_process(COMMAND cygpath -u ${in} OUTPUT_VARIABLE localOut)
     string(STRIP ${localOut} localOut)
     set(${out} "${localOut}" PARENT_SCOPE)
