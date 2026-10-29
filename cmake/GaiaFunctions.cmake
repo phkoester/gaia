@@ -129,11 +129,13 @@ endfunction()
 
 # GaiaDetectPython()
 #
-# Sets `GAIA_PYTHON_NATIVE_WINDOWS` from the path separator of `Python3_EXECUTABLE`. A native Windows Python
-# reports `\`. An MSYS Python reports `/`, like Linux.
+# Sets the cache variable `Python3_EXECUTABLE`. Then sets the cache variable `GAIA_PYTHON_NATIVE_WINDOWS`
+# from the path separator returned by `Python3_EXECUTABLE`. A native Windows Python reports `\`. An MSYS
+# Python reports `/`, just like a Linux Python.
 function(GaiaDetectPython)
-  if(NOT GAIA_OS_WINDOWS)
-    GaiaSet(GAIA_PYTHON_NATIVE_WINDOWS BOOL OFF)
+  set(CACHE{Python3_EXECUTABLE} VALUE ${Python3_EXECUTABLE})
+  if(WIN32)
+    set(CACHE{GAIA_PYTHON_NATIVE_WINDOWS} VALUE OFF)
     return()
   endif()
 
@@ -149,10 +151,10 @@ function(GaiaDetectPython)
   endif()
 
   if(sep STREQUAL "backslash")
-    GaiaSet(GAIA_PYTHON_NATIVE_WINDOWS BOOL ON)
+    set(CACHE{GAIA_PYTHON_NATIVE_WINDOWS} VALUE ON)
     GaiaStatus("Python 3 uses Windows paths: ${Python3_EXECUTABLE}")
   elseif(sep STREQUAL "slash")
-    GaiaSet(GAIA_PYTHON_NATIVE_WINDOWS BOOL OFF)
+    set(CACHE{GAIA_PYTHON_NATIVE_WINDOWS} VALUE OFF)
     GaiaStatus("Python 3 uses Unix paths: ${Python3_EXECUTABLE}")
   else()
     GaiaFatalError("Invalid path separator from ${Python3_EXECUTABLE}: `${sep}`")
@@ -164,20 +166,10 @@ function(GaiaFatalError msg)
   message(FATAL_ERROR "${PROJECT_NAME}: ${msg}")
 endfunction()
 
-# GaiaSet(name type value)
-function(GaiaSet name type value)
-  set(${name} ${value} CACHE ${type})
-endfunction()
-
-# GaiaStatus(msg)
-function(GaiaStatus msg)
-  message(STATUS "${PROJECT_NAME}: ${msg}")
-endfunction()
-
 # GaiaPythonPath(in out)
 #
 # Converts `in` into a path that the configured Python 3 understands. Native Windows Python gets backslashes.
-# MSYS Python gets a Unix path with forward slashes.
+# MSYS Python gets a Unix path with forward slashes, just like Linux.
 function(GaiaPythonPath in out)
   if(GAIA_PYTHON_NATIVE_WINDOWS)
     file(TO_NATIVE_PATH "${in}" localOut)
@@ -185,6 +177,11 @@ function(GaiaPythonPath in out)
   else()
     set(${out} "${in}" PARENT_SCOPE)
   endif()
+endfunction()
+
+# GaiaStatus(msg)
+function(GaiaStatus msg)
+  message(STATUS "${PROJECT_NAME}: ${msg}")
 endfunction()
 
 # GaiaUnixPath(in out)

@@ -1,10 +1,9 @@
 # Gaia
 
 Gaia is a collection of Bash scripts, Python scripts, Makefiles, and various other scripts that help you to
-build C++ and Rust projects on Linux and Windows. macOS would be a welcome addition and shouldn't be too hard
-to do, but that's not in the pipeline as of yet.
+build C++ and Rust projects on Linux and Windows.
 
-Gaia is pre-alpha, a hobby project of mine, and possibly dangerous. **Use it at your own risk.**
+macOS would be a welcome addition and shouldn't be too hard to do, but that's not in the pipeline as of yet.
 
 ## Set Up the Shell
 
