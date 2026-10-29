@@ -5,6 +5,13 @@ build C++ and Rust projects on Linux and Windows.
 
 macOS would be a welcome addition and shouldn't be too hard to do, but that's not in the pipeline as of yet.
 
+## CMake Requirements
+
+A Python 3 interpreter with a minimum version of 3.8 is required.
+
+On Windows, a Developer Command Prompt from Microsoft Visual Studio is required. Both a native Windows Python
+(using Windows paths) and an MSYS Python (using Unix paths) are supported.
+
 ## Set Up the Shell
 
 ### Linux
