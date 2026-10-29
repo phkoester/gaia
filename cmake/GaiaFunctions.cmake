@@ -178,11 +178,11 @@ function(GaiaPythonPath in out)
   if(GAIA_PYTHON_NATIVE_WINDOWS)
     file(TO_NATIVE_PATH "${in}" localOut)
     set(${out} "${localOut}" PARENT_SCOPE)
-  elseif(GAIA_OS_WINDOWS AND "$ENV{MSYSTEM}" STREQUAL "MSYS")
-    GaiaUnixPath(${in} localOut)
+  elseif(GAIA_OS_WINDOWS)
+    GaiaWindowsUnixPath(${in} localOut)
     set(${out} "${localOut}" PARENT_SCOPE)
   else()
-    set(${out} ${in} PARENT_SCOPE)
+    set(${out} "${in}" PARENT_SCOPE)
   endif()
 endfunction()
 
@@ -191,15 +191,17 @@ function(GaiaStatus msg)
   message(STATUS "${PROJECT_NAME}: ${msg}")
 endfunction()
 
-# GaiaUnixPath(in out)
+# Windows functions -----------------------------------------------------------------------------------------
+
+if(WIN32) # `GAIA_OS_WINDOWS` isn't available yet
+
+# GaiaWindowsUnixPath(in out)
 function(GaiaUnixPath in out)
-  if(GAIA_OS_WINDOWS AND "$ENV{MSYSTEM}" STREQUAL "MSYS")
-    execute_process(COMMAND cygpath -u ${in} OUTPUT_VARIABLE localOut)
-    string(STRIP ${localOut} localOut)
-    set(${out} "${localOut}" PARENT_SCOPE)
-  else()
-    set(${out} ${in} PARENT_SCOPE)
-  endif()
+  execute_process(COMMAND cygpath -u "${in}" OUTPUT_VARIABLE localOut)
+  string(STRIP ${localOut} localOut)
+  set(${out} "${localOut}" PARENT_SCOPE)
 endfunction()
+
+endif() # WIN32
 
 # EOF
