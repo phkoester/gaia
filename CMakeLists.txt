@@ -1,10 +1,22 @@
 #
-# gaia.cmake
-#
-# To be included from a project's root `CMakeLists.txt` file.
+# CMakeLists.txt
 #
 
-include(${CMAKE_CURRENT_LIST_DIR}/GaiaHelpers.cmake)
+cmake_minimum_required(VERSION 4.2)
+
+include(${CMAKE_CURRENT_LIST_DIR}/GaiaFunctions.cmake)
+
+# Project ---------------------------------------------------------------------------------------------------
+
+# Is this the master project?
+if(NOT DEFINED GAIA_MASTER_PROJECT)
+  set(GAIA_MASTER_PROJECT OFF)
+  if(NOT DEFINED PROJECT_NAME)
+    set(GAIA_MASTER_PROJECT ON)
+  endif()
+endif()
+
+project(gaia VERSION 1.2.0)
 
 # Prerequisites ---------------------------------------------------------------------------------------------
 
@@ -12,25 +24,20 @@ if(WIN32)
   if("$ENV{DevEnvDir}" STREQUAL "")
     GaiaFatalError("Developer Command Prompt for Microsoft Visual Studio is required")
   endif()
-  if(NOT "$ENV{MSYSTEM}" STREQUAL "MSYS")
-    GaiaFatalError("MSYS from Git SDK is required")
-  endif()
-  if(NOT $ENV{SHELL} MATCHES "bash\.exe$")
-    GaiaFatalError("Bash from Git SDK is required")
-  endif()
 endif()
 
 find_package(Python3 3.8 REQUIRED COMPONENTS Interpreter)
+GaiaDetectPython()
 
 # Check host tuple ------------------------------------------------------------------------------------------
 
 if(LINUX)
-  set(GAIA_OS linux)
-  set(GAIA_OS_LINUX ON)
+  GaiaSet(GAIA_OS STRING linux)
+  GaiaSet(GAIA_OS_LINUX BOOL ON)
 endif()
 if(WIN32)
-  set(GAIA_OS windows)
-  set(GAIA_OS_WINDOWS ON)
+  GaiaSet(GAIA_OS STRING windows)
+  GaiaSet(GAIA_OS_WINDOWS BOOL ON)
 endif()
 
 if(NOT(GAIA_OS_LINUX) AND NOT(GAIA_OS_WINDOWS))
@@ -40,16 +47,16 @@ endif()
 # Check C/C++ toolchain -------------------------------------------------------------------------------------
 
 if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
-  set(GAIA_C_COMPILER clang)
-  set(GAIA_C_COMPILER_CLANG ON)
+  GaiaSet(GAIA_C_COMPILER STRING clang)
+  GaiaSet(GAIA_C_COMPILER_CLANG BOOL ON)
 endif()
 if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
-  set(GAIA_C_COMPILER gnu)
-  set(GAIA_C_COMPILER_GNU ON)
+  GaiaSet(GAIA_C_COMPILER STRING gnu)
+  GaiaSet(GAIA_C_COMPILER_GNU BOOL ON)
 endif()
 if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
-  set(GAIA_C_COMPILER msvc)
-  set(GAIA_C_COMPILER_MSVC ON)
+  GaiaSet(GAIA_C_COMPILER STRING msvc)
+  GaiaSet(GAIA_C_COMPILER_MSVC BOOL ON)
 endif()
 
 if(NOT(GAIA_C_COMPILER_CLANG) AND NOT(GAIA_C_COMPILER_GNU) AND NOT(GAIA_C_COMPILER_MSVC))
@@ -57,34 +64,23 @@ if(NOT(GAIA_C_COMPILER_CLANG) AND NOT(GAIA_C_COMPILER_GNU) AND NOT(GAIA_C_COMPIL
 endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  set(GAIA_CXX_COMPILER clang)
-  set(GAIA_CXX_COMPILER_CLANG ON)
+  GaiaSet(GAIA_CXX_COMPILER STRING clang)
+  GaiaSet(GAIA_CXX_COMPILER_CLANG BOOL ON)
 endif()
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  set(GAIA_CXX_COMPILER gnu)
-  set(GAIA_CXX_COMPILER_GNU ON)
+  GaiaSet(GAIA_CXX_COMPILER STRING gnu)
+  GaiaSet(GAIA_CXX_COMPILER_GNU BOOL ON)
 endif()
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-  set(GAIA_CXX_COMPILER mesvc)
-  set(GAIA_CXX_COMPILER_MSVC ON)
+  GaiaSet(GAIA_CXX_COMPILER STRING msvc)
+  GaiaSet(GAIA_CXX_COMPILER_MSVC BOOL ON)
 endif()
 
 if(NOT(GAIA_CXX_COMPILER_CLANG) AND NOT(GAIA_CXX_COMPILER_GNU) AND NOT(GAIA_CXX_COMPILER_MSVC))
   GaiaFatalError("Unsupported C++ compiler ${CMAKE_CXX_COMPILER_ID}")
 endif()
 
-# CMPs ------------------------------------------------------------------------------------------------------
-
-# Get rid off a warning from libcbor
-set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
-# "More read-only target properties now error when trying to set them."
-if(POLICY CMP0160)
-  cmake_policy(SET CMP0160 NEW)
-endif()
-
-GaiaAddVar(BUILD_SHARED_LIBS BOOL OFF "Build shared libraries")
-GaiaAddVar(BUILD_TESTING     BOOL ON  "Enable testing and build tests")
-GaiaAddVar(COVERAGE          BOOL OFF "Enable code coverage")
+# Configuration ---------------------------------------------------------------------------------------------
 
 if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
   GaiaAddVar(CMAKE_BUILD_TYPE STRING Release "The build type")

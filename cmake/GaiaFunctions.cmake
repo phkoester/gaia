@@ -1,5 +1,5 @@
 #
-# GaiaHelpers.cmake
+# GaiaFunctions.cmake
 #
 # Helper functions for Gaia.
 #
@@ -54,11 +54,11 @@ endfunction()
 # GaiaAddExecutable(name srcFile...)
 function(GaiaAddExecutable name)
   add_executable(${name})
-  target_sources(${name} PRIVATE ${ARGN})
   target_compile_definitions(${name} PRIVATE ${COMPILE_DEFS})
   target_compile_features(${name} PRIVATE ${COMPILE_FEATURES})
   target_compile_options(${name} PRIVATE ${COMPILE_FLAGS})
   target_link_options(${name} PRIVATE ${LINK_FLAGS})
+  target_sources(${name} PRIVATE ${ARGN})
 endfunction()
 
 # GaiaAddLibrary(name ...), like add_library()
@@ -127,14 +127,64 @@ function(GaiaCopyRuntimeFiles name)
   endif()
 endfunction()
 
+# GaiaDetectPython()
+#
+# Sets `GAIA_PYTHON_NATIVE_WINDOWS` from the path separator of `Python3_EXECUTABLE`. A native Windows Python
+# reports `\`. An MSYS Python reports `/`, like Linux.
+function(GaiaDetectPython)
+  if(NOT GAIA_OS_WINDOWS)
+    GaiaSet(GAIA_PYTHON_NATIVE_WINDOWS BOOL OFF)
+    return()
+  endif()
+
+  execute_process(
+    COMMAND ${Python3_EXECUTABLE} -c "import os; print('backslash' if os.sep == chr(92) else 'slash')"
+    OUTPUT_VARIABLE sep
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_VARIABLE error
+    RESULT_VARIABLE result
+  )
+  if(NOT result EQUAL 0)
+    GaiaFatalError("Could not run ${Python3_EXECUTABLE}: ${error}")
+  endif()
+
+  if(sep STREQUAL "backslash")
+    GaiaSet(GAIA_PYTHON_NATIVE_WINDOWS BOOL ON)
+    GaiaStatus("Python 3 uses Windows paths: ${Python3_EXECUTABLE}")
+  elseif(sep STREQUAL "slash")
+    GaiaSet(GAIA_PYTHON_NATIVE_WINDOWS BOOL OFF)
+    GaiaStatus("Python 3 uses Unix paths: ${Python3_EXECUTABLE}")
+  else()
+    GaiaFatalError("Invalid path separator from ${Python3_EXECUTABLE}: `${sep}`")
+  endif()
+endfunction()
+
 # GaiaFatalError(msg)
 function(GaiaFatalError msg)
   message(FATAL_ERROR "${PROJECT_NAME}: ${msg}")
 endfunction()
 
+# GaiaSet(name type value)
+function(GaiaSet name type value)
+  set(${name} ${value} CACHE ${type})
+endfunction()
+
 # GaiaStatus(msg)
 function(GaiaStatus msg)
   message(STATUS "${PROJECT_NAME}: ${msg}")
+endfunction()
+
+# GaiaPythonPath(in out)
+#
+# Converts `in` into a path that the configured Python 3 understands. Native Windows Python gets backslashes.
+# MSYS Python gets a Unix path with forward slashes.
+function(GaiaPythonPath in out)
+  if(GAIA_PYTHON_NATIVE_WINDOWS)
+    file(TO_NATIVE_PATH "${in}" localOut)
+    set(${out} "${localOut}" PARENT_SCOPE)
+  else()
+    set(${out} "${in}" PARENT_SCOPE)
+  endif()
 endfunction()
 
 # GaiaUnixPath(in out)
