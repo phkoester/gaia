@@ -8,7 +8,7 @@
 # - CONFIGURE_DEPS
 #     Targets to make before configuring
 # - COVERAGE
-#     If set to 1, build with code coverage and create a report when running tests (Linux and Clang only).
+#     If set to 1, build with code coverage and create a report when running tests (Linux and LLVM only).
 #     After changing it, run `make clean`
 # - DEFAULT_RUN_TARGET
 #     The default target to run
