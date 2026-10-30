@@ -47,7 +47,7 @@ endif()
 # Check C/C++ toolchain -------------------------------------------------------------------------------------
 
 if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
-  set(CACHE{GAIA_C_COMPILER} VALUE clang)
+  set(CACHE{GAIA_C_COMPILER} VALUE llvm)
   set(CACHE{GAIA_C_COMPILER_LLVM} VALUE ON)
 endif()
 if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
@@ -64,7 +64,7 @@ if(NOT(GAIA_C_COMPILER_LLVM) AND NOT(GAIA_C_COMPILER_GNU) AND NOT(GAIA_C_COMPILE
 endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  set(CACHE{GAIA_CXX_COMPILER} VALUE clang)
+  set(CACHE{GAIA_CXX_COMPILER} VALUE llvm)
   set(CACHE{GAIA_CXX_COMPILER_LLVM} VALUE ON)
 endif()
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
