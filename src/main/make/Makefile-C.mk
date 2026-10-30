@@ -57,38 +57,22 @@ include $(GAIA_DIR)/src/main/make/Makefile-common.mk
 
 # Constants -------------------------------------------------------------------------------------------------
 
+export BUILD_DIR := build/$(GAIA_BUILD_TYPE)
+COVERAGE_DIR := $(BUILD_DIR)/code-coverage
+EXECUTABLE_DIRS :=
+TEST_DIR := $(BUILD_DIR)/src/test
+
 ifdef GAIA_OS_WINDOWS
-  export BUILD_DIR := build
-  ifeq ($(GAIA_BUILD_TYPE),debug)
-    CONFIG := Debug
-  else
-    CONFIG := Release
-  endif
-  COVERAGE_DIR := $(BUILD_DIR)/code-coverage/$(CONFIG)
   EXECUTABLE_DIRS := \
-    $(BUILD_DIR)/src/bench/$(CONFIG) \
-    $(BUILD_DIR)/src/bin/$(CONFIG) \
-    $(BUILD_DIR)/src/example/$(CONFIG) \
-    $(BUILD_DIR)/src/experimental/$(CONFIG) \
-    $(BUILD_DIR)/src/main/$(CONFIG) \
-    $(BUILD_DIR)/src/test/$(CONFIG)
-  TEST_DIR := $(BUILD_DIR)/src/test/$(CONFIG)
-else
-  export BUILD_DIR := build/$(GAIA_BUILD_TYPE)
-  CONFIG :=
-  COVERAGE_DIR := $(BUILD_DIR)/code-coverage
-  EXECUTABLE_DIRS :=
-  TEST_DIR := $(BUILD_DIR)/src/test
+    $(BUILD_DIR)/src/bench \
+    $(BUILD_DIR)/src/bin \
+    $(BUILD_DIR)/src/example \
+    $(BUILD_DIR)/src/experimental \
+    $(BUILD_DIR)/src/main \
+    $(BUILD_DIR)/src/test
 endif
 
 CMAKE_DEPS := CMakeLists.txt $(shell find src -name CMakeLists.txt)
-
-ifdef GAIA_OS_LINUX
-  CONFIGURE_DEP := compile_commands.json
-endif
-ifdef GAIA_OS_WINDOWS
-  CONFIGURE_DEP := build/cmake_install.cmake
-endif
 
 CHECK_FILES :=
 ifeq ($(filter $(MAKECMDGOALS),check),check)
@@ -216,7 +200,7 @@ ifdef GAIA_OS_LINUX
   BUILD_PRESET := linux-$(GAIA_BUILD_TYPE)
 endif
 ifdef GAIA_OS_WINDOWS
-  CONFIGURE_PRESET := windows
+  CONFIGURE_PRESET := windows-$(GAIA_BUILD_TYPE)
   BUILD_PRESET := windows-$(GAIA_BUILD_TYPE)
 endif
 
@@ -241,17 +225,6 @@ ifneq ($(VERBOSE),1)
   DOXYGEN_FLAGS += -q
 endif
 
-# Configure GNU Make ----------------------------------------------------------------------------------------
-
-GMAKE_FLAGS := --no-print-directory
-ifdef JOBS
-  ifneq ($(JOBS),0)
-    GMAKE_FLAGS += -j$(JOBS)
-  endif
-else
-  GMAKE_FLAGS += -j$(GAIA_NPROC_3_4) -l$(GAIA_NPROC)
-endif
-
 # Targets ---------------------------------------------------------------------------------------------------
 
 bench:
@@ -262,11 +235,8 @@ endif
 
 build: configure
 	@$(call print-target,$@)
-	@cmake $(CMAKE_FLAGS) $(CMAKE_CONFIGURE_FLAGS) \
-	  --build --preset $(BUILD_PRESET) \
-	  $(if $(TARGET),--target $(TARGET),) \
-	  $(CMAKE_TRAILING_FLAGS) \
-	  $(if $(GAIA_OS_LINUX),-- $(GMAKE_FLAGS),)
+	@cmake $(CMAKE_FLAGS) $(CMAKE_CONFIGURE_FLAGS) --build --preset $(BUILD_PRESET) \
+	  $(if $(TARGET),--target $(TARGET),) $(CMAKE_TRAILING_FLAGS)
 
 check:
 	@$(call print-target,$@)
@@ -282,18 +252,15 @@ clean:
 	@rm -frv build
 	@rm -frv $(shell find -name __pycache__ -type d)
 
-configure: $(CONFIGURE_DEP) $(CONFIGURE_DEPS)
+configure: compile_commands.json $(CONFIGURE_DEPS)
 
 doc: doc-main doc-test
 
 .PHONY: rebuild
 rebuild: reconfigure
 	@$(call print-target,$@)
-	@cmake $(CMAKE_FLAGS) \
-	  --build --clean-first --preset $(BUILD_PRESET) \
-	  $(if $(TARGET),--target $(TARGET),) \
-	  $(CMAKE_TRAILING_FLAGS) \
-	  $(if $(GAIA_OS_LINUX),-- $(GMAKE_FLAGS),)
+	@cmake $(CMAKE_FLAGS) --build --clean-first --preset $(BUILD_PRESET) \
+	  $(if $(TARGET),--target $(TARGET),) $(CMAKE_TRAILING_FLAGS)
 
 .PHONY: reconfigure
 reconfigure:
@@ -361,9 +328,7 @@ ifneq ($(wildcard src/test/Doxyfile),)
 	@echo Created \`$(BUILD_DIR)/src/test/doc/html/index.html\`
 endif
 
-# Auxiliary targets (Linux) .................................................................................
-
-ifdef GAIA_OS_LINUX
+# Auxiliary targets .........................................................................................
 
 $(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS)
 	@$(call print-target,$@)
@@ -372,18 +337,6 @@ $(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS)
 compile_commands.json: $(BUILD_DIR)/compile_commands.json
 	@echo ">" $@
 	@gaia-filter-compile-commands --field file -i $< -o $@ $(PROJECT_NAME)/src
-
-endif
-
-# Auxiliary targets (Windows) ...............................................................................
-
-ifdef GAIA_OS_WINDOWS
-
-build/cmake_install.cmake: $(GAIA_DEPS) $(CMAKE_DEPS)
-	@$(call print-target,$@)
-	@cmake $(CMAKE_CONFIGURE_FLAGS) --preset $(CONFIGURE_PRESET)
-
-endif
 
 # C-specific targets ----------------------------------------------------------------------------------------
 

@@ -5,6 +5,11 @@ build C++ and Rust projects on Linux and Windows.
 
 macOS would be a welcome addition and shouldn't be too hard to do, but that's not in the pipeline as of yet.
 
+| Operating System | Supported C++ Toolchains
+| :--------------- | :-----------------------
+| Linux            | GNU (`g++`), LLVM (`clang++`)
+| Windows          | LLVM (`clang-cl.exe`), MSVC (`cl.exe`)
+
 ## CMake Requirements
 
 * CMake 4.2 or higher.
