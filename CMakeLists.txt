@@ -48,7 +48,7 @@ endif()
 
 if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
   set(CACHE{GAIA_C_COMPILER} VALUE clang)
-  set(CACHE{GAIA_C_COMPILER_CLANG} VALUE ON)
+  set(CACHE{GAIA_C_COMPILER_LLVM} VALUE ON)
 endif()
 if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
   set(CACHE{GAIA_C_COMPILER} VALUE gnu)
@@ -59,13 +59,13 @@ if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
   set(CACHE{GAIA_C_COMPILER_MSVC} VALUE ON)
 endif()
 
-if(NOT(GAIA_C_COMPILER_CLANG) AND NOT(GAIA_C_COMPILER_GNU) AND NOT(GAIA_C_COMPILER_MSVC))
+if(NOT(GAIA_C_COMPILER_LLVM) AND NOT(GAIA_C_COMPILER_GNU) AND NOT(GAIA_C_COMPILER_MSVC))
   GaiaFatalError("Unsupported C compiler ${CMAKE_C_COMPILER_ID}")
 endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
   set(CACHE{GAIA_CXX_COMPILER} VALUE clang)
-  set(CACHE{GAIA_CXX_COMPILER_CLANG} VALUE ON)
+  set(CACHE{GAIA_CXX_COMPILER_LLVM} VALUE ON)
 endif()
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   set(CACHE{GAIA_CXX_COMPILER} VALUE gnu)
@@ -76,18 +76,18 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
   set(CACHE{GAIA_CXX_COMPILER_MSVC} VALUE ON)
 endif()
 
-if(NOT(GAIA_CXX_COMPILER_CLANG) AND NOT(GAIA_CXX_COMPILER_GNU) AND NOT(GAIA_CXX_COMPILER_MSVC))
+if(NOT(GAIA_CXX_COMPILER_LLVM) AND NOT(GAIA_CXX_COMPILER_GNU) AND NOT(GAIA_CXX_COMPILER_MSVC))
   GaiaFatalError("Unsupported C++ compiler ${CMAKE_CXX_COMPILER_ID}")
 endif()
 
 # Configuration ---------------------------------------------------------------------------------------------
 
+GaiaAddVar(BUILD_COVERAGE    BOOL OFF "Enable code coverage and generate reports")
 GaiaAddVar(BUILD_SHARED_LIBS BOOL OFF "Build shared libraries")
-GaiaAddVar(BUILD_TESTING     BOOL ON  "Enable testing and build tests")
-GaiaAddVar(COVERAGE          BOOL OFF "Enable coverage and build coverage reports")
+GaiaAddVar(BUILD_TESTING     BOOL ON  "Enable testing: benchmarks and tests")
 
 if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
-  GaiaAddVar(CMAKE_BUILD_TYPE STRING Release "The build type")
+  GaiaAddVar(CMAKE_BUILD_TYPE STRING Release "The build type (`Debug` or `Release`)")
 endif()
 
 # EOF

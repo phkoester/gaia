@@ -4,52 +4,7 @@
 # Helper functions for Gaia.
 #
 
-# Private functions -----------------------------------------------------------------------------------------
-
-# GaiaParseArgs__(outSrcFiles outEnv srcFile... [ENVIRONMENT name=value]...)
-function(GaiaParseArgs__ outSrcFiles outEnv)
-  set(srcFiles)
-  set(env)
-  set(appendTo srcFiles)
-  foreach(it IN LISTS ARGN)
-    if(it STREQUAL "ENVIRONMENT")
-      set(appendTo env)
-    else()
-      list(APPEND ${appendTo} ${it})
-    endif()
-  endforeach()
-
-  set(${outSrcFiles} ${srcFiles} PARENT_SCOPE)
-  set(${outEnv} ${env} PARENT_SCOPE)
-endfunction()
-
 # Functions -------------------------------------------------------------------------------------------------
-
-# GaiaAddBench(name dir srcFile... [ENVIRONMENT name=value...])
-function(GaiaAddBench name dir)
-  GaiaParseArgs__(srcFiles env ${ARGN})
-
-  list(TRANSFORM srcFiles PREPEND "${dir}/")
-  GaiaAddExecutable(${name} ${srcFiles})
-  target_link_libraries(${name} PRIVATE benchmark::benchmark_main Rocket::rocket-bench)
-  GaiaCopyRuntimeFiles(${name})
-
-  add_test(
-    NAME    ${name}
-    COMMAND ${name}
-  )
-
-  string(JOIN " " configs ${CMAKE_CONFIGURATION_TYPES})
-
-  set_property(TEST ${name}
-    PROPERTY ENVIRONMENT
-      "BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}"
-      "CONFIG=$<CONFIG>"
-      "CONFIGS=${configs}"
-      "SOURCE_DIR=${CMAKE_SOURCE_DIR}/src/test/${dir}"
-      ${env}
-  )
-endfunction()
 
 # GaiaAddExecutable(name srcFile...)
 function(GaiaAddExecutable name)
@@ -59,6 +14,7 @@ function(GaiaAddExecutable name)
   target_compile_options(${name} PRIVATE ${COMPILE_FLAGS})
   target_link_options(${name} PRIVATE ${LINK_FLAGS})
   target_sources(${name} PRIVATE ${ARGN})
+  GaiaCopyRuntimeFiles(${name})
 endfunction()
 
 # GaiaAddLibrary(name ...), like add_library()
@@ -68,33 +24,6 @@ function(GaiaAddLibrary name)
   target_compile_features(${name} PRIVATE ${COMPILE_FEATURES})
   target_compile_options(${name} PRIVATE ${COMPILE_FLAGS})
   target_link_options(${name} PRIVATE ${LINK_FLAGS})
-endfunction()
-
-# GaiaAddTest(name dir srcFile... [ENVIRONMENT name=value...])
-function(GaiaAddTest name dir)
-  GaiaParseArgs__(srcFiles env ${ARGN})
-
-  list(TRANSFORM srcFiles PREPEND "${dir}/")
-  GaiaAddExecutable(${name} ${srcFiles})
-  target_link_libraries(${name} PRIVATE Rocket::rocket-test-main Rocket::rocket-test)
-  GaiaCopyRuntimeFiles(${name})
-
-  string(JOIN " " configs ${CMAKE_CONFIGURATION_TYPES})
-
-  set(envProps)
-  foreach(it IN LISTS env)
-    list(APPEND envProps PROPERTIES ENVIRONMENT "${it}")
-  endforeach()
-
-  gtest_discover_tests(${name}
-    DISCOVERY_MODE PRE_TEST
-    EXTRA_ARGS --gtest_catch_exceptions=0
-    PROPERTIES ENVIRONMENT "BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}"
-    PROPERTIES ENVIRONMENT "CONFIG=$<CONFIG>"
-    PROPERTIES ENVIRONMENT "CONFIGS=${configs}"
-    PROPERTIES ENVIRONMENT "SOURCE_DIR=${CMAKE_SOURCE_DIR}/src/test/${dir}"
-    ${envProps}
-  )
 endfunction()
 
 # GaiaAddVar(name type default doc)

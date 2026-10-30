@@ -7,6 +7,9 @@
 #     Arguments to pass to the run target
 # - CONFIGURE_DEPS
 #     Targets to make before configuring
+# - COVERAGE
+#     If set to 1, build with code coverage and create a report when running tests (Linux and Clang only).
+#     After changing it, run `make clean`
 # - DEFAULT_RUN_TARGET
 #     The default target to run
 # - GAIA_BUILD_TYPE
@@ -36,13 +39,13 @@
 # Targets (parameters):
 #
 # - bench (GAIA_BUILD_TYPE, PATTERN)
-# - build (GAIA_BUILD_TYPE, TARGET, VERBOSE)
+# - build (COVERAGE, GAIA_BUILD_TYPE, TARGET, VERBOSE)
 # - check (GAIA_BUILD_TYPE, PATTERN)
 # - clean
-# - configure (GAIA_BUILD_TYPE)
+# - configure (COVERAGE, GAIA_BUILD_TYPE)
 # - doc (GAIA_BUILD_TYPE, VERBOSE)
 # - run (ARGS, DEFAULT_RUN_TARGET, GAIA_BUILD_TYPE, MEMCHECK, TARGET, VERBOSE)
-# - test (GAIA_BUILD_TYPE, PATTERN, VERBOSE)
+# - test (COVERAGE, GAIA_BUILD_TYPE, PATTERN, VERBOSE)
 #
 
 ifndef GAIA_DIR
@@ -132,13 +135,46 @@ ifeq ($(GAIA_CXX_TOOLCHAIN),llvm)
   endif
 endif
 
-# Configure lcov --------------------------------------------------------------------------------------------
+# Configure code coverage -----------------------------------------------------------------------------------
 
 ifeq ($(COVERAGE),1)
-  ifdef GAIA_OS_WINDOWS
-    $(error `COVERAGE=1` is not supported on Windows)
+  ifndef GAIA_OS_LINUX
+    $(error `COVERAGE=1` requires Linux and LLVM toolchain)
   endif
+  ifneq ($(GAIA_CXX_TOOLCHAIN),llvm)
+    $(error `COVERAGE=1` requires Linux and LLVM toolchain)
+  endif
+
+  export BUILD_COVERAGE := 1
+
+  # LLVM source-based code coverage
+  COVERAGE_COMPILE_FLAGS := -fprofile-instr-generate -fcoverage-mapping
+  COVERAGE_LINK_FLAGS := -fprofile-instr-generate
+
+  # Prefer the LLVM tools matching the Clang version, e.g. `llvm-cov-21`
+  LLVM_VERSION := $(shell $(CC) -dumpversion | cut -d. -f1)
+  LLVM_COV := $(shell command -v llvm-cov-$(LLVM_VERSION) || command -v llvm-cov)
+  LLVM_PROFDATA := $(shell command -v llvm-profdata-$(LLVM_VERSION) || command -v llvm-profdata)
+  ifeq ($(LLVM_COV),)
+    $(error Missing `llvm-cov`)
+  endif
+  ifeq ($(LLVM_PROFDATA),)
+    $(error Missing `llvm-profdata`)
+  endif
+
+  COVERAGE_IGNORE_REGEX := (/_deps/|/src/bench/|/src/test/)
+  COVERAGE_PROFDATA := $(COVERAGE_DIR)/coverage.profdata
+  COVERAGE_PROFRAW_DIR := $(abspath $(COVERAGE_DIR))/profraw
 endif
+
+# Instrumented ELF executables and shared libraries of this project (excluding `_deps`). The first one is
+# passed positionally to `llvm-cov`, the others with `-object`
+coverage-binaries = $(shell \
+  for f in $$(find $(BUILD_DIR)/src -name CMakeFiles -prune -o -type f \( -executable -o -name '*.so*' \) -print); do \
+    [ "$$(head -c4 $$f | tail -c3)" = ELF ] && echo $$f; \
+  done)
+
+coverage-objects = $(firstword $1) $(addprefix -object=,$(wordlist 2,$(words $1),$1))
 
 # Configure valgrind ----------------------------------------------------------------------------------------
 
@@ -156,6 +192,16 @@ endif
 # Configure CMake -------------------------------------------------------------------------------------------
 
 CMAKE_FLAGS :=
+
+# Flags for configuring only; `cmake --build` does not accept them
+CMAKE_CONFIGURE_FLAGS :=
+ifeq ($(COVERAGE),1)
+  CMAKE_CONFIGURE_FLAGS += \
+    "-DCMAKE_C_FLAGS=$(COVERAGE_COMPILE_FLAGS)" \
+    "-DCMAKE_CXX_FLAGS=$(COVERAGE_COMPILE_FLAGS)" \
+    "-DCMAKE_EXE_LINKER_FLAGS=$(COVERAGE_LINK_FLAGS)" \
+    "-DCMAKE_SHARED_LINKER_FLAGS=$(COVERAGE_LINK_FLAGS)"
+endif
 
 CMAKE_TRAILING_FLAGS :=
 ifeq ($(VERBOSE),1)
@@ -240,24 +286,40 @@ doc: doc-main doc-test
 run:
 	@$(call print-target,$@)
 ifneq ($(MEMCHECK),1)
-	@echo $$ $(RUN_EXECUTABLE) $(ARGS)
-	@$(RUN_EXECUTABLE) $(ARGS)
+	$(RUN_EXECUTABLE) $(ARGS)
 else
-	@echo $$ ROCKET_EXIT=1 valgrind $(VALGRIND_FLAGS) $(RUN_EXECUTABLE) $(ARGS)
-	@ROCKET_EXIT=1 valgrind $(VALGRIND_FLAGS) $(RUN_EXECUTABLE) $(ARGS)
+	ROCKET_EXIT=1 valgrind $(VALGRIND_FLAGS) $(RUN_EXECUTABLE) $(ARGS)
 endif
 
 test:
 	@$(call print-target,$@)
-	ctest $(CTEST_FLAGS) --preset $(TEST_PRESET) --test-dir $(BUILD_DIR)/src/test $(if $(PATTERN),-R '$(PATTERN)',)
-  ifeq ($(COVERAGE),1)
-	@mkdir -p $(COVERAGE_DIR)
-	@lcov --capture --directory $(BUILD_DIR)/src \
-	  --ignore-errors inconsistent --output-file $(COVERAGE_DIR)/app.info
-	@genhtml --ignore-errors inconsistent -o $(COVERAGE_DIR)/html $(COVERAGE_DIR)/app.info
-	@rm $(COVERAGE_DIR)/app.info
-	@echo Created $(COVERAGE_DIR)/html/index.html
-  endif
+ifneq ($(COVERAGE),1)
+	ctest $(CTEST_FLAGS) \
+	  --preset $(TEST_PRESET) \
+	  --test-dir $(BUILD_DIR)/src/test $(if $(PATTERN),-R '$(PATTERN)',)
+else
+	@rm -rf $(COVERAGE_DIR)
+	@mkdir -p $(COVERAGE_PROFRAW_DIR)
+	LLVM_PROFILE_FILE=$(COVERAGE_PROFRAW_DIR)/%p-%m.profraw ctest $(CTEST_FLAGS) \
+	  --preset $(TEST_PRESET) \
+	  --test-dir $(BUILD_DIR)/src/test \
+          $(if $(PATTERN),-R '$(PATTERN)',)
+	@$(LLVM_PROFDATA) merge -sparse -o $(COVERAGE_PROFDATA) $(COVERAGE_PROFRAW_DIR)/*.profraw
+	@rm -r $(COVERAGE_PROFRAW_DIR)
+	@$(LLVM_COV) show \
+	  -format=html \
+	  -ignore-filename-regex='$(COVERAGE_IGNORE_REGEX)' \
+	  -instr-profile=$(COVERAGE_PROFDATA) \
+	  -output-dir=$(COVERAGE_DIR)/html \
+	  -show-line-counts-or-regions \
+	  $(call coverage-objects,$(call coverage-binaries))
+	@$(LLVM_COV) report \
+	  -ignore-filename-regex='$(COVERAGE_IGNORE_REGEX)' \
+	  -instr-profile=$(COVERAGE_PROFDATA) \
+	  $(call coverage-objects,$(call coverage-binaries)) >/dev/null
+	@rm -f default.profraw
+	@echo Created \`$(COVERAGE_DIR)/html/index.html\`
+endif
 
 # Auxiliary targets .........................................................................................
 
@@ -268,7 +330,7 @@ ifneq ($(wildcard src/main/Doxyfile),)
 	  -e "warning: Incomplete input: scope for class" \
 	  -e "warning: documented symbol 'T std::experimental::.*' was not declared or defined" || \
           true
-	@echo Created $(BUILD_DIR)/src/main/doc/html/index.html
+	@echo Created \`$(BUILD_DIR)/src/main/doc/html/index.html\`
 endif
 
 doc-test:
@@ -278,7 +340,7 @@ ifneq ($(wildcard src/test/Doxyfile),)
 	  -e "warning: Incomplete input: scope for class" \
 	  -e "warning: documented symbol 'T std::experimental::.*' was not declared or defined" || \
           true
-	@echo Created $(BUILD_DIR)/src/test/doc/html/index.html
+	@echo Created \`$(BUILD_DIR)/src/test/doc/html/index.html\`
 endif
 
 # Auxiliary targets (Linux) .................................................................................
@@ -287,7 +349,7 @@ ifdef GAIA_OS_LINUX
 
 $(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS)
 	@$(call print-target,$@)
-	@cmake $(CMAKE_FLAGS) --preset $(CONFIGURE_PRESET)
+	@cmake $(CMAKE_FLAGS) $(CMAKE_CONFIGURE_FLAGS) --preset $(CONFIGURE_PRESET)
 
 compile_commands.json: $(BUILD_DIR)/compile_commands.json
 	@echo ">" $@

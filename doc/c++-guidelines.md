@@ -72,7 +72,7 @@ need to be documented, in this order:
  * @tparam C the component type
  * @param comp the component
  * @return whether the component is visible
- * @throw #rocket::InvalidState if the component isn't attached yet
+ * @throw #std::runtime_error if the component isn't attached yet
  * @throw #mygui::InvalidThread if the current thread is not the GUI thread
  *
  * ## Examples
