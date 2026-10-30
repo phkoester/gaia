@@ -259,12 +259,13 @@ doc: doc-main doc-test
 .PHONY: rebuild
 rebuild: reconfigure
 	@$(call print-target,$@)
-	@cmake $(CMAKE_FLAGS) --build --clean-first --preset $(BUILD_PRESET) \
+	@cmake $(CMAKE_FLAGS) --build --preset $(BUILD_PRESET) \
 	  $(if $(TARGET),--target $(TARGET),) $(CMAKE_TRAILING_FLAGS)
 
 .PHONY: reconfigure
 reconfigure:
 	@$(call print-target,$@)
+	@cmake --build --preset $(BUILD_PRESET) --target clean
 	@cmake $(CMAKE_CONFIGURE_FLAGS) --fresh --preset $(CONFIGURE_PRESET) \
 	  -DFETCHCONTENT_FULLY_DISCONNECTED=ON
 
