@@ -122,8 +122,6 @@ endif
 
 # Select C and C++ compilers --------------------------------------------------------------------------------
 
-export CMAKE_TOOLCHAIN_FLAG :=
-
 ifeq ($(GAIA_CXX_TOOLCHAIN),gnu)
   export CC := gcc
   export CXX := g++
@@ -131,10 +129,6 @@ endif
 ifeq ($(GAIA_CXX_TOOLCHAIN),llvm)
   export CC := clang
   export CXX := clang++
-
-  ifdef GAIA_OS_WINDOWS
-    CMAKE_TOOLCHAIN_FLAG := -T ClangCL
-  endif
 endif
 
 # Configure code coverage -----------------------------------------------------------------------------------
@@ -193,10 +187,14 @@ endif
 
 # Configure CMake -------------------------------------------------------------------------------------------
 
-CMAKE_FLAGS :=
-
-# Flags for configuring only; `cmake --build` does not accept them
 CMAKE_CONFIGURE_FLAGS :=
+
+ifdef GAIA_OS_WINDOWS
+  ifeq ($(GAIA_CXX_TOOLCHAIN),llvm)
+    CMAKE_CONFIGURE_FLAGS += -T ClangCL
+  endif
+endif
+
 ifeq ($(COVERAGE),1)
   CMAKE_CONFIGURE_FLAGS += \
     "-DCMAKE_C_FLAGS=$(COVERAGE_COMPILE_FLAGS)" \
@@ -206,9 +204,12 @@ ifeq ($(COVERAGE),1)
 endif
 
 CMAKE_TRAILING_FLAGS :=
+
 ifeq ($(VERBOSE),1)
   CMAKE_TRAILING_FLAGS += -v
 endif
+
+CMAKE_FLAGS :=
 
 ifdef GAIA_OS_LINUX
   CONFIGURE_PRESET := linux-$(GAIA_BUILD_TYPE)
@@ -261,7 +262,7 @@ endif
 
 build: configure
 	@$(call print-target,$@)
-	@cmake $(CMAKE_FLAGS) \
+	@cmake $(CMAKE_FLAGS) $(CMAKE_CONFIGURE_FLAGS) \
 	  --build --preset $(BUILD_PRESET) \
 	  $(if $(TARGET),--target $(TARGET),) \
 	  $(CMAKE_TRAILING_FLAGS) \
@@ -288,9 +289,6 @@ doc: doc-main doc-test
 .PHONY: rebuild
 rebuild: reconfigure
 	@$(call print-target,$@)
-	@rm -frv $(BUILD_DIR)/src
-	@rm -frv $(BUILD_DIR)/_deps/*-build
-	@rm -frv $(BUILD_DIR)/_deps/*-tmp
 	@cmake $(CMAKE_FLAGS) \
 	  --build --clean-first --preset $(BUILD_PRESET) \
 	  $(if $(TARGET),--target $(TARGET),) \
@@ -300,7 +298,7 @@ rebuild: reconfigure
 .PHONY: reconfigure
 reconfigure:
 	@$(call print-target,$@)
-	@cmake $(CMAKE_FLAGS) $(CMAKE_CONFIGURE_FLAGS) --fresh --preset $(CONFIGURE_PRESET) \
+	@cmake $(CMAKE_CONFIGURE_FLAGS) --fresh --preset $(CONFIGURE_PRESET) \
 	  -DFETCHCONTENT_FULLY_DISCONNECTED=ON
 
 run:
@@ -369,7 +367,7 @@ ifdef GAIA_OS_LINUX
 
 $(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS)
 	@$(call print-target,$@)
-	@cmake $(CMAKE_FLAGS) $(CMAKE_CONFIGURE_FLAGS) --preset $(CONFIGURE_PRESET)
+	@cmake $(CMAKE_CONFIGURE_FLAGS) --preset $(CONFIGURE_PRESET)
 
 compile_commands.json: $(BUILD_DIR)/compile_commands.json
 	@echo ">" $@
@@ -383,7 +381,7 @@ ifdef GAIA_OS_WINDOWS
 
 build/cmake_install.cmake: $(GAIA_DEPS) $(CMAKE_DEPS)
 	@$(call print-target,$@)
-	@cmake $(CMAKE_FLAGS) $(CMAKE_TOOLCHAIN_FLAG) --preset $(CONFIGURE_PRESET)
+	@cmake $(CMAKE_CONFIGURE_FLAGS) --preset $(CONFIGURE_PRESET)
 
 endif
 
