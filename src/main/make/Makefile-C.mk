@@ -44,6 +44,8 @@
 # - clean
 # - configure (COVERAGE, GAIA_BUILD_TYPE)
 # - doc (GAIA_BUILD_TYPE, VERBOSE)
+# - rebuild (COVERAGE, GAIA_BUILD_TYPE, TARGET, VERBOSE)
+# - reconfigure (COVERAGE, GAIA_BUILD_TYPE)
 # - run (ARGS, DEFAULT_RUN_TARGET, GAIA_BUILD_TYPE, MEMCHECK, TARGET, VERBOSE)
 # - test (COVERAGE, GAIA_BUILD_TYPE, PATTERN, VERBOSE)
 #
@@ -282,6 +284,24 @@ clean:
 configure: $(CONFIGURE_DEP) $(CONFIGURE_DEPS)
 
 doc: doc-main doc-test
+
+.PHONY: rebuild
+rebuild: reconfigure
+	@$(call print-target,$@)
+	@rm -frv $(BUILD_DIR)/src
+	@rm -frv $(BUILD_DIR)/_deps/*-build
+	@rm -frv $(BUILD_DIR)/_deps/*-tmp
+	@cmake $(CMAKE_FLAGS) \
+	  --build --clean-first --preset $(BUILD_PRESET) \
+	  $(if $(TARGET),--target $(TARGET),) \
+	  $(CMAKE_TRAILING_FLAGS) \
+	  $(if $(GAIA_OS_LINUX),-- $(GMAKE_FLAGS),)
+
+.PHONY: reconfigure
+reconfigure:
+	@$(call print-target,$@)
+	@cmake $(CMAKE_FLAGS) $(CMAKE_CONFIGURE_FLAGS) --fresh --preset $(CONFIGURE_PRESET) \
+	  -DFETCHCONTENT_FULLY_DISCONNECTED=ON
 
 run:
 	@$(call print-target,$@)
