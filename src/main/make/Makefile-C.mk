@@ -95,7 +95,7 @@ ifeq ($(filter $(MAKECMDGOALS),run),run)
     endif
   endif
   ifdef GAIA_OS_WINDOWS
-    RUN_EXECUTABLE := $(shell find $(EXECUTABLE_DIRS) -executable -name '$(TARGET).exe' -type f 2>/dev/null)
+    RUN_EXECUTABLE := $(shell find $(EXECUTABLE_DIRS) -executable -name '$(TARGET).exe' -type f 2> /dev/null)
   else
     RUN_EXECUTABLE := $(shell find $(BUILD_DIR)/src -executable -name '$(TARGET)' -type f)
   endif
@@ -235,7 +235,7 @@ endif
 
 build: configure
 	@$(call print-target,$@)
-	@cmake $(CMAKE_FLAGS) $(CMAKE_CONFIGURE_FLAGS) --build --preset $(BUILD_PRESET) \
+	@cmake $(CMAKE_FLAGS) --build --preset $(BUILD_PRESET) \
 	  $(if $(TARGET),--target $(TARGET),) $(CMAKE_TRAILING_FLAGS)
 
 check:
@@ -257,10 +257,7 @@ configure: compile_commands.json $(CONFIGURE_DEPS)
 doc: doc-main doc-test
 
 .PHONY: rebuild
-rebuild: reconfigure
-	@$(call print-target,$@)
-	@cmake $(CMAKE_FLAGS) --build --preset $(BUILD_PRESET) \
-	  $(if $(TARGET),--target $(TARGET),) $(CMAKE_TRAILING_FLAGS)
+rebuild: reconfigure build
 
 .PHONY: reconfigure
 reconfigure:
@@ -302,7 +299,7 @@ else
 	@$(LLVM_COV) report \
 	  -ignore-filename-regex='$(COVERAGE_IGNORE_REGEX)' \
 	  -instr-profile=$(COVERAGE_PROFDATA) \
-	  $(call coverage-objects,$(call coverage-binaries)) >/dev/null
+	  $(call coverage-objects,$(call coverage-binaries)) > /dev/null
 	@rm -f default.profraw
 	@echo Created \`$(COVERAGE_DIR)/html/index.html\`
 endif
@@ -329,7 +326,7 @@ ifneq ($(wildcard src/test/Doxyfile),)
 	@echo Created \`$(BUILD_DIR)/src/test/doc/html/index.html\`
 endif
 
-# Auxiliary targets .........................................................................................
+# `compile_commands.json` ...................................................................................
 
 $(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS)
 	@$(call print-target,$@)

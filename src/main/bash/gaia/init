@@ -27,11 +27,11 @@ source "$dir__/init-rust" || return 2
 
 # Detect Gaia version ---------------------------------------------------------------------------------------
 
-export GAIA_VERSION=$(cat "$GAIA_DIR/gaia-project.json" | \
-    grep -w version | sed -E 's/\s*"version": "(.*)",?/\1/')
+# Extract version from `CMakeLists.txt`
+export GAIA_VERSION=$(sed -nE 's/^\s*project\(\s*gaia\s+VERSION\s+([0-9.]+).*/\1/p' "$GAIA_DIR/CMakeLists.txt" | head -n 1)
 
 if [[ ! $GAIA_VERSION =~ [0-9]+\.[0-9]+\.[0-9]+ ]]; then
-  echo init: error: Cannot find valid version in \`$GAIA_DIR/gaia-project.json\` > /dev/stderr
+  echo init: error: Cannot find a valid version in \`$GAIA_DIR/CMakeLists.txt\` > /dev/stderr
   return 2
 fi
 

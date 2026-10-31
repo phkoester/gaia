@@ -85,11 +85,6 @@ unique = $(if $1,$(firstword $1) $(call unique,$(filter-out $(firstword $1),$1))
 
 upper = $(shell echo $1 | tr a-z A-Z)
 
-# $1: path
-# $2: version name
-# $3: version
-write-version-header = $(shell python3 -c 'import gaia; gaia.write_version_header("$1", "$2", "$3")')
-
 # Phony targets ---------------------------------------------------------------------------------------------
 
 .PHONY: \
