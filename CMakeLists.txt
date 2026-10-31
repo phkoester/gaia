@@ -74,6 +74,15 @@ if(NOT(GAIA_CXX_COMPILER_LLVM) AND NOT(GAIA_CXX_COMPILER_GNU) AND NOT(GAIA_CXX_C
   GaiaFatalError("Unsupported C++ compiler ${CMAKE_CXX_COMPILER_ID}")
 endif()
 
+# General settings ------------------------------------------------------------------------------------------
+
+set(CMAKE_CXX_EXTENSIONS ON)
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS OFF)
+set(FETCHCONTENT_QUIET FALSE)
+
 # Configuration ---------------------------------------------------------------------------------------------
 
 GaiaAddVar(BUILD_COVERAGE    BOOL OFF "Enable code coverage and generate reports")
