@@ -263,8 +263,9 @@ rebuild: reconfigure build
 reconfigure:
 	@$(call print-target,$@)
 	@cmake --build --preset $(BUILD_PRESET) --target clean
+	@# The `< /dev/null` fixes an output problem with CMake in Windows Terminal
 	@cmake $(CMAKE_CONFIGURE_FLAGS) --fresh --preset $(CONFIGURE_PRESET) \
-	  -DFETCHCONTENT_FULLY_DISCONNECTED=ON
+	  -DFETCHCONTENT_FULLY_DISCONNECTED=ON < /dev/null
 
 run:
 	@$(call print-target,$@)
@@ -330,7 +331,8 @@ endif
 
 $(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS)
 	@$(call print-target,$@)
-	@cmake $(CMAKE_CONFIGURE_FLAGS) --preset $(CONFIGURE_PRESET)
+	@# The `< /dev/null` fixes an output problem with CMake in Windows Terminal
+	@cmake $(CMAKE_CONFIGURE_FLAGS) --preset $(CONFIGURE_PRESET) < /dev/null
 
 compile_commands.json: $(BUILD_DIR)/compile_commands.json
 	@echo ">" $@
