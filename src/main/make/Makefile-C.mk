@@ -111,8 +111,14 @@ ifeq ($(GAIA_CXX_TOOLCHAIN),gnu)
   export CXX := g++
 endif
 ifeq ($(GAIA_CXX_TOOLCHAIN),llvm)
-  export CC := clang
-  export CXX := clang++
+  ifdef GAIA_OS_WINDOWS
+    # Ninja doesn't support toolsets like `-T ClangCL`, so select the MSVC-compatible driver directly
+    export CC := clang-cl
+    export CXX := clang-cl
+  else
+    export CC := clang
+    export CXX := clang++
+  endif
 endif
 
 # Configure code coverage -----------------------------------------------------------------------------------
@@ -172,12 +178,6 @@ endif
 # Configure CMake -------------------------------------------------------------------------------------------
 
 CMAKE_CONFIGURE_FLAGS :=
-
-ifdef GAIA_OS_WINDOWS
-  ifeq ($(GAIA_CXX_TOOLCHAIN),llvm)
-    CMAKE_CONFIGURE_FLAGS += -T ClangCL
-  endif
-endif
 
 ifeq ($(COVERAGE),1)
   CMAKE_CONFIGURE_FLAGS += \

@@ -47,11 +47,14 @@ endfunction()
 # GaiaCopyRuntimeFiles(name)
 function(GaiaCopyRuntimeFiles name)
   if(GAIA_OS_WINDOWS AND BUILD_SHARED_LIBS)
-    # `copy_if_newer` requires CMake 4.2
+    # `copy_if_newer` requires CMake 4.2. The command is empty, and thus does nothing, if there are no
+    # runtime DLLs
+    set(dlls $<TARGET_RUNTIME_DLLS:${name}>)
     add_custom_command(
       TARGET  ${name} POST_BUILD
-      COMMAND ${CMAKE_COMMAND} -E copy_if_newer $<TARGET_RUNTIME_DLLS:${name}> $<TARGET_FILE_DIR:${name}>
+      COMMAND "$<$<BOOL:${dlls}>:${CMAKE_COMMAND};-E;copy_if_newer;${dlls};$<TARGET_FILE_DIR:${name}>>"
       COMMAND_EXPAND_LISTS
+      VERBATIM
     )
   endif()
 endfunction()

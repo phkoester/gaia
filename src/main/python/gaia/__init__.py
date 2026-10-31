@@ -24,7 +24,7 @@ def get_version(dir: str) -> str | None:
   if os.path.isfile(path):
     with io.open(path, mode="r") as file:
       content = file.read()
-      match = re.search(r"\s*project\(.*\s+VERSION\s+([0-9.]+)", content)
+      match = re.search(r"^\s*project\(.*\s+VERSION\s+([0-9.]+)", content)
       if match:
         version = match.group(1)
         return version
