@@ -260,7 +260,7 @@ doc: doc-main doc-test
 rebuild: reconfigure build
 
 .PHONY: reconfigure
-reconfigure:
+reconfigure: compile_commands.json $(CONFIGURE_DEPS)
 	@$(call print-target,$@)
 	@cmake --build --preset $(BUILD_PRESET) --target clean
 	@# The `< /dev/null` fixes an output problem with CMake in Windows Terminal
