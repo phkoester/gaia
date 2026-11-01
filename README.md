@@ -65,10 +65,10 @@ Open the "Git Bash Developer" profile in Windows Terminal and run these commands
 
 ```shell
 $ pacman -Syu
-$ pacman -S ccache`
 $ pacman -S procps`
 $ pacman -S python-pip
 $ pip3 install --break-system-packages json5 semver toml
+$ winget install ccache.ccache
 ```
 
 ## Set Up Gaia
