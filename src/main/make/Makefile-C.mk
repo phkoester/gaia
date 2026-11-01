@@ -252,7 +252,7 @@ clean:
 	@rm -frv build
 	@rm -frv $(shell find -name __pycache__ -type d)
 
-configure: compile_commands.json $(CONFIGURE_DEPS)
+configure: compile_commands.json
 
 doc: doc-main doc-test
 
@@ -260,7 +260,7 @@ doc: doc-main doc-test
 rebuild: reconfigure build
 
 .PHONY: reconfigure
-reconfigure: compile_commands.json $(CONFIGURE_DEPS)
+reconfigure: compile_commands.json
 	@$(call print-target,$@)
 	@cmake --build --preset $(BUILD_PRESET) --target clean
 	@# The `</dev/null` fixes an output problem with CMake in Windows Terminal
@@ -278,13 +278,13 @@ endif
 test:
 	@$(call print-target,$@)
 ifneq ($(COVERAGE),1)
-	ctest $(CTEST_FLAGS) \
+	@ctest $(CTEST_FLAGS) \
 	  --preset $(TEST_PRESET) \
 	  --test-dir $(BUILD_DIR)/src/test $(if $(PATTERN),-R '$(PATTERN)',)
 else
 	@rm -rf $(COVERAGE_DIR)
 	@mkdir -p $(COVERAGE_PROFRAW_DIR)
-	LLVM_PROFILE_FILE=$(COVERAGE_PROFRAW_DIR)/%p-%m.profraw ctest $(CTEST_FLAGS) \
+	@LLVM_PROFILE_FILE=$(COVERAGE_PROFRAW_DIR)/%p-%m.profraw ctest $(CTEST_FLAGS) \
 	  --preset $(TEST_PRESET) \
 	  --test-dir $(BUILD_DIR)/src/test \
           $(if $(PATTERN),-R '$(PATTERN)',)
@@ -337,7 +337,7 @@ endif
 
 # `compile_commands.json` ...................................................................................
 
-$(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS)
+$(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS) $(CONFIGURE_DEPS)
 	@$(call print-target,$@)
 	@# The `</dev/null` fixes an output problem with CMake in Windows Terminal
 	@cmake $(CMAKE_CONFIGURE_FLAGS) --preset $(CONFIGURE_PRESET) </dev/null
