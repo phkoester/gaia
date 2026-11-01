@@ -17,7 +17,7 @@ ssh-init() {
     ssh-add
   elif [[  $n == 1 && -f ~/.ssh-init ]] && grep "SSH_AGENT_PID=$pids;" ~/.ssh-init >/dev/null; then
     # Silently reuse existing agent
-    source ~/.ssh-init > /dev/null || return 1
+    source ~/.ssh-init >/dev/null || return 1
   else
     shell-error-f -r1 $FUNCNAME Found no suitable \`ssh-agent\`: $pids
     return 1

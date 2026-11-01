@@ -11,11 +11,11 @@ dir__=$(dirname "$BASH_SOURCE")
 # Check prerequisites ---------------------------------------------------------------------------------------
 
 if [[ ! $GAIA_DIR ]]; then
-  echo init: error: Environment variable \`GAIA_DIR\` not set > /dev/stderr
+  echo init: error: Environment variable \`GAIA_DIR\` not set >/dev/stderr
   return 2
 fi
 if [[ ! -d $GAIA_DIR ]]; then
-  echo init: error: Directory \`$GAIA_DIR\` does not exist > /dev/stderr
+  echo init: error: Directory \`$GAIA_DIR\` does not exist >/dev/stderr
   return 2
 fi
 
@@ -31,7 +31,7 @@ source "$dir__/init-rust" || return 2
 export GAIA_VERSION=$(sed -nE 's/^\s*project\(\s*gaia\s+VERSION\s+([0-9.]+).*/\1/p' "$GAIA_DIR/CMakeLists.txt" | head -n 1)
 
 if [[ ! $GAIA_VERSION =~ [0-9]+\.[0-9]+\.[0-9]+ ]]; then
-  echo init: error: Cannot find a valid version in \`$GAIA_DIR/CMakeLists.txt\` > /dev/stderr
+  echo init: error: Cannot find a valid version in \`$GAIA_DIR/CMakeLists.txt\` >/dev/stderr
   return 2
 fi
 
@@ -51,6 +51,11 @@ export GAIA_MAKE_FLAGS="-j$GAIA_NPROC_3_4 -l$GAIA_NPROC"
 
 [[ -d /mnt/wsl ]] && export GAIA_WSL=1
 [[ -d /mnt/wslg ]] && export GAIA_WSLG=1
+
+if which ccache >/dev/null 2>&1; then
+  export CMAKE_C_COMPILER_LAUNCHER=ccache
+  export CMAKE_CXX_COMPILER_LAUNCHER=ccache
+fi
 
 export PYTHONUTF8=1
 

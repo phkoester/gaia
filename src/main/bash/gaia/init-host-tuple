@@ -31,7 +31,7 @@ if [[ $OSTYPE == linux-gnu ]]; then
   fi
 
   if [[ ! $MACHTYPE =~ x86_64-.*-linux-gnu ]]; then
-    echo init-host-tuple: error: Invalid \`MACHTYPE\`: \`$MACHTYPE\` > /dev/stderr
+    echo init-host-tuple: error: Invalid \`MACHTYPE\`: \`$MACHTYPE\` >/dev/stderr
     return 2
   fi
 
@@ -44,7 +44,7 @@ elif [[ $OS == Windows_NT ]]; then
   export GAIA_OS_WINDOWS=1
 
   if [[ $PROCESSOR_ARCHITECTURE != AMD64 ]]; then
-    echo init-host-tuple: error: Invalid \`PROCESSOR_ARCHITECTURE\`: \`$PROCESSOR_ARCHITECTURE\` > /dev/stderr
+    echo init-host-tuple: error: Invalid \`PROCESSOR_ARCHITECTURE\`: \`$PROCESSOR_ARCHITECTURE\` >/dev/stderr
     return 2
   fi
 
@@ -52,7 +52,7 @@ elif [[ $OS == Windows_NT ]]; then
   GAIA_HOST_VENDOR=pc
   GAIA_HOST_OS=windows
 else
-  echo init-host-tuple: error: Cannot detect host tuple > /dev/stderr
+  echo init-host-tuple: error: Cannot detect host tuple >/dev/stderr
   return 2
 fi
 

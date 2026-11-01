@@ -12,13 +12,13 @@ TEST-shell-error() {
   EXPECT-EQ $? 0
   EXPECT-MATCH "$output" "test-shell.sh: error: oops"
 
-  shell-error -r2 $FUNCNAME oops 2> /dev/null
+  shell-error -r2 $FUNCNAME oops 2>/dev/null
   EXPECT-EQ $? 2
 
-  (shell-error $FUNCNAME oops 2> /dev/null)
+  (shell-error $FUNCNAME oops 2>/dev/null)
   EXPECT-EQ $? 1
 
-  (shell-error -e2 $FUNCNAME oops 2> /dev/null)
+  (shell-error -e2 $FUNCNAME oops 2>/dev/null)
   EXPECT-EQ $? 2
 }
 
@@ -27,13 +27,13 @@ TEST-shell-error-f() {
   EXPECT-EQ $? 0
   EXPECT-MATCH "$output" "test-shell.sh: error: In function \`TEST-shell-error-f\`: oops"
 
-  shell-error-f -r2 $FUNCNAME oops 2> /dev/null
+  shell-error-f -r2 $FUNCNAME oops 2>/dev/null
   EXPECT-EQ $? 2
 
-  (shell-error-f $FUNCNAME oops 2> /dev/null)
+  (shell-error-f $FUNCNAME oops 2>/dev/null)
   EXPECT-EQ $? 1
 
-  (shell-error-f -e2 $FUNCNAME oops 2> /dev/null)
+  (shell-error-f -e2 $FUNCNAME oops 2>/dev/null)
   EXPECT-EQ $? 2
 }
 

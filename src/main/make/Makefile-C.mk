@@ -95,7 +95,7 @@ ifeq ($(filter $(MAKECMDGOALS),run),run)
     endif
   endif
   ifdef GAIA_OS_WINDOWS
-    RUN_EXECUTABLE := $(shell find $(EXECUTABLE_DIRS) -executable -name '$(TARGET).exe' -type f 2> /dev/null)
+    RUN_EXECUTABLE := $(shell find $(EXECUTABLE_DIRS) -executable -name '$(TARGET).exe' -type f 2>/dev/null)
   else
     RUN_EXECUTABLE := $(shell find $(BUILD_DIR)/src -executable -name '$(TARGET)' -type f)
   endif
@@ -263,9 +263,9 @@ rebuild: reconfigure build
 reconfigure: compile_commands.json $(CONFIGURE_DEPS)
 	@$(call print-target,$@)
 	@cmake --build --preset $(BUILD_PRESET) --target clean
-	@# The `< /dev/null` fixes an output problem with CMake in Windows Terminal
+	@# The `</dev/null` fixes an output problem with CMake in Windows Terminal
 	@cmake $(CMAKE_CONFIGURE_FLAGS) --fresh --preset $(CONFIGURE_PRESET) \
-	  -DFETCHCONTENT_FULLY_DISCONNECTED=ON < /dev/null
+	  -DFETCHCONTENT_FULLY_DISCONNECTED=ON </dev/null
 
 run:
 	@$(call print-target,$@)
@@ -300,7 +300,7 @@ else
 	@$(LLVM_COV) report \
 	  -ignore-filename-regex='$(COVERAGE_IGNORE_REGEX)' \
 	  -instr-profile=$(COVERAGE_PROFDATA) \
-	  $(call coverage-objects,$(call coverage-binaries)) > /dev/null
+	  $(call coverage-objects,$(call coverage-binaries)) >/dev/null
 	@rm -f default.profraw
 	@echo Created \`$(COVERAGE_DIR)/html/index.html\`
 endif
@@ -339,8 +339,8 @@ endif
 
 $(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS)
 	@$(call print-target,$@)
-	@# The `< /dev/null` fixes an output problem with CMake in Windows Terminal
-	@cmake $(CMAKE_CONFIGURE_FLAGS) --preset $(CONFIGURE_PRESET) < /dev/null
+	@# The `</dev/null` fixes an output problem with CMake in Windows Terminal
+	@cmake $(CMAKE_CONFIGURE_FLAGS) --preset $(CONFIGURE_PRESET) </dev/null
 
 compile_commands.json: $(BUILD_DIR)/compile_commands.json
 	@echo ">" $@

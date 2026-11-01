@@ -25,7 +25,7 @@ GaiaDetectPython()
 
 if(WIN32)
   if(NOT DEFINED ENV{DevEnvDir})
-    GaiaFatalError("On Windows, the Developer Command Prompt from Microsoft Visual Studio is required")
+    GaiaFatalError("Missing Developer Command Prompt from Microsoft Visual Studio")
   endif()
 endif()
 

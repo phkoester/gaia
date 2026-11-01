@@ -57,7 +57,7 @@ elif [[ $GAIA_HOST == x86_64-pc-windows ]]; then
   GAIA_TARGET_OS=windows
   GAIA_TARGET_ABI=msvc
 else
-  echo init-target-tuple: error: Invalid host tuple: \`$GAIA_HOST\` > /dev/stderr
+  echo init-target-tuple: error: Invalid host tuple: \`$GAIA_HOST\` >/dev/stderr
   return 2
 fi
 
