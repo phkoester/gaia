@@ -327,6 +327,14 @@ ifneq ($(wildcard src/test/Doxyfile),)
 	@echo Created \`$(BUILD_DIR)/src/test/doc/html/index.html\`
 endif
 
+list-targets: configure
+	@$(call print-target,$@)
+ifdef GAIA_OS_WINDOWS
+	@gaia-stem $(shell find $(EXECUTABLE_DIRS) -name "*.exe" -type f -o -name "*.lib" -type f) | sort -u
+else
+	@cmake --build --preset $(BUILD_PRESET) --target help
+endif
+
 # `compile_commands.json` ...................................................................................
 
 $(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS)
@@ -337,15 +345,5 @@ $(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS)
 compile_commands.json: $(BUILD_DIR)/compile_commands.json
 	@echo ">" $@
 	@gaia-filter-compile-commands --field file -i $< -o $@ $(PROJECT_NAME)/src
-
-# C-specific targets ----------------------------------------------------------------------------------------
-
-list-targets: configure
-	@$(call print-target,$@)
-ifdef GAIA_OS_WINDOWS
-	@gaia-stem $(shell find $(EXECUTABLE_DIRS) -name "*.exe" -type f -o -name "*.lib" -type f) | sort -u
-else
-	@cmake --build --preset $(BUILD_PRESET) --target help
-endif
 
 # EOF
