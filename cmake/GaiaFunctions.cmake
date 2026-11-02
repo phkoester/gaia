@@ -17,7 +17,7 @@ function(GaiaAddExecutable name)
   GaiaCopyRuntimeFiles(${name})
 endfunction()
 
-# GaiaAddLibrary(name ...), like add_library()
+# GaiaAddLibrary(name ...)
 function(GaiaAddLibrary name)
   add_library(${name} ${ARGN})
   target_compile_definitions(${name} PRIVATE ${COMPILE_DEFS})
