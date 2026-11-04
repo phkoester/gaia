@@ -4,22 +4,19 @@
 # Selects the default target tuple for the current host tuple and sets Gaia environment variables
 # accordingly. These are
 #
-# - GAIA_TARGET_ARCH
-#   - x86_64
-# - GAIA_TARGET_VENDOR
-#   - pc
-# - GAIA_TARGET_OS
-#   - linux, windows
-# - GAIA_TARGET_ABI
-#   - gnu, msvc
+# - GAIA_TARGET_ARCH: aarch64, x86_64
+# - GAIA_TARGET_VENDOR: apple, pc
+# - GAIA_TARGET_OS: darwin, linux, windows
+# - GAIA_TARGET_ABI: gnu, msvc
 # - GAIA_TARGET (combines all of the above)
 #
 # Supported host tuples and their corresponding default target tuples are:
 #
-#   Host tuple          | Default target tuple
-#   ------------------- | --------------------
-#   `x86_64-pc-linux`   | `x86_64-unknown-linux-gnu`
-#   `x86_64-pc-windows` | `x86_64-pc-windows-msvc`
+#   Host tuple             | Default target tuple
+#   ---------------------- | --------------------
+#   `aarch64-apple-darwin` | `aarch64-apple-darwin-gnu`
+#   `x86_64-pc-linux`      | `x86_64-unknown-linux-gnu`
+#   `x86_64-pc-windows`    | `x86_64-pc-windows-msvc`
 #
 # Today, a tuple has up to 10 parts:
 #
@@ -46,12 +43,20 @@
 unset GAIA_TARGET_ARCH GAIA_TARGET_VENDOR GAIA_TARGET_OS GAIA_TARGET_ABI GAIA_TARGET
 export GAIA_TARGET_ARCH GAIA_TARGET_VENDOR GAIA_TARGET_OS GAIA_TARGET_ABI GAIA_TARGET
 
-if [[ $GAIA_HOST == x86_64-pc-linux ]]; then
+if [[ $GAIA_HOST == aarch64-apple-darwin ]]; then
+  # Darwin
+  GAIA_TARGET_ARCH=aarch64
+  GAIA_TARGET_VENDOR=apple
+  GAIA_TARGET_OS=darwin
+  GAIA_TARGET_ABI=gnu
+elif [[ $GAIA_HOST == x86_64-pc-linux ]]; then
+  # Linux
   GAIA_TARGET_ARCH=x86_64
   GAIA_TARGET_VENDOR=pc
   GAIA_TARGET_OS=linux
   GAIA_TARGET_ABI=gnu
 elif [[ $GAIA_HOST == x86_64-pc-windows ]]; then
+  # Windows
   GAIA_TARGET_ARCH=x86_64
   GAIA_TARGET_VENDOR=pc
   GAIA_TARGET_OS=windows

@@ -3,16 +3,14 @@
 #
 # Detects the host tuple and sets Gaia environment variables accordingly. These are
 #
-# - GAIA_HOST_ARCH
-#   - x86_64
-# - GAIA_HOST_VENDOR
-#   - pc
-# - GAIA_HOST_OS
-#   - linux, windows
+# - GAIA_HOST_ARCH: aarch64, x86_64
+# - GAIA_HOST_VENDOR: apple, pc
+# - GAIA_HOST_OS: darwin, linux, windows
 # - GAIA_HOST (combines all of the above)
 #
 # Until now, these host tuples are supported:
 #
+# - `aarch64-apple-darwin`
 # - `x86_64-pc-linux`
 # - `x86_64-pc-windows`
 #
@@ -22,18 +20,37 @@
 unset GAIA_HOST_ARCH GAIA_HOST_VENDOR GAIA_HOST_OS GAIA_HOST
 export GAIA_HOST_ARCH GAIA_HOST_VENDOR GAIA_HOST_OS GAIA_HOST
 
-if [[ $OSTYPE == linux-gnu ]]; then
+if [[ $OSTYPE =~ darwin.* ]]; then
+  # Darwin
+
+  export GAIA_OS_DARWIN=1
+
+  if [[ ! $MACHTYPE =~ aarch64-apple-darwin.* ]]; then
+    echo init-host-tuple: error: Invalid \`MACHTYPE\`: \`$MACHTYPE\` >/dev/stderr
+    return 2
+  fi
+
+  export GAIA_MACOS=1
+
+  GAIA_HOST_ARCH=aarch64
+  GAIA_HOST_VENDOR=apple
+  GAIA_HOST_OS=darwin
+elif [[ $OSTYPE == linux-gnu ]]; then
   # Linux
 
   export GAIA_OS_LINUX=1
-  if lsb_release -a | grep -q "Ubuntu"; then
-    export GAIA_UBUNTU=1
-  fi
 
   if [[ ! $MACHTYPE =~ x86_64-.*-linux-gnu ]]; then
     echo init-host-tuple: error: Invalid \`MACHTYPE\`: \`$MACHTYPE\` >/dev/stderr
     return 2
   fi
+
+  export GAIA_LINUX=1
+  if lsb_release -a | grep -q "Ubuntu"; then
+    export GAIA_UBUNTU=1
+  fi
+  [[ -d /mnt/wsl ]] && export GAIA_WSL=1
+  [[ -d /mnt/wslg ]] && export GAIA_WSLG=1
 
   GAIA_HOST_ARCH=x86_64
   GAIA_HOST_VENDOR=pc
@@ -44,9 +61,11 @@ elif [[ $OS == Windows_NT ]]; then
   export GAIA_OS_WINDOWS=1
 
   if [[ $PROCESSOR_ARCHITECTURE != AMD64 ]]; then
-    echo init-host-tuple: error: Invalid \`PROCESSOR_ARCHITECTURE\`: \`$PROCESSOR_ARCHITECTURE\` >/dev/stderr
+    echo init-host-tuple: error: Invalid \`PROCESSOR_ARCHITECTURE\`: \`$PROCESSOR_ARCHITECTURE\` > /dev/stderr
     return 2
   fi
+
+  export GAIA_WINDOWS=1
 
   GAIA_HOST_ARCH=x86_64
   GAIA_HOST_VENDOR=pc

@@ -28,7 +28,7 @@ source "$dir__/init-rust" || return 2
 # Detect Gaia version ---------------------------------------------------------------------------------------
 
 # Extract version from `CMakeLists.txt`
-export GAIA_VERSION=$(sed -nE 's/^\s*project\(\s*gaia\s+VERSION\s+([0-9.]+).*/\1/p' "$GAIA_DIR/CMakeLists.txt" | head -n 1)
+export GAIA_VERSION=$(sed -nE 's/^project\(gaia VERSION ([0-9.]+).*/\1/p' "$GAIA_DIR/CMakeLists.txt" | head -n 1)
 
 if [[ ! $GAIA_VERSION =~ [0-9]+\.[0-9]+\.[0-9]+ ]]; then
   echo init: error: Cannot find a valid version in \`$GAIA_DIR/CMakeLists.txt\` >/dev/stderr
@@ -42,15 +42,14 @@ export GAIA_COLOR_RED='\033[0;31m'
 export GAIA_COLOR_OFF='\033[0m'
 
 export GAIA_BUILD_TYPE=${GAIA_BUILD_TYPE:-release}
-export GAIA_NPROC=$(nproc)
+if [[ $GAIA_OS_DARWIN ]]; then
+  export GAIA_NPROC=$(sysctl -n hw.logicalcpu)
+else
+  export GAIA_NPROC=$(nproc)
+fi
 export GAIA_NPROC_1_4=$(($GAIA_NPROC / 4))
 export GAIA_NPROC_1_2=$(($GAIA_NPROC / 2))
 export GAIA_NPROC_3_4=$((3 * $GAIA_NPROC / 4))
-
-export GAIA_MAKE_FLAGS="-j$GAIA_NPROC_3_4 -l$GAIA_NPROC"
-
-[[ -d /mnt/wsl ]] && export GAIA_WSL=1
-[[ -d /mnt/wslg ]] && export GAIA_WSLG=1
 
 if which ccache >/dev/null 2>&1; then
   export CMAKE_C_COMPILER_LAUNCHER=ccache
