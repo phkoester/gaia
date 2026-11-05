@@ -356,7 +356,7 @@ endif
 # `compile_commands.json` ...................................................................................
 
 $(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS) $(CONFIGURE_DEPS)
-	@$(call print-target,$@)
+	@$(call print-target,configure)
 	@# The `</dev/null` fixes an output problem with CMake in Windows Terminal
 	@cmake $(CMAKE_CONFIGURE_FLAGS) --preset $(CONFIGURE_PRESET) </dev/null
 
