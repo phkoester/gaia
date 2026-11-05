@@ -107,20 +107,26 @@ endif
 # Select C and C++ compilers --------------------------------------------------------------------------------
 
 ifeq ($(GAIA_CXX_TOOLCHAIN),gnu)
-  ifdef GAIA_OS_DARWIN
+  # GNU
+  ifdef GAIA_OS_MACOS
+    # GNU, macOS
     export CC := gcc-16
     export CXX := g++-16
   else
+    # GNU, not macOS
     export CC := gcc
     export CXX := g++
   endif
 endif
 ifeq ($(GAIA_CXX_TOOLCHAIN),llvm)
+  # LLVM
   ifdef GAIA_OS_WINDOWS
-    # Ninja doesn't support toolsets like `-T ClangCL`, so select the MSVC-compatible driver directly
+    # LLVM, Windows: Ninja doesn't support toolsets like `-T ClangCL`, so select the MSVC-compatible driver
+    # directly
     export CC := clang-cl
     export CXX := clang-cl
   else
+    # LLVM, not Windows
     export CC := clang
     export CXX := clang++
   endif
@@ -200,13 +206,13 @@ endif
 
 CMAKE_FLAGS :=
 
-ifdef GAIA_OS_DARWIN
-  CONFIGURE_PRESET := darwin-$(GAIA_BUILD_TYPE)
-  BUILD_PRESET := darwin-$(GAIA_BUILD_TYPE)
-endif
 ifdef GAIA_OS_LINUX
   CONFIGURE_PRESET := linux-$(GAIA_BUILD_TYPE)
   BUILD_PRESET := linux-$(GAIA_BUILD_TYPE)
+endif
+ifdef GAIA_OS_MACOS
+  CONFIGURE_PRESET := macos-$(GAIA_BUILD_TYPE)
+  BUILD_PRESET := macos-$(GAIA_BUILD_TYPE)
 endif
 ifdef GAIA_OS_WINDOWS
   CONFIGURE_PRESET := windows-$(GAIA_BUILD_TYPE)
@@ -220,11 +226,11 @@ ifeq ($(VERBOSE),1)
   CTEST_FLAGS += -V
 endif
 
-ifdef GAIA_OS_DARWIN
-  TEST_PRESET := darwin-$(GAIA_BUILD_TYPE)
-endif
 ifdef GAIA_OS_LINUX
   TEST_PRESET := linux-$(GAIA_BUILD_TYPE)
+endif
+ifdef GAIA_OS_MACOS
+  TEST_PRESET := macos-$(GAIA_BUILD_TYPE)
 endif
 ifdef GAIA_OS_WINDOWS
   TEST_PRESET := windows-$(GAIA_BUILD_TYPE)

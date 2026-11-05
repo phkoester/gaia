@@ -42,7 +42,7 @@ export GAIA_COLOR_RED='\033[0;31m'
 export GAIA_COLOR_OFF='\033[0m'
 
 export GAIA_BUILD_TYPE=${GAIA_BUILD_TYPE:-release}
-if [[ $GAIA_OS_DARWIN ]]; then
+if [[ $GAIA_OS_MACOS ]]; then
   export GAIA_NPROC=$(sysctl -n hw.logicalcpu)
 else
   export GAIA_NPROC=$(nproc)
@@ -58,16 +58,16 @@ fi
 
 export PYTHONUTF8=1
 
-# Environment (Darwin) ......................................................................................
-
-if [[ $GAIA_OS_DARWIN ]]; then
-  export GAIA_CXX_TOOLCHAIN=${GAIA_CXX_TOOLCHAIN:-llvm}
-fi
-
 # Environment (Linux) .......................................................................................
 
 if [[ $GAIA_OS_LINUX ]]; then
   export GAIA_CXX_TOOLCHAIN=${GAIA_CXX_TOOLCHAIN:-gnu}
+fi
+
+# Environment (macOS) .......................................................................................
+
+if [[ $GAIA_OS_MACOS ]]; then
+  export GAIA_CXX_TOOLCHAIN=${GAIA_CXX_TOOLCHAIN:-llvm}
 fi
 
 # Environment (Windows) .....................................................................................

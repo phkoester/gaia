@@ -1,12 +1,12 @@
 # Gaia
 
 Gaia is a collection of Bash scripts, Python scripts, Makefiles, and various other scripts that help you to
-build C++ and Rust projects on Darwin (macOS), Linux, and Windows.
+build C++ and Rust projects on Linux, macOS, and Windows.
 
 | Operating System | Supported C++ Toolchains
 | :--------------- | :-----------------------
-| Darwin (macOS)   | GNU (`gnu++-16`), LLVM (`clang++`)
 | Linux            | GNU (`g++`), LLVM (`clang++`)
+| macOS            | GNU (`gnu++-16`), LLVM (`clang++`)
 | Windows          | LLVM (`clang-cl.exe`), MSVC (`cl.exe`)
 
 ## CMake Requirements
@@ -19,10 +19,6 @@ build C++ and Rust projects on Darwin (macOS), Linux, and Windows.
 
 This section is only for developers who want to use Gaia on the shell directly. If you only consume Gaia via
 a transitive CMake dependency, you can skip this chapter.
-
-### Darwin (macOS)
-
-...
 
 ### Linux
 
@@ -38,7 +34,11 @@ $ sudo apt dist-upgrade
 $ sudo apt install python3 python3-json5 python3-semver python3-toml
 ```
 
-≈### Windows
+### macOS
+
+XXX
+
+### Windows
 
 First, enable the "Use Unicode UTF-8 for worldwide language support" option Windows. Make sure Windows
 Terminal is installed.

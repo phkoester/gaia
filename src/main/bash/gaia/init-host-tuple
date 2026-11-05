@@ -21,7 +21,7 @@ unset GAIA_HOST_ARCH GAIA_HOST_VENDOR GAIA_HOST_OS GAIA_HOST
 export GAIA_HOST_ARCH GAIA_HOST_VENDOR GAIA_HOST_OS GAIA_HOST
 
 if [[ $OSTYPE =~ darwin.* ]]; then
-  # Darwin
+  # Darwin, macOS
 
   export GAIA_OS_DARWIN=1
 
@@ -30,7 +30,15 @@ if [[ $OSTYPE =~ darwin.* ]]; then
     return 2
   fi
 
-  export GAIA_MACOS=1
+  productName__=$(sw_vers -productName 2>/dev/null)
+  if [[ $productName__ != macOS ]]; then
+    echo init-host-tuple: error: Invalid product name: \`$productName__\` >/dev/stderr
+    unset productName__
+    return 2
+  fi
+  unset productName__
+
+  export GAIA_OS_MACOS=1
 
   GAIA_HOST_ARCH=aarch64
   GAIA_HOST_VENDOR=apple
@@ -46,9 +54,11 @@ elif [[ $OSTYPE == linux-gnu ]]; then
   fi
 
   export GAIA_LINUX=1
+
   if lsb_release -a | grep -q "Ubuntu"; then
     export GAIA_UBUNTU=1
   fi
+
   [[ -d /mnt/wsl ]] && export GAIA_WSL=1
   [[ -d /mnt/wslg ]] && export GAIA_WSLG=1
 

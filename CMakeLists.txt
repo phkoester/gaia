@@ -31,17 +31,15 @@ endif()
 
 # Check host tuple ------------------------------------------------------------------------------------------
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-  set(CACHE{GAIA_OS_DARWIN} VALUE ON)
-endif()
 if(LINUX)
   set(CACHE{GAIA_OS_LINUX} VALUE ON)
-endif()
-if(WIN32)
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
+  set(CACHE{GAIA_OS_MACOS} VALUE ON)
+elseif(WIN32)
   set(CACHE{GAIA_OS_WINDOWS} VALUE ON)
 endif()
 
-if(NOT(GAIA_OS_DARWIN) AND NOT(GAIA_OS_LINUX) AND NOT(GAIA_OS_WINDOWS))
+if(NOT(GAIA_OS_LINUX) AND NOT(GAIA_OS_MACOS) AND NOT(GAIA_OS_WINDOWS))
   GaiaFatalError("Unsupported OS: ${CMAKE_SYSTEM_NAME}")
 endif()
 
