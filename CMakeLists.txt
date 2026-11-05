@@ -32,15 +32,12 @@ endif()
 # Check host tuple ------------------------------------------------------------------------------------------
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-  set(CACHE{GAIA_OS} VALUE darwin)
   set(CACHE{GAIA_OS_DARWIN} VALUE ON)
 endif()
 if(LINUX)
-  set(CACHE{GAIA_OS} VALUE linux)
   set(CACHE{GAIA_OS_LINUX} VALUE ON)
 endif()
 if(WIN32)
-  set(CACHE{GAIA_OS} VALUE windows)
   set(CACHE{GAIA_OS_WINDOWS} VALUE ON)
 endif()
 

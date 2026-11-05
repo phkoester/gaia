@@ -1,11 +1,11 @@
 # Gaia
 
 Gaia is a collection of Bash scripts, Python scripts, Makefiles, and various other scripts that help you to
-build C++ and Rust projects on Linux and Windows.
+build C++ and Rust projects on Darwin (macOS), Linux, and Windows.
 
 | Operating System | Supported C++ Toolchains
 | :--------------- | :-----------------------
-| Darwin (macOS)   | LLVM (`clang++`)
+| Darwin (macOS)   | GNU (`gnu++-16`), LLVM (`clang++`)
 | Linux            | GNU (`g++`), LLVM (`clang++`)
 | Windows          | LLVM (`clang-cl.exe`), MSVC (`cl.exe`)
 
@@ -83,7 +83,7 @@ In your `~/.bashrc`, export these variables:
 | Environment Variable      | Required? | Description
 | :------------------------ | :-------- | :----------
 | `GAIA_BUILD_TYPE`         | No        | Values: `debug`, `release` (default)
-| `GAIA_CXX_TOOLCHAIN`      | No        | Values: `gnu` (default on Linux), `llvm`, `msvc` (default on Windows)
+| `GAIA_CXX_TOOLCHAIN`      | No        | Values: `gnu` (default on Linux), `llvm` (default on Darwin), `msvc` (default on Windows)
 | `GAIA_DIR`                | Yes       | Example: `~/project/gaia`
 | `GAIA_PROJECT_DIR`        | No        | Fallback directory where `gaia-build` looks for projects
 

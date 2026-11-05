@@ -107,8 +107,13 @@ endif
 # Select C and C++ compilers --------------------------------------------------------------------------------
 
 ifeq ($(GAIA_CXX_TOOLCHAIN),gnu)
-  export CC := gcc
-  export CXX := g++
+  ifdef GAIA_OS_DARWIN
+    export CC := gcc-16
+    export CXX := g++-16
+  else
+    export CC := gcc
+    export CXX := g++
+  endif
 endif
 ifeq ($(GAIA_CXX_TOOLCHAIN),llvm)
   ifdef GAIA_OS_WINDOWS
@@ -215,6 +220,9 @@ ifeq ($(VERBOSE),1)
   CTEST_FLAGS += -V
 endif
 
+ifdef GAIA_OS_DARWIN
+  TEST_PRESET := darwin-$(GAIA_BUILD_TYPE)
+endif
 ifdef GAIA_OS_LINUX
   TEST_PRESET := linux-$(GAIA_BUILD_TYPE)
 endif
