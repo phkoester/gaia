@@ -58,6 +58,12 @@ fi
 
 export PYTHONUTF8=1
 
+# Environment (Darwin) ......................................................................................
+
+if [[ $GAIA_OS_DARWIN ]]; then
+  export GAIA_CXX_TOOLCHAIN=${GAIA_CXX_TOOLCHAIN:-llvm}
+fi
+
 # Environment (Linux) .......................................................................................
 
 if [[ $GAIA_OS_LINUX ]]; then
