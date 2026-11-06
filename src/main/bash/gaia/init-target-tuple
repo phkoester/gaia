@@ -7,7 +7,6 @@
 # - GAIA_TARGET_ARCH: aarch64, x86_64
 # - GAIA_TARGET_VENDOR: apple, pc
 # - GAIA_TARGET_OS: darwin, linux, windows
-# - GAIA_TARGET_ABI: gnu, msvc
 # - GAIA_TARGET (combines all of the above)
 #
 # Supported host tuples and their corresponding default target tuples are:
@@ -40,32 +39,29 @@
 
 # Select default target tuple -------------------------------------------------------------------------------
 
-unset GAIA_TARGET_ARCH GAIA_TARGET_VENDOR GAIA_TARGET_OS GAIA_TARGET_ABI GAIA_TARGET
-export GAIA_TARGET_ARCH GAIA_TARGET_VENDOR GAIA_TARGET_OS GAIA_TARGET_ABI GAIA_TARGET
+unset GAIA_TARGET_ARCH GAIA_TARGET_VENDOR GAIA_TARGET_OS GAIA_TARGET
+export GAIA_TARGET_ARCH GAIA_TARGET_VENDOR GAIA_TARGET_OS GAIA_TARGET
 
 if [[ $GAIA_HOST == aarch64-apple-darwin ]]; then
   # Darwin
   GAIA_TARGET_ARCH=aarch64
   GAIA_TARGET_VENDOR=apple
   GAIA_TARGET_OS=darwin
-  GAIA_TARGET_ABI=gnu
 elif [[ $GAIA_HOST == x86_64-pc-linux ]]; then
   # Linux
   GAIA_TARGET_ARCH=x86_64
   GAIA_TARGET_VENDOR=pc
   GAIA_TARGET_OS=linux
-  GAIA_TARGET_ABI=gnu
 elif [[ $GAIA_HOST == x86_64-pc-windows ]]; then
   # Windows
   GAIA_TARGET_ARCH=x86_64
   GAIA_TARGET_VENDOR=pc
   GAIA_TARGET_OS=windows
-  GAIA_TARGET_ABI=msvc
 else
   echo init-target-tuple: error: Invalid host tuple: \`$GAIA_HOST\` >/dev/stderr
   return 2
 fi
 
-GAIA_TARGET=$GAIA_TARGET_ARCH-$GAIA_TARGET_VENDOR-$GAIA_TARGET_OS-$GAIA_TARGET_ABI
+GAIA_TARGET=$GAIA_TARGET_ARCH-$GAIA_TARGET_VENDOR-$GAIA_TARGET_OS
 
 # EOF
