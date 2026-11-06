@@ -21,7 +21,7 @@ unset GAIA_HOST_ARCH GAIA_HOST_VENDOR GAIA_HOST_OS GAIA_HOST
 export GAIA_HOST_ARCH GAIA_HOST_VENDOR GAIA_HOST_OS GAIA_HOST
 
 if [[ $OSTYPE =~ darwin.* ]]; then
-  # Darwin, macOS
+  # Darwin, macOS, Apple Silicon
 
   export GAIA_OS_DARWIN=1
 

@@ -3,11 +3,11 @@
 Gaia is a collection of Bash scripts, Python scripts, Makefiles, and various other scripts that help you to
 build C++ and Rust projects on Linux, macOS, and Windows.
 
-| Operating System | Supported C++ Toolchains
-| :--------------- | :-----------------------
-| Linux            | GNU (`g++`), LLVM (`clang++`)
-| macOS            | GNU (`gnu++-16`), LLVM (`clang++`)
-| Windows          | LLVM (`clang-cl.exe`), MSVC (`cl.exe`)
+| Operating System      | Supported C++ Toolchains
+| :-------------------- | :-----------------------
+| Linux                 | GNU (`g++`), LLVM (`clang++`)
+| macOS (Apple Silicon) | GNU (`g++-16`), LLVM (`clang++`)
+| Windows               | LLVM (`clang-cl.exe`), MSVC (`cl.exe`)
 
 ## CMake Requirements
 
