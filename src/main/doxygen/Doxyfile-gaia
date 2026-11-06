@@ -2,8 +2,6 @@
 # Doxyfile-gaia
 #
 
-@INCLUDE = $(GAIA_DIR)/src/main/doxygen/Doxyfile-default
-
 @INCLUDE = $(GAIA_DIR)/src/main/doxygen/Doxyfile-aliases
 
 # TAGFILES --------------------------------------------------------------------------------------------------
@@ -21,7 +19,7 @@ TAGFILES += "$(GAIA_DIR)/src/main/doxygen/cppreference-doxygen-web.tag.xml=https
 # Settings --------------------------------------------------------------------------------------------------
 
 ALLOW_UNICODE_NAMES = YES
-CLANG_DATABASE_PATH = .
+# CLANG_DATABASE_PATH = .
 EXCLUDE_SYMBOLS     = internal
 GENERATE_LATEX      = NO
 GENERATE_TREEVIEW   = YES

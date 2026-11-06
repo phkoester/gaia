@@ -332,7 +332,7 @@ ifneq ($(wildcard src/main/Doxyfile),)
 	@doxygen $(DOXYGEN_FLAGS) src/main/Doxyfile 2>&1 | grep -v \
 	  -e "warning: Incomplete input: scope for class" \
 	  -e "warning: documented symbol 'T std::experimental::.*' was not declared or defined" || \
-          true
+         true
 	@echo Created \`$(BUILD_DIR)/src/main/doc/html/index.html\`
 endif
 
