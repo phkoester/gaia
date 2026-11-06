@@ -59,17 +59,11 @@ include $(GAIA_DIR)/src/main/make/Makefile-common.mk
 
 export BUILD_DIR := build/$(GAIA_BUILD_TYPE)
 COVERAGE_DIR := $(BUILD_DIR)/code-coverage
-EXECUTABLE_DIRS :=
+EXECUTABLE_SUFFIX :=
 TEST_DIR := $(BUILD_DIR)/src/test
 
 ifdef GAIA_OS_WINDOWS
-  EXECUTABLE_DIRS := \
-    $(BUILD_DIR)/src/bench \
-    $(BUILD_DIR)/src/bin \
-    $(BUILD_DIR)/src/example \
-    $(BUILD_DIR)/src/experimental \
-    $(BUILD_DIR)/src/main \
-    $(BUILD_DIR)/src/test
+  EXECUTABLE_SUFFIX := .exe
 endif
 
 CMAKE_DEPS := CMakeLists.txt $(shell find src -name CMakeLists.txt)
@@ -94,11 +88,7 @@ ifeq ($(filter $(MAKECMDGOALS),run),run)
       TARGET := $(DEFAULT_RUN_TARGET)
     endif
   endif
-  ifdef GAIA_OS_WINDOWS
-    RUN_EXECUTABLE := $(shell find $(EXECUTABLE_DIRS) -executable -name '$(TARGET).exe' -type f 2>/dev/null)
-  else
-    RUN_EXECUTABLE := $(shell find $(BUILD_DIR)/src -executable -name '$(TARGET)' -type f)
-  endif
+  RUN_EXECUTABLE := $(shell find $(BUILD_DIR)/src -executable -name '$(TARGET)$(EXECUTABLE_SUFFIX)' -type f)
   ifeq ($(RUN_EXECUTABLE),)
     $(error Found no executable for target `$(TARGET)`)
   endif
@@ -323,6 +313,17 @@ else
 	@echo Created \`$(COVERAGE_DIR)/html/index.html\`
 endif
 
+# `compile_commands.json` ...................................................................................
+
+$(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS) $(CONFIGURE_DEPS)
+	@$(call print-target,configure)
+	@# The `</dev/null` fixes an output problem with CMake in Windows Terminal
+	@cmake $(CMAKE_CONFIGURE_FLAGS) --preset $(CONFIGURE_PRESET) </dev/null
+
+compile_commands.json: $(BUILD_DIR)/compile_commands.json
+	@echo ">" $@
+	@gaia-filter-compile-commands --field file -i $< -o $@ $(PROJECT_NAME)/src
+
 # Auxiliary targets .........................................................................................
 
 doc-main:
@@ -347,21 +348,6 @@ endif
 
 list-targets: configure
 	@$(call print-target,$@)
-ifdef GAIA_OS_WINDOWS
-	@gaia-stem $(shell find $(EXECUTABLE_DIRS) -name "*.exe" -type f -o -name "*.lib" -type f) | sort -u
-else
 	@cmake --build --preset $(BUILD_PRESET) --target help
-endif
-
-# `compile_commands.json` ...................................................................................
-
-$(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS) $(CONFIGURE_DEPS)
-	@$(call print-target,configure)
-	@# The `</dev/null` fixes an output problem with CMake in Windows Terminal
-	@cmake $(CMAKE_CONFIGURE_FLAGS) --preset $(CONFIGURE_PRESET) </dev/null
-
-compile_commands.json: $(BUILD_DIR)/compile_commands.json
-	@echo ">" $@
-	@gaia-filter-compile-commands --field file -i $< -o $@ $(PROJECT_NAME)/src
 
 # EOF
