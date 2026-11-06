@@ -13,9 +13,9 @@
 #
 #   Host tuple             | Default target tuple
 #   ---------------------- | --------------------
-#   `aarch64-apple-darwin` | `aarch64-apple-darwin-gnu`
-#   `x86_64-pc-linux`      | `x86_64-unknown-linux-gnu`
-#   `x86_64-pc-windows`    | `x86_64-pc-windows-msvc`
+#   `aarch64-apple-darwin` | `aarch64-apple-darwin`
+#   `x86_64-pc-linux`      | `x86_64-unknown-linux`
+#   `x86_64-pc-windows`    | `x86_64-pc-windows`
 #
 # Today, a tuple has up to 10 parts:
 #
