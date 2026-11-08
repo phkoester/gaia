@@ -32,11 +32,36 @@ $ sudo apt update
 $ sudo apt upgrade
 $ sudo apt dist-upgrade
 $ sudo apt install python3 python3-json5 python3-semver python3-toml
+$ sudo apt install ccache
 ```
 
 ### macOS
 
-XXX
+On macOS, the recommended shell is a current Bash running in Ghostty. Ghostty handles Unicode grapheme
+clusters correctly, which the standard terminal doesn't.
+
+In the standard `zsh` that opens with the standard terminal, say
+
+```shell
+$ clang++ # On a fresh system, this triggers the setup of the Developer Command-Line Tools
+$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" # Install homebrew
+```
+
+Prepend `opt/homebrew/bin` to your `PATH`.
+
+```shell
+$ brew install bash # This installs a recent version
+$ brew install findutils
+$ brew install python3
+$ pip3 install --break-system-packages json5 semver toml
+$ brew install ccache
+```
+
+In your Ghostty configuration file, add
+
+```
+command = /opt/homebrew/bin/bash
+```
 
 ### Windows
 
@@ -89,7 +114,7 @@ In your `~/.bashrc`, export these variables:
 
 After that, to initialize Gaia, place this line in your `~/.bashrc`:
 
-```bash
+```shell
 source "$GAIA_DIR/src/main/bash/gaia/init"
 ```
 

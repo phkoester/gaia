@@ -29,8 +29,8 @@ required.
 
 For a full Clippy run, execute the following command:
 
-```bash
-cargo +nightly clippy --all-features --all-targets
+```shell
+$ cargo +nightly clippy --all-features --all-targets
 ```
 
 ## Source-File Sections

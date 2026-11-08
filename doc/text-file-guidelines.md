@@ -43,7 +43,7 @@ In general, anything "code-ish" may be enclosed in backticks (<code>`</code>). T
 pieces of code, names and values of environment variables, or command-line tools. To some extent, where they
 don't impose too much noise, these backticks may even surface on the user interface:
 
-```bash
+```shell
 echo Loading file \`$file\` ...
 echo error: Invalid option \`-$opt\` >/dev/stderr
 ```
