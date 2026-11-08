@@ -244,7 +244,7 @@ endif
 build: configure
 	@$(call print-target,$@)
 	@cmake $(CMAKE_FLAGS) --build --preset $(BUILD_PRESET) \
-	  $(if $(TARGET),--target $(TARGET),) $(CMAKE_TRAILING_FLAGS)
+	  $(if $(TARGET),--target $(TARGET),) $(CMAKE_TRAILING_FLAGS) </dev/null
 
 check:
 	@$(call print-target,$@)
@@ -270,8 +270,7 @@ rebuild: reconfigure build
 .PHONY: reconfigure
 reconfigure: compile_commands.json
 	@$(call print-target,$@)
-	@cmake --build --preset $(BUILD_PRESET) --target clean
-	@# The `</dev/null` fixes an output problem with CMake in Windows Terminal
+	@cmake --build --preset $(BUILD_PRESET) --target clean </dev/null
 	@cmake $(CMAKE_CONFIGURE_FLAGS) --fresh --preset $(CONFIGURE_PRESET) \
 	  -DFETCHCONTENT_FULLY_DISCONNECTED=ON </dev/null
 
@@ -317,7 +316,6 @@ endif
 
 $(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS) $(CONFIGURE_DEPS)
 	@$(call print-target,configure)
-	@# The `</dev/null` fixes an output problem with CMake in Windows Terminal
 	@cmake $(CMAKE_CONFIGURE_FLAGS) --preset $(CONFIGURE_PRESET) </dev/null
 
 compile_commands.json: $(BUILD_DIR)/compile_commands.json
@@ -348,6 +346,6 @@ endif
 
 list-targets: configure
 	@$(call print-target,$@)
-	@cmake --build --preset $(BUILD_PRESET) --target help
+	@cmake --build --preset $(BUILD_PRESET) --target help </dev/null
 
 # EOF
