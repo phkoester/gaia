@@ -7,9 +7,6 @@
 #     Arguments to pass to the run target
 # - CONFIGURE_DEPS
 #     Targets to make before configuring
-# - COVERAGE
-#     If set to 1, build with code coverage and create a report when running tests (Linux and LLVM only).
-#     After changing it, run `make clean`
 # - DEFAULT_RUN_TARGET
 #     The default target to run
 # - GAIA_BUILD_TYPE
@@ -39,15 +36,15 @@
 # Targets (parameters):
 #
 # - bench (GAIA_BUILD_TYPE, PATTERN)
-# - build (COVERAGE, GAIA_BUILD_TYPE, TARGET, VERBOSE)
+# - build (GAIA_BUILD_TYPE, TARGET, VERBOSE)
 # - check (GAIA_BUILD_TYPE, PATTERN)
 # - clean
-# - configure (COVERAGE, GAIA_BUILD_TYPE)
+# - configure (GAIA_BUILD_TYPE)
 # - doc (GAIA_BUILD_TYPE, VERBOSE)
-# - rebuild (COVERAGE, GAIA_BUILD_TYPE, TARGET, VERBOSE)
-# - reconfigure (COVERAGE, GAIA_BUILD_TYPE)
+# - rebuild (GAIA_BUILD_TYPE, TARGET, VERBOSE)
+# - reconfigure (GAIA_BUILD_TYPE)
 # - run (ARGS, DEFAULT_RUN_TARGET, GAIA_BUILD_TYPE, MEMCHECK, TARGET, VERBOSE)
-# - test (COVERAGE, GAIA_BUILD_TYPE, PATTERN, VERBOSE)
+# - test (GAIA_BUILD_TYPE, PATTERN, VERBOSE)
 #
 
 ifndef GAIA_DIR
@@ -58,7 +55,6 @@ include $(GAIA_DIR)/src/main/make/Makefile-common.mk
 # Constants -------------------------------------------------------------------------------------------------
 
 export BUILD_DIR := build/$(GAIA_BUILD_TYPE)
-COVERAGE_DIR := $(BUILD_DIR)/code-coverage
 EXECUTABLE_SUFFIX :=
 TEST_DIR := $(BUILD_DIR)/src/test
 
@@ -66,7 +62,7 @@ ifdef GAIA_OS_WINDOWS
   EXECUTABLE_SUFFIX := .exe
 endif
 
-CMAKE_DEPS := CMakeLists.txt $(shell find src -name CMakeLists.txt)
+CMAKE_DEPS := CMakeLists.txt $(shell find src -name CMakeLists.txt) $(wildcard cmake/*)
 
 CHECK_FILES :=
 ifeq ($(filter $(MAKECMDGOALS),check),check)
@@ -122,53 +118,14 @@ ifeq ($(GAIA_CXX_TOOLCHAIN),llvm)
   endif
 endif
 
-# Configure code coverage -----------------------------------------------------------------------------------
-
-ifeq ($(COVERAGE),1)
-  ifndef GAIA_OS_LINUX
-    $(error `COVERAGE=1` requires Linux and LLVM toolchain)
-  endif
-  ifneq ($(GAIA_CXX_TOOLCHAIN),llvm)
-    $(error `COVERAGE=1` requires Linux and LLVM toolchain)
-  endif
-
-  export BUILD_COVERAGE := 1
-
-  # LLVM source-based code coverage
-  COVERAGE_COMPILE_FLAGS := -fprofile-instr-generate -fcoverage-mapping
-  COVERAGE_LINK_FLAGS := -fprofile-instr-generate
-
-  # Prefer the LLVM tools matching the Clang version, e.g., `llvm-cov-21`
-  LLVM_VERSION := $(shell $(CC) -dumpversion | cut -d. -f1)
-  LLVM_COV := $(shell command -v llvm-cov-$(LLVM_VERSION) || command -v llvm-cov)
-  LLVM_PROFDATA := $(shell command -v llvm-profdata-$(LLVM_VERSION) || command -v llvm-profdata)
-  ifeq ($(LLVM_COV),)
-    $(error Missing `llvm-cov`)
-  endif
-  ifeq ($(LLVM_PROFDATA),)
-    $(error Missing `llvm-profdata`)
-  endif
-
-  COVERAGE_IGNORE_REGEX := (/_deps/|/src/bench/|/src/test/)
-  COVERAGE_PROFDATA := $(COVERAGE_DIR)/coverage.profdata
-  COVERAGE_PROFRAW_DIR := $(abspath $(COVERAGE_DIR))/profraw
-endif
-
-# Instrumented ELF executables and shared libraries of this project (excluding `_deps`). The first one is
-# passed positionally to `llvm-cov`, the others with `-object`
-coverage-binaries = $(shell \
-  for f in $$(find $(BUILD_DIR)/src -name CMakeFiles -prune -o -type f \( -executable -o -name '*.so*' \) -print); do \
-    [ "$$(head -c4 $$f | tail -c3)" = ELF ] && echo $$f; \
-  done)
-
-coverage-objects = $(firstword $1) $(addprefix -object=,$(wordlist 2,$(words $1),$1))
-
 # Configure valgrind ----------------------------------------------------------------------------------------
 
-VALGRIND_FLAGS :=
-ifeq ($(VERBOSE),1)
-  VALGRIND_FLAGS += --leak-check=full --show-leak-kinds=all --suppressions=$(GAIA_DIR)/src/main/valgrind/gaia-valgrind.supp --track-origins=yes --vgdb=no
-endif
+VALGRIND_FLAGS := \
+  --leak-check=full \
+  --show-leak-kinds=all \
+  --suppressions=$(GAIA_DIR)/src/main/valgrind/gaia-valgrind.supp \
+  --track-origins=yes \
+  --vgdb=no
 
 ifeq ($(MEMCHECK),1)
   ifdef GAIA_OS_WINDOWS
@@ -179,14 +136,6 @@ endif
 # Configure CMake -------------------------------------------------------------------------------------------
 
 CMAKE_CONFIGURE_FLAGS :=
-
-ifeq ($(COVERAGE),1)
-  CMAKE_CONFIGURE_FLAGS += \
-    "-DCMAKE_C_FLAGS=$(COVERAGE_COMPILE_FLAGS)" \
-    "-DCMAKE_CXX_FLAGS=$(COVERAGE_COMPILE_FLAGS)" \
-    "-DCMAKE_EXE_LINKER_FLAGS=$(COVERAGE_LINK_FLAGS)" \
-    "-DCMAKE_SHARED_LINKER_FLAGS=$(COVERAGE_LINK_FLAGS)"
-endif
 
 CMAKE_TRAILING_FLAGS :=
 
@@ -287,33 +236,9 @@ endif
 
 test:
 	@$(call print-target,$@)
-ifneq ($(COVERAGE),1)
 	@ctest $(CTEST_FLAGS) \
 	  --preset $(TEST_PRESET) \
 	  --test-dir $(BUILD_DIR)/src/test $(if $(PATTERN),-R '$(PATTERN)',)
-else
-	@rm -rf $(COVERAGE_DIR)
-	@mkdir -p $(COVERAGE_PROFRAW_DIR)
-	@LLVM_PROFILE_FILE=$(COVERAGE_PROFRAW_DIR)/%p-%m.profraw ctest $(CTEST_FLAGS) \
-	  --preset $(TEST_PRESET) \
-	  --test-dir $(BUILD_DIR)/src/test \
-          $(if $(PATTERN),-R '$(PATTERN)',)
-	@$(LLVM_PROFDATA) merge -sparse -o $(COVERAGE_PROFDATA) $(COVERAGE_PROFRAW_DIR)/*.profraw
-	@rm -r $(COVERAGE_PROFRAW_DIR)
-	@$(LLVM_COV) show \
-	  -format=html \
-	  -ignore-filename-regex='$(COVERAGE_IGNORE_REGEX)' \
-	  -instr-profile=$(COVERAGE_PROFDATA) \
-	  -output-dir=$(COVERAGE_DIR)/html \
-	  -show-line-counts-or-regions \
-	  $(call coverage-objects,$(call coverage-binaries))
-	@$(LLVM_COV) report \
-	  -ignore-filename-regex='$(COVERAGE_IGNORE_REGEX)' \
-	  -instr-profile=$(COVERAGE_PROFDATA) \
-	  $(call coverage-objects,$(call coverage-binaries)) >/dev/null
-	@rm -f default.profraw
-	@echo Created $(COVERAGE_DIR)/html/index.html
-endif
 
 # `compile_commands.json` ...................................................................................
 

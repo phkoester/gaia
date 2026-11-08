@@ -69,6 +69,9 @@ def get_project_dir(prj: str) -> str:
 
 def parse_args() -> list[str]:
   ret = cl.args
+  # `--` may separate the projects from the command, but it isn't part of the command
+  if ret and ret[0] == "--":
+    del ret[0]
   if not ret:
     ret = ["make"]
   elif ret[0] == "g":
@@ -89,16 +92,21 @@ def parse_cl() -> argparse.Namespace:
   )
 
   parser.add_argument("-h", "--help", action="help",
-      help="show this help message and exit")
+    help="show this help message and exit")
   parser.add_argument("-s", "--skip", action="store_true", dest="skip",
-      help="skip processing dependencies")
+    help="skip processing dependencies")
 
-  parser.add_argument("args", action="store", nargs="*", type=str)
+  # Our own options must come first. Everything from the first non-option on is left alone, so the command
+  # can have options of its own
+  parser.add_argument("args", action="store", nargs=argparse.REMAINDER, type=str)
 
   return parser.parse_args()
 
 def parse_projects() -> list[str]:
   ret = []
+  # `--` may separate our options from the projects
+  if cl.args and cl.args[0] == "--":
+    del cl.args[0]
   # Consume `args` as long as the first element matches a project or "all"
   while True:
     prj = cl.args and cl.args[0] or None

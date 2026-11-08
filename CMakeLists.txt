@@ -88,7 +88,6 @@ set(FETCHCONTENT_QUIET FALSE)
 
 # Configuration ---------------------------------------------------------------------------------------------
 
-GaiaAddVar(BUILD_COVERAGE    BOOL OFF "Enable code coverage and generate reports")
 GaiaAddVar(BUILD_SHARED_LIBS BOOL OFF "Build shared libraries")
 GaiaAddVar(BUILD_TESTING     BOOL ON  "Enable testing: benchmarks and tests")
 

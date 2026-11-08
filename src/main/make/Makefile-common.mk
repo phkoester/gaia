@@ -47,8 +47,9 @@ EMPTY :=
 SPACE := $(EMPTY) $(EMPTY)
 
 GAIA_DEPS := \
+  $(wildcard $(GAIA_DIR)/CMakeLists.txt) \
   $(wildcard $(GAIA_DIR)/bin/*) \
-  $(wildcard $(GAIA_DIR)/src/main/cmake/*) \
+  $(wildcard $(GAIA_DIR)/cmake/*) \
   $(wildcard $(GAIA_DIR)/src/main/make/*)
 
 export PROJECT_NAME := $(notdir $(CURDIR))

@@ -31,7 +31,7 @@ endfunction()
 # Adds a CMake cache variable. If it is already set, it is left unchanged. Otherwise, if there is an
 # environment variable with the same name, it is used. As a fallback, the default value is used.
 function(GaiaAddVar name type default doc)
-  if(NOT DEFINED CACHE{name})
+  if(NOT DEFINED ${name})
     if(DEFINED ENV{${name}})
       set(${name} $ENV{${name}} CACHE ${type} "${doc}")
       GaiaStatus("Setting ${name} by environment: ${${name}}")
