@@ -40,7 +40,7 @@ cl-get-args-f() {
   echo $result
 }
 
-# Usage: eval $(cl-get-options OPT_STRING "$@")
+# Usage: eval "$(cl-get-options OPT_STRING "$@")"
 #
 # OPT_STRING is passed to `getopts`. No leading `:` is allowed.
 cl-get-options() {
@@ -68,9 +68,12 @@ cl-get-options() {
 
   # Parse options using `getopts`
   local found=0
-  local opt; while getopts :$opt_string opt; do # Leading `:`: silent mode
-    [[ $opt == \? ]] && { echo "shell-error -e2 Invalid option: \\\`-$OPTARG\\\`;" return 2; }
-    [[ $opt == : ]] && { echo "shell-error -e2 Option \\\`-$OPTARG\\\` requires an argument"; return 2; }
+  local opt quoted; while getopts :$opt_string opt; do # Leading `:`: silent mode
+    # The caller evals our output, so `OPTARG` must be quoted or it would be executed
+    printf -v quoted %q "$OPTARG"
+
+    [[ $opt == \? ]] && { echo "shell-error -e2 Invalid option: \\\`-$quoted\\\`"; return 2; }
+    [[ $opt == : ]] && { echo "shell-error -e2 Option \\\`-$quoted\\\` requires an argument"; return 2; }
     local takes_arg=${map[$opt]}
     if [[ $found == 0 ]]; then
       result="$result;"
@@ -79,15 +82,15 @@ cl-get-options() {
     if [[ $takes_arg == 0 ]]; then
       result="$result $opt=1"
     else
-      result="$result $opt=\"$OPTARG\""
+      result="$result $opt=$quoted"
     fi
   done
 
   result="$result; shift $((OPTIND - 1))"
-  echo $result
+  printf '%s\n' "$result"
 }
 
-# Usage: eval $(cl-get-options-f $FUNCNAME OPT_STRING "$@")
+# Usage: eval "$(cl-get-options-f $FUNCNAME OPT_STRING "$@")"
 #
 # OPT_STRING is passed to `getopts`. No leading `:` is allowed.
 cl-get-options-f() {
@@ -117,9 +120,12 @@ cl-get-options-f() {
 
   # Parse options using `getopts`
   local found=0
-  local opt; while getopts :$opt_string opt; do # Leading `:`: silent mode
-    [[ $opt == \? ]] && { echo "shell-error-f -r2 \"$func_name\" Invalid option: \\\`-$OPTARG\\\`; return 2"; return 2; }
-    [[ $opt == : ]] && { echo "shell-error-f -r2 \"$func_name\" Option \\\`-$OPTARG\\\` requires an argument; return 2"; return 2; }
+  local opt quoted; while getopts :$opt_string opt; do # Leading `:`: silent mode
+    # The caller evals our output, so `OPTARG` must be quoted or it would be executed
+    printf -v quoted %q "$OPTARG"
+
+    [[ $opt == \? ]] && { echo "shell-error-f -r2 \"$func_name\" Invalid option: \\\`-$quoted\\\`; return 2"; return 2; }
+    [[ $opt == : ]] && { echo "shell-error-f -r2 \"$func_name\" Option \\\`-$quoted\\\` requires an argument; return 2"; return 2; }
     local takes_arg=${map[$opt]}
     if [[ $found == 0 ]]; then
       result="$result;"
@@ -128,12 +134,12 @@ cl-get-options-f() {
     if [[ $takes_arg == 0 ]]; then
       result="$result $opt=1"
     else
-      result="$result $opt=\"$OPTARG\""
+      result="$result $opt=$quoted"
     fi
   done
 
   result="$result; shift $((OPTIND - 1))"
-  echo $result
+  printf '%s\n' "$result"
 }
 
 # EOF

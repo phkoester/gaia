@@ -34,7 +34,7 @@ func-helper__() {
 
   # Parse command line
 
-  eval $(cl-get-options-f $FUNCNAME "$OPT_STRING" "$@")
+  eval "$(cl-get-options-f $FUNCNAME "$OPT_STRING" "$@")"
   if [[ $ARG_NAMES ]]; then
     eval $(cl-get-args-f $FUNCNAME $ARG_NAMES)
   fi
@@ -70,6 +70,41 @@ script__() {
   STATUS=$?
   # echo "***" $OUTPUT >/dev/stderr # Debug
   echo $OUTPUT
+}
+
+# The helpers above print values with an unquoted `echo`, which collapses whitespace. These print the value
+# of option `-m` exactly. The trailing `.` keeps `$(...)` from stripping trailing line feeds
+option-value__() {
+  eval "$(cl-get-options m:v "$@")"
+  printf '%s.' "$m"
+}
+
+option-value-f__() {
+  eval "$(cl-get-options-f $FUNCNAME m:v "$@")"
+  printf '%s.' "$m"
+}
+
+# Usage: expect-option-verbatim__ VALUE
+#
+# Checks that option `-m` delivers VALUE unchanged, in both separate and attached form, and with both
+# `cl-get-options` and `cl-get-options-f`.
+expect-option-verbatim__() {
+  local value=$1 actual
+
+  actual=$(option-value__ -m "$value")
+  EXPECT-SAME "${actual%.}" "$value"
+
+  actual=$(option-value-f__ -m "$value")
+  EXPECT-SAME "${actual%.}" "$value"
+
+  # An empty value cannot be attached: `-m` alone would then be missing its argument
+  if [[ $value ]]; then
+    actual=$(option-value__ "-m$value")
+    EXPECT-SAME "${actual%.}" "$value"
+
+    actual=$(option-value-f__ "-m$value")
+    EXPECT-SAME "${actual%.}" "$value"
+  fi
 }
 
 # Tests -----------------------------------------------------------------------------------------------------
@@ -144,6 +179,132 @@ TEST-cl-get-args-f() {
   func__ "" A >/dev/null
   EXPECT-MATCH "$OUTPUT" "error: In function \`func-helper__\`: Missing argument: \`A\`"
   EXPECT-EQ $STATUS 2
+}
+
+TEST-options-do-not-execute-values() {
+  local tmp marker value
+  tmp=$(mktemp -d)
+  marker=$tmp/injected
+
+  for value in \
+    "\`touch $marker\`" \
+    "Fix \`touch $marker\` here" \
+    "\$(touch $marker)" \
+    "; touch $marker" \
+    "| touch $marker" \
+    "&& touch $marker" \
+    "\"; touch $marker; \"" \
+    "'; touch $marker; '" \
+    "\\\"; touch $marker; \\\""; do
+    expect-option-verbatim__ "$value"
+  done
+
+  EXPECT-FAILURE test -e "$marker"
+  rm -rf "$tmp"
+}
+
+TEST-options-do-not-expand-values() {
+  local value
+  for value in '$HOME' '${HOME}' '$((1 + 1))' '~' '*' '?' '[a-z]' '{a,b}'; do
+    expect-option-verbatim__ "$value"
+  done
+}
+
+TEST-options-preserve-whitespace() {
+  local value
+  for value in \
+    'two   spaces' \
+    ' leading' \
+    'trailing ' \
+    '   ' \
+    $'tab\there' \
+    $'line\nfeed' \
+    $'trailing line feed\n' \
+    $'a  b\tc*  d'; do
+    expect-option-verbatim__ "$value"
+  done
+}
+
+TEST-options-preserve-special-characters() {
+  local value
+  for value in \
+    '"' "'" 'a"b' "a'b" '\' 'a\' 'a\b' '\\' '\"' "\\'" \
+    '#a' '!a' '&' ';' '|' '<' '>' '(' ')' 'a=b' \
+    '-n' '-e' '-v' '--' \
+    'äöü €'; do
+    expect-option-verbatim__ "$value"
+  done
+}
+
+TEST-options-accept-empty-value() {
+  expect-option-verbatim__ ""
+}
+
+TEST-options-last-value-wins() {
+  local actual
+
+  actual=$(option-value__ -m first -m 'second  value')
+  EXPECT-SAME "${actual%.}" 'second  value'
+
+  actual=$(option-value-f__ -m first -m 'second  value')
+  EXPECT-SAME "${actual%.}" 'second  value'
+}
+
+TEST-options-unset-missing-option() {
+  local actual
+
+  actual=$(m=stale; option-value__ -v)
+  EXPECT-SAME "${actual%.}" ""
+
+  actual=$(m=stale; option-value-f__ -v)
+  EXPECT-SAME "${actual%.}" ""
+}
+
+TEST-options-keep-positional-arguments() {
+  local actual
+
+  # Print the options and the remaining arguments, each one in brackets
+  print__() {
+    eval "$(cl-get-options m:v "$@")"
+    printf '[%s]' "$v" "$m" "$@"
+  }
+  print-f__() {
+    eval "$(cl-get-options-f $FUNCNAME m:v "$@")"
+    printf '[%s]' "$v" "$m" "$@"
+  }
+
+  actual=$(print__ -v -m 'a  b' c 'd  e' '$(f)')
+  EXPECT-SAME "$actual" '[1][a  b][c][d  e][$(f)]'
+
+  actual=$(print-f__ -v -m 'a  b' c 'd  e' '$(f)')
+  EXPECT-SAME "$actual" '[1][a  b][c][d  e][$(f)]'
+
+  unset -f print__ print-f__
+}
+
+TEST-options-invalid-option-characters() {
+  local option
+  for option in q ';' '$' "'" '"' '`' '&' '*' '(' '|' '<'; do
+    script__ m: "" "-$option" >/dev/null
+    EXPECT-CONTAINS "$OUTPUT" "error: Invalid option: \`-$option\`"
+    EXPECT-EQ $STATUS 2
+
+    func__ m: "" "-$option" >/dev/null
+    EXPECT-CONTAINS "$OUTPUT" "error: In function \`func-helper__\`: Invalid option: \`-$option\`"
+    EXPECT-EQ $STATUS 2
+  done
+}
+
+TEST-options-stop-at-first-invalid-option() {
+  local output
+
+  output=$(cl-get-options m: -x -y)
+  EXPECT-EQ $? 2
+  EXPECT-SAME "$output" 'shell-error -e2 Invalid option: \`-x\`'
+
+  output=$(cl-get-options-f my-func m: -x -y)
+  EXPECT-EQ $? 2
+  EXPECT-SAME "$output" 'shell-error-f -r2 "my-func" Invalid option: \`-x\`; return 2'
 }
 
 # Main ------------------------------------------------------------------------------------------------------

@@ -14,7 +14,7 @@ if [[ $1 == "" ]]; then
 elif [[ $1 == acp ]]; then
   # `acp` = add, commit, push
   shift
-  eval $(cl-get-options m: "$@")
+  eval "$(cl-get-options m: "$@")"
   if [[ ! $m ]]; then
     m="(No commit message.)"
   fi

@@ -10,6 +10,16 @@ source "$GAIA_DIR/src/main/bash/gaia/init" || return 2
 
 # Functions -------------------------------------------------------------------------------------------------
 
+# Usage: EXPECT-CONTAINS STR SUB
+#
+# Unlike `EXPECT-MATCH`, this compares literally, so SUB may contain regular-expression characters.
+EXPECT-CONTAINS() {
+  if [[ $1 != *"$2"* ]]; then
+    TEST_FAILED=1
+    shell-error -r1 Expected \`"$1"\` to contain \`"$2"\`
+  fi
+}
+
 # Usage: EXPECT-EQ LHS RHS
 EXPECT-EQ() {
   if [[ $1 != $2 ]]; then
@@ -27,7 +37,7 @@ EXPECT-FAILURE() {
   fi
 }
 
-# Usage: EXPECT-MATCH S PATTERN...
+# Usage: EXPECT-MATCH STR PATTERN...
 EXPECT-MATCH() {
   local str=$1
   shift 1
@@ -49,7 +59,7 @@ EXPECT-NE() {
   fi
 }
 
-# Usage: EXPECT-NO-MATCH S PATTERN...
+# Usage: EXPECT-NO-MATCH STR PATTERN...
 EXPECT-NO-MATCH() {
   local str=$1
   shift 1
@@ -63,6 +73,16 @@ EXPECT-NO-MATCH() {
   done
 }
 
+# Usage: EXPECT-SAME LHS RHS
+#
+# Unlike `EXPECT-EQ`, this compares literally, so RHSy contain pattern characters such as `*`.
+EXPECT-SAME() {
+  if [[ $1 != "$2" ]]; then
+    TEST_FAILED=1
+    shell-error -r1 Expected \`"$1"\` to be the same as \`"$2"\`
+  fi
+}
+
 # Usage: EXPECT-SUCCESS ARG...
 EXPECT-SUCCESS() {
   "$@"
@@ -73,12 +93,13 @@ EXPECT-SUCCESS() {
 }
 
 # Usage: RUN-ALL-TESTS [-t PATTERN]
-# Always call this function with `RUN-ALL-TESTS "$@"`
+#
+# Always call this function with `RUN-ALL-TESTS "$@"`.
 RUN-ALL-TESTS() {
   # Parse command line
 
   # Accept the `-v` option to be compatible with Python’s `unittest`
-  eval $(cl-get-options-f $FUNCNAME "t:v" "$@")
+  eval "$(cl-get-options-f $FUNCNAME "t:v" "$@")"
 
   # Collect test functions
 

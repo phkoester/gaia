@@ -12,7 +12,7 @@
 #
 # If neither `-e` nor `-r` is supplied, this function exits with status 1.
 shell-error() {
-  eval $(cl-get-options-f $FUNCNAME "e:nr:" "$@")
+  eval "$(cl-get-options-f $FUNCNAME "e:nr:" "$@")"
 
   echo $(basename -- $0): error: $@ >/dev/stderr
   [[ ! $n ]] && shell-print-stack-trace
@@ -32,7 +32,7 @@ shell-error() {
 #
 # If neither `-e` nor `-r` is supplied, this function exits with status 1.
 shell-error-f() {
-  eval $(cl-get-options-f $FUNCNAME "e:nr:" "$@")
+  eval "$(cl-get-options-f $FUNCNAME "e:nr:" "$@")"
   eval $(cl-get-args-f $FUNCNAME FUNC_NAME)
 
   echo $(basename -- $0): error: In function \`$func_name\`: $@ >/dev/stderr
