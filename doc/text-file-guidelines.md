@@ -50,20 +50,19 @@ echo error: Invalid option \`-$opt\` >/dev/stderr
 
 Some basic Markdown features:
 
-| What           | Type                            | Result
-| :------------- | :------------------------------ | :-----
-| en dash        | `--`                            | --
-| em dash        | `---`                           | ---
-| code           | <code>&grave;text&grave;</code> | `text`
-| italics        | `*text*`                        | *text*
-| bold           | `**text**`                      | **text**
-| strike-through | `~~text~~`                      | ~~text~~
+| What          | Type                            | Result
+| :------------ | :------------------------------ | :-----
+| en dash       | `--`                            | --
+| em dash       | `---`                           | ---
+| code          | <code>&grave;text&grave;</code> | `text`
+| italics       | `*text*`                        | *text*
+| bold          | `**text**`                      | **text**
+| strikethrough | `~~text~~`                      | ~~text~~
 
 Markdown isn't standardized, so not every feature will work in every environment. Rustdoc, Doxygen, Visual
 Studio Code, and GitHub—only to name a few—all use their individual Markdown parsers and renderers.
 
-A full documentation for CommonMark (used by Rustdoc) can be found
-[here](https://spec.commonmark.org/0.31.2).
+Full documentation for CommonMark (used by Rustdoc) can be found [here](https://spec.commonmark.org/0.31.2).
 
 For hints, use a bold font:
 

@@ -15,7 +15,7 @@ wsl-env() {
 wsl-mount-google-drive() {
   [[ ! -d /mnt/g ]] && sudo mkdir /mnt/g
   if [[ ! -d "/mnt/g/Meine Ablage" ]]; then
-    echo 'Mounting GoogleDrive as `mnt/g` ...'
+    echo 'Mounting GoogleDrive as `/mnt/g` ...'
     sudo mount -t drvfs G: /mnt/g
   fi
 }

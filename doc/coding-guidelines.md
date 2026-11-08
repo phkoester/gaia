@@ -9,7 +9,7 @@ In this document you will find a loose collection of general, language-independe
 Some markdown features such as `*...*` and <code>&grave;...&grave;</code> may be used in comments:
 
 ```rust
-frobinate(x); // Do some *really* sophisticated stuff with `x`
+frobnicate(x); // Do some *really* sophisticated stuff with `x`
 ```
 
 However, literals and links should not be styled in comments for better readability:

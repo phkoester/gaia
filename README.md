@@ -1,6 +1,6 @@
 # Gaia
 
-Gaia is a collection of Bash scripts, Python scripts, Makefiles, and various other scripts that help you to
+Gaia is a collection of Bash scripts, Python scripts, Makefiles, and various other scripts that help you
 build C++ and Rust projects on Linux, macOS, and Windows.
 
 | Operating System      | Supported C++ Toolchains
@@ -40,11 +40,11 @@ $ sudo apt install ccache
 On macOS, the recommended shell is a current Bash running in Ghostty. Ghostty handles Unicode grapheme
 clusters correctly, which the standard terminal doesn't.
 
-In the standard `zsh` that opens with the standard terminal, say
+In the standard zsh that opens with the standard terminal, say
 
 ```shell
 $ clang++ # On a fresh system, this triggers the setup of the Developer Command-Line Tools
-$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" # Install homebrew
+$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" # Install Homebrew
 ```
 
 Prepend `opt/homebrew/bin` to your `PATH`.
@@ -66,7 +66,7 @@ command = /opt/homebrew/bin/bash
 
 ### Windows
 
-First, enable the "Use Unicode UTF-8 for worldwide language support" option Windows. Make sure Windows
+First, enable the "Use Unicode UTF-8 for worldwide language support" option in Windows. Make sure Windows
 Terminal is installed.
 
 On Windows, Gaia runs on the Bash from the [Git for Windows SDK](https://gitforwindows.org/) on top
@@ -94,7 +94,7 @@ Open the "Git Bash Developer" profile in Windows Terminal and run these commands
 
 ```shell
 $ pacman -Syu
-$ pacman -S procps`
+$ pacman -S procps
 $ pacman -S python-pip
 $ pip3 install --break-system-packages json5 semver toml
 $ winget install ccache.ccache
@@ -122,7 +122,7 @@ source "$GAIA_DIR/src/main/bash/gaia/init"
 Now, when opening a terminal that loads your `.bashrc`, you should see a "This is Gaia" message. This means
 that Gaia is successfully installed and configured.
 
-## Recommended Readings
+## Recommended Reading
 
 - [Text-File Guidelines](doc/text-file-guidelines.md)
 - [Coding Guidelines](doc/coding-guidelines.md)

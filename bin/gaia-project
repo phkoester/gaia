@@ -84,7 +84,7 @@ def parse_cl() -> argparse.Namespace:
     description=DESCRIPTION,
     epilog=EPILOG,
     formatter_class=argparse.RawDescriptionHelpFormatter,
-    prog="gaia-build",
+    prog="gaia-project",
     usage=USAGE,
   )
 

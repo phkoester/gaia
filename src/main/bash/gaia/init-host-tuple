@@ -8,7 +8,7 @@
 # - GAIA_HOST_OS: darwin, linux, windows
 # - GAIA_HOST (combines all of the above)
 #
-# Until now, these host tuples are supported:
+# So far, these host tuples are supported:
 #
 # - `aarch64-apple-darwin`
 # - `x86_64-pc-linux`

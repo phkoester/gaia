@@ -3,7 +3,7 @@
 #
 # Logging utilities.
 #
-# Logging may be enabled with the environment variable `GAIA_LOG`. Possible value are `none`, `error`,
+# Logging may be enabled with the environment variable `GAIA_LOG`. Possible values are `none`, `error`,
 # `warn`, `info`, `debug`, and `trace`.
 #
 

@@ -19,7 +19,7 @@ if [[ ! -d $GAIA_DIR ]]; then
   return 2
 fi
 
-# Call other intialization scripts --------------------------------------------------------------------------
+# Call other initialization scripts -------------------------------------------------------------------------
 
 source "$dir__/init-host-tuple" || return 2
 source "$dir__/init-target-tuple" || return 2

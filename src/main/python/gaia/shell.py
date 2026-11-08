@@ -30,7 +30,7 @@ def error(msg: str, exit_status: int = 1, stack_trace=True) -> None:
 
   sys.stderr.write(f"{_inv_name}: error: {msg}\n")
   if stack_trace:
-    stack_trace()
+    print_stack_trace()
   if exit_status != 0:
     sys.exit(exit_status)
 
@@ -52,7 +52,7 @@ def _get_shebang(file: str) -> list[str]:
       cl = match.group(1).split()
       cl.append(file)
       return cl
-  
+
   return None
 
 def note(msg: str) -> None:
@@ -68,7 +68,7 @@ def _on_sigint(signal, frame) -> NoReturn:
 
   Calls `os._exit` rather than `sys.exit`, enforcing a cold exit.
   """
-  
+
   # sys.exit(130)
   os._exit(130) # Cold exit
 
@@ -86,15 +86,15 @@ def run(*cl, input=None, timeout=None, check=False, **kwargs) -> subprocess.Comp
   """
 
   gaia.log.debug(f"{cl=}")
-  
+
 # try:
   return subprocess.run(*cl, input=input, timeout=timeout, check=check, **kwargs)
 # except OSError:
-#   # Excecution failed. We look for a shebang
+#   # Execution failed. We look for a shebang
 #   if new_cl := _get_shebang(file):
 #     new_cl.extend(cl[0][1:]) # Add all but the first argument to the new command line
 #     # We got a new command line: recursive call
-#     return run(new_cl, input=input, timeout=timeout, check=check, **kwargs) 
+#     return run(new_cl, input=input, timeout=timeout, check=check, **kwargs)
 #   raise
 
 def warn(msg: str) -> None:

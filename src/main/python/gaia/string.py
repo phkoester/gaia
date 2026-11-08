@@ -33,7 +33,7 @@ def remove_trailing(str: str, sub: str) -> str:
   l = len(sub)
   if l == 0 or l > len(str):
     return str
-  if str[-l] == sub:
+  if str[-l:] == sub:
     return str[0:-l]
   return str
 
