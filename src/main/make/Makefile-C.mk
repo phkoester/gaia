@@ -312,7 +312,7 @@ else
 	  -instr-profile=$(COVERAGE_PROFDATA) \
 	  $(call coverage-objects,$(call coverage-binaries)) >/dev/null
 	@rm -f default.profraw
-	@echo Created \`$(COVERAGE_DIR)/html/index.html\`
+	@echo Created $(COVERAGE_DIR)/html/index.html
 endif
 
 # `compile_commands.json` ...................................................................................
@@ -335,7 +335,7 @@ ifneq ($(wildcard src/main/Doxyfile),)
 	  -e "warning: Incomplete input: scope for class" \
 	  -e "warning: documented symbol 'T std::experimental::.*' was not declared or defined" || \
          true
-	@echo Created \`$(BUILD_DIR)/src/main/doc/html/index.html\`
+	@echo Created $(BUILD_DIR)/src/main/doc/html/index.html
 endif
 
 doc-test: $(if $(wildcard src/test/Doxyfile),compile_commands.json)
@@ -346,7 +346,7 @@ ifneq ($(wildcard src/test/Doxyfile),)
 	  -e "warning: Incomplete input: scope for class" \
 	  -e "warning: documented symbol 'T std::experimental::.*' was not declared or defined" || \
           true
-	@echo Created \`$(BUILD_DIR)/src/test/doc/html/index.html\`
+	@echo Created $(BUILD_DIR)/src/test/doc/html/index.html
 endif
 
 list-targets: configure
