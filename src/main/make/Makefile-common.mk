@@ -60,7 +60,7 @@ TEST_DEPS :=
 
 # Functions -------------------------------------------------------------------------------------------------
 
-lower = $(shell echo $1 | tr A-Z -az)
+lower = $(shell echo $1 | tr A-Z a-z)
 
 # $1: items to move to the back
 # $2: all items
