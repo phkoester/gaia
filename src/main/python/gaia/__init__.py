@@ -6,7 +6,6 @@ import io
 import json5
 import os
 import re
-import semver
 import toml
 
 def get_version(dir: str) -> str | None:

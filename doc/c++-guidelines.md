@@ -69,7 +69,7 @@ need to be documented, in this order:
  *
  * Additional documentation goes here.
  *
- * @tparam C the component type
+ * @tparam Component the component type
  * @param comp the component
  * @return whether the component is visible
  * @throw #std::runtime_error if the component isn’t attached yet

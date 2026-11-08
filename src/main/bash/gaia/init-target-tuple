@@ -14,7 +14,7 @@
 #   Host tuple             | Default target tuple
 #   ---------------------- | --------------------
 #   `aarch64-apple-darwin` | `aarch64-apple-darwin`
-#   `x86_64-pc-linux`      | `x86_64-unknown-linux`
+#   `x86_64-pc-linux`      | `x86_64-pc-linux`
 #   `x86_64-pc-windows`    | `x86_64-pc-windows`
 #
 # Today, a tuple has up to 10 parts:
@@ -33,7 +33,7 @@
 #   `libc`    | `gnu`   | GNU (glibc)
 #   `abi`     | `eabi`  | EABI (embedded ABI)
 #   `variant` | `hf`    | Hardware floating point
-#   `version` | `6.33`  | Version 6.3.3
+#   `version` | `6.3.3` | Version 6.3.3
 #   `format`  | `macho` | Mach-O
 #
 

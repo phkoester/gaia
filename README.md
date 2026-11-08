@@ -12,7 +12,7 @@ build C++ and Rust projects on Linux, macOS, and Windows.
 ## CMake Requirements
 
 * CMake 4.2 or higher.
-* Python 3.8 or higher. On Windows, both a native Windows Python and an MSYS Python will work.
+* Python 3.10 or higher. On Windows, both a native Windows Python and an MSYS Python will work.
 * On Windows, a Developer Command Prompt from Microsoft Visual Studio is required.
 
 ## Set Up the Shell
@@ -47,7 +47,7 @@ $ clang++ # On a fresh system, this triggers the setup of the Developer Command-
 $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" # Install Homebrew
 ```
 
-Prepend `opt/homebrew/bin` to your `PATH`.
+Prepend `/opt/homebrew/bin` to your `PATH`.
 
 ```shell
 $ brew install bash # This installs a recent version
@@ -111,7 +111,7 @@ In your `~/.bashrc`, export these variables:
 | `GAIA_BUILD_TYPE`         | No        | Values: `debug`, `release` (default)
 | `GAIA_CXX_TOOLCHAIN`      | No        | Values: `gnu` (default on Linux), `llvm` (default on Darwin), `msvc` (default on Windows)
 | `GAIA_DIR`                | Yes       | Example: `~/project/gaia`
-| `GAIA_PROJECT_DIR`        | No        | Fallback directory where `gaia-build` looks for projects
+| `GAIA_PROJECT_DIR`        | No        | Fallback directory where `gaia-project` looks for projects
 
 After that, to initialize Gaia, place this line in your `~/.bashrc`:
 

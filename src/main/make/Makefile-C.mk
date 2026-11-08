@@ -14,8 +14,6 @@
 # - GAIA_CXX_TOOLCHAIN
 #     The C++ toolchain: `gnu`, `llvm`, or `msvc`
 # - GAIA_DIR
-# - JOBS
-#     The number of jobs for GNU Make (0: none, N: N jobs, default: 3/4)
 # - MEMCHECK
 #     If set to 1, run executables with a memory checker such as valgrind
 # - PATTERN

@@ -20,7 +20,7 @@ project(gaia VERSION 1.2.4)
 
 # Prerequisites ---------------------------------------------------------------------------------------------
 
-find_package(Python3 3.8 REQUIRED COMPONENTS Interpreter)
+find_package(Python3 3.10 REQUIRED COMPONENTS Interpreter)
 GaiaDetectPython()
 
 if(WIN32)

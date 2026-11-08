@@ -25,5 +25,5 @@ Hexadecimal numbers are set in capital letters:
 
 ```c++
 i32 n = 0xFF;
-auto c = U'\U20AC'; // U+20AC (EURO SIGN)
+auto c = U'\u20AC'; // U+20AC (EURO SIGN)
 ```

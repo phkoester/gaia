@@ -22,8 +22,8 @@ EPILOG = """If no PROJECT is given, `all` is assumed.
 
 Examples:
 
-  gaia-build   # Execute command line `make` for all projects
-  gaia-build g # Execute command line `gaia-git` for all projects"""
+  gaia-project   # Execute command line `make` for all projects
+  gaia-project g # Execute command line `gaia-git` for all projects"""
 
 USAGE = "%(prog)s [OPTION]... [PROJECT]... [ARG]..."
 

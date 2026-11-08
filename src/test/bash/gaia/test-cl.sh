@@ -22,7 +22,7 @@ func-helper__() {
 
   # Before parsing the command line, take arguments OPT_STRING and ARG_NAMES
 
-  if [[ $# < 2 ]]; then
+  if (($# < 2)); then
     shell-error-f -r2 $FUNCNAME Usage: func-helper OPT_STRING ARG_NAMES \[ARG\]...
     GAIA_NO_SHELL_PRINT_STACK_TRACE=
     return 2
