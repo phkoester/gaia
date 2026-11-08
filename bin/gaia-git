@@ -30,7 +30,10 @@ elif [[ $1 == acp ]]; then
   else
     echo Nothing to commit
   fi
-  if git status | grep -q "Your branch is ahead of 'origin/main' by 1 commit."; then
+  # Count the commits the upstream of the current branch doesn't have yet. This fails if there is no upstream
+  if ! ahead=$(git rev-list --count '@{upstream}..HEAD' 2>/dev/null); then
+    echo Not pushing: The current branch has no upstream
+  elif ((ahead > 0)); then
     echo Pushing ...
     exec git push
   else
