@@ -51,10 +51,11 @@ Prepend `opt/homebrew/bin` to your `PATH`.
 
 ```shell
 $ brew install bash # This installs a recent version
-$ brew install findutils
+$ brew install findutils # This installs a way better `find`
 $ brew install python3
 $ pip3 install --break-system-packages json5 semver toml
 $ brew install ccache
+$ brew install gcc # This installs a recent `gcc` and `g++`
 ```
 
 In your Ghostty configuration file, add
