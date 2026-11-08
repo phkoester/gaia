@@ -6,18 +6,16 @@
 """
 Filter `compile_commands.json` by regex pattern.
 
-This script reads a `compile_commands.json` file, splits it into blocks (one per compilation command), and
-filters blocks matching a regular expression pattern.
+This script reads a `compile_commands.json` document from stdin, splits it into blocks (one per compilation
+command), and writes the blocks matching a regular expression pattern to stdout.
 
 Usage:
-  gaia-filter-compile-commands [OPTIONS] -i INPUT_FILE -o OUTPUT_FILE PATTERN
+  gaia-filter-compile-commands [OPTIONS] PATTERN <INPUT_FILE >OUTPUT_FILE
 
 Arguments:
   PATTERN  Regular expression pattern to match against
 
 Options:
-  -i, --in IN        input file path (required)
-  -o, --out OUT      output file path (required)
       --field FIELD  field to match against: `file` (default), `command`, `directory`, or `all`
       --invert       invert the filter (keep non-matching blocks)
       --help         display this help message and exit
@@ -28,24 +26,16 @@ import json
 import re
 import sys
 
-from pathlib import Path
-
-def filter_compile_commands(input_file, output_file, pattern, field='file', invert=False):
-  # Read input file
-
-  input_path = Path(input_file)
-  if not input_path.exists():
-    print(f"Error: Input file '{input_file}' does not exist", file=sys.stderr)
-    return 1
+def filter_compile_commands(pattern, field='file', invert=False):
+  # Read stdin. Use the binary stream so the input is decoded as JSON, independent of the locale.
 
   try:
-    with open(input_path, 'r', encoding='utf-8') as f:
-      data = json.load(f)
+    data = json.load(sys.stdin.buffer)
   except json.JSONDecodeError as e:
-    print(f"Error: Invalid JSON in '{input_file}': {e}", file=sys.stderr)
+    print(f"Error: Invalid JSON on stdin: {e}", file=sys.stderr)
     return 1
   except Exception as e:
-    print(f"Error: Cannot read '{input_file}': {e}", file=sys.stderr)
+    print(f"Error: Cannot read stdin: {e}", file=sys.stderr)
     return 1
 
   if not isinstance(data, list):
@@ -96,12 +86,10 @@ def filter_compile_commands(input_file, output_file, pattern, field='file', inve
 
   # Write output
 
-  output_path = Path(output_file)
   try:
-    with open(output_path, 'w', encoding='utf-8') as f:
-      json.dump(filtered_data, f, indent=2)
+    json.dump(filtered_data, sys.stdout, indent=2)
   except Exception as e:
-    print(f"error: Cannot write `{output_path}`: {e}", file=sys.stderr)
+    print(f"error: Cannot write stdout: {e}", file=sys.stderr)
     return 1
 
   # kept_count = len(filtered_data)
@@ -110,7 +98,6 @@ def filter_compile_commands(input_file, output_file, pattern, field='file', inve
   # print(f"Filtered {original_count} entries:")
   # print(f"  Kept:    {kept_count}")
   # print(f"  Removed: {removed_count}")
-  # print(f"Output written to: {output_path}")
 
   return 0
 
@@ -119,18 +106,6 @@ def main():
     description='Filter compile_commands.json by regex pattern',
     formatter_class=argparse.RawDescriptionHelpFormatter,
     epilog=__doc__
-  )
-  parser.add_argument(
-    "-i", "--in",
-    dest='input_file',
-    required=True,
-    help='input file path (required)'
-  )
-  parser.add_argument(
-    "-o", "--out",
-    dest='output_file',
-    required=True,
-    help='output file path (required)'
   )
   parser.add_argument(
     '--field',
@@ -151,8 +126,6 @@ def main():
   args = parser.parse_args()
 
   return filter_compile_commands(
-    args.input_file,
-    args.output_file,
     args.pattern,
     field=args.field,
     invert=args.invert

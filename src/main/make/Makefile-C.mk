@@ -268,14 +268,14 @@ doc: doc-main doc-test
 rebuild: reconfigure build
 
 .PHONY: reconfigure
-reconfigure: compile_commands.json
+reconfigure:
 	@$(call print-target,$@)
 	@cmake --build --preset $(BUILD_PRESET) --target clean </dev/null
 	@cmake $(CMAKE_CONFIGURE_FLAGS) --fresh --preset $(CONFIGURE_PRESET) \
 	  -DFETCHCONTENT_FULLY_DISCONNECTED=ON </dev/null
 	@echo ">" compile_commands.json
-	@gaia-filter-compile-commands --field file \
-	  -i $(BUILD_DIR)/compile_commands.json -o compile_commands.json $(PROJECT_NAME)/src
+	@cat $(BUILD_DIR)/compile_commands.json | \
+	  gaia-filter-compile-commands --field file $(PROJECT_NAME)/src/ > compile_commands.json
 
 run:
 	@$(call print-target,$@)
@@ -323,7 +323,7 @@ $(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS) $(CONFIGURE_DEPS)
 
 compile_commands.json: $(BUILD_DIR)/compile_commands.json
 	@echo ">" $@
-	@gaia-filter-compile-commands --field file -i $< -o $@ $(PROJECT_NAME)/src
+	@cat $< | gaia-filter-compile-commands --field file $(PROJECT_NAME)/src/ > $@
 
 # Auxiliary targets .........................................................................................
 
