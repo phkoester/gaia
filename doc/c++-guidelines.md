@@ -1,6 +1,6 @@
 # C++ Guidelines
 
-This document is "work in progress" and far from complete.
+This document is a work in progress and far from complete.
 
 The general coding rules from [Coding Guidelines](coding-guidelines.md) apply.
 
@@ -48,7 +48,7 @@ For each documented item, start with a short but descriptive sentence in a parag
 /**
  * Processes @p x in a state-of-the-art fashion.
  *
- * There is even more to say about this function. This happens starting a new paragraph.
+ * There is even more to say about this function. This goes in a new paragraph.
  *
  * @tparam T the value type
  * @param x the value to frobnicate

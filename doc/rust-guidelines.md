@@ -1,6 +1,6 @@
 # Rust Guidelines
 
-This document is "work in progress" and far from complete.
+This document is a work in progress and far from complete.
 
 The general coding rules from [Coding Guidelines](coding-guidelines.md) apply.
 
@@ -130,7 +130,7 @@ Common sections in doc comments include, in this order:
 
 ### Features
 
-Feature names, e.g. **`no_std`**, should be set bold and monospaced. You achieve this by typing
+Feature names, e.g., **`no_std`**, should be set bold and monospaced. You achieve this by typing
 <code>\*\*&grave;name&grave;\*\*</code>.
 
 ### Known Issues with Rustfmt

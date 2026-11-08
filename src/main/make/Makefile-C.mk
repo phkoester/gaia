@@ -20,7 +20,7 @@
 # - JOBS
 #     The number of jobs for GNU Make (0: none, N: N jobs, default: 3/4)
 # - MEMCHECK
-#     If set to 1, run executables with a memory checker, e.g. valgrind
+#     If set to 1, run executables with a memory checker such as valgrind
 # - PATTERN
 #     - Run only benchmarks or tests matching PATTERN
 #     - Check only source files matching PATTERN
@@ -138,7 +138,7 @@ ifeq ($(COVERAGE),1)
   COVERAGE_COMPILE_FLAGS := -fprofile-instr-generate -fcoverage-mapping
   COVERAGE_LINK_FLAGS := -fprofile-instr-generate
 
-  # Prefer the LLVM tools matching the Clang version, e.g. `llvm-cov-21`
+  # Prefer the LLVM tools matching the Clang version, e.g., `llvm-cov-21`
   LLVM_VERSION := $(shell $(CC) -dumpversion | cut -d. -f1)
   LLVM_COV := $(shell command -v llvm-cov-$(LLVM_VERSION) || command -v llvm-cov)
   LLVM_PROFDATA := $(shell command -v llvm-profdata-$(LLVM_VERSION) || command -v llvm-profdata)

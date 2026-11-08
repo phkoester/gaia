@@ -5,7 +5,7 @@ This dictionary lists some frequently used terms and shows the recommended spell
 Since the language to write is American English, [Merriam-Webster](https://www.merriam-webster.com) is the
 recommended reference.
 
-In some cases, where technical terms tend to be used as closed compounds, e.g. *toolchain*, the closed form
+In some cases, where technical terms tend to be used as closed compounds, e.g., *toolchain*, the closed form
 is preferred even though Merriam-Webster does not list it. If a technical term is listed in the
 Wikipedia—which is true for **toolchain**—, then the Wikipedia may be an acceptable reference.
 

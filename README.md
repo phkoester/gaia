@@ -40,7 +40,7 @@ $ sudo apt install ccache
 On macOS, the recommended shell is a current Bash running in Ghostty. Ghostty handles Unicode grapheme
 clusters correctly, which the standard terminal doesn't.
 
-In the standard zsh that opens with the standard terminal, say
+In the standard zsh that opens with the standard terminal, run
 
 ```shell
 $ clang++ # On a fresh system, this triggers the setup of the Developer Command-Line Tools
@@ -66,7 +66,7 @@ command = /opt/homebrew/bin/bash
 
 ### Windows
 
-First, enable the "Use Unicode UTF-8 for worldwide language support" option in Windows. Make sure Windows
+First, enable the "Use Unicode UTF-8 for worldwide language support" option on Windows. Make sure Windows
 Terminal is installed.
 
 On Windows, Gaia runs on the Bash from the [Git for Windows SDK](https://gitforwindows.org/) on top

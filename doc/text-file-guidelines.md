@@ -37,7 +37,7 @@ For section titles in code, title case is not in use.
 
 ## Styling with Markdown
 
-Wherever feasible, use Markdown. Resort to HTML only if what you want cannot be accomplished using markdown.
+Wherever feasible, use Markdown. Resort to HTML only if what you want cannot be accomplished using Markdown.
 
 In general, anything "code-ish" may be enclosed in backticks (<code>`</code>). This includes file names,
 pieces of code, names and values of environment variables, or command-line tools. To some extent, where they
@@ -60,7 +60,7 @@ Some basic Markdown features:
 | strikethrough | `~~text~~`                      | ~~text~~
 
 Markdown isn't standardized, so not every feature will work in every environment. Rustdoc, Doxygen, Visual
-Studio Code, and GitHub—only to name a few—all use their individual Markdown parsers and renderers.
+Studio Code, and GitHub—to name just a few—all use their individual Markdown parsers and renderers.
 
 Full documentation for CommonMark (used by Rustdoc) can be found [here](https://spec.commonmark.org/0.31.2).
 

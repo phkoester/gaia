@@ -6,7 +6,7 @@ In this document you will find a loose collection of general, language-independe
 
 ## Styling in Comments
 
-Some markdown features such as `*...*` and <code>&grave;...&grave;</code> may be used in comments:
+Some Markdown features such as `*...*` and <code>&grave;...&grave;</code> may be used in comments:
 
 ```rust
 frobnicate(x); // Do some *really* sophisticated stuff with `x`
