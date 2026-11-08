@@ -26,7 +26,7 @@ Prefixes such as *anti*, *meta*, or *non* need not be followed by a hyphen: **an
 - **code point** noun; Unicode entity
 - **command line** noun
 - **Doxygen** name; command-line tool
-- **email** noun; see ["Email (let's drop the hyphen)"](https://www-cs-faculty.stanford.edu/~knuth/email.html)
+- **email** noun; see ["Email (let’s drop the hyphen)"](https://www-cs-faculty.stanford.edu/~knuth/email.html)
 - **enum** noun; language item
 - **file name** noun
 - **frontend** noun

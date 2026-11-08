@@ -22,7 +22,7 @@ a transitive CMake dependency, you can skip this chapter.
 
 ### Linux
 
-On Linux, Gaia runs on the standard Bash. In the following examples, `apt` will be assumed to be the system's
+On Linux, Gaia runs on the standard Bash. In the following examples, `apt` will be assumed to be the system’s
 package manager. If you use a different manager, adjust the commands as appropriate.
 
 Run these commands:
@@ -38,7 +38,7 @@ $ sudo apt install ccache
 ### macOS
 
 On macOS, the recommended shell is a current Bash running in Ghostty. Ghostty handles Unicode grapheme
-clusters correctly, which the standard terminal doesn't.
+clusters correctly, which the standard terminal doesn’t.
 
 In the standard zsh that opens with the standard terminal, run
 

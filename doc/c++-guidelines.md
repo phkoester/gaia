@@ -72,7 +72,7 @@ need to be documented, in this order:
  * @tparam C the component type
  * @param comp the component
  * @return whether the component is visible
- * @throw #std::runtime_error if the component isn't attached yet
+ * @throw #std::runtime_error if the component isn’t attached yet
  * @throw #mygui::InvalidThread if the current thread is not the GUI thread
  *
  * ## Examples
@@ -116,5 +116,5 @@ in the documentation.
 
 ### Known Issues with Doxygen
 
-Straight single quotes in backticks, such as <code>&grave;'x'&grave;</code>, don't work. Instead, you have to
+Straight single quotes in backticks, such as <code>&grave;'x'&grave;</code>, don’t work. Instead, you have to
 write `<code>'x'</code>` or <code>@c 'x'</code> to achieve `'x'`.

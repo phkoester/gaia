@@ -111,7 +111,7 @@ endif
 ifeq ($(GAIA_CXX_TOOLCHAIN),llvm)
   # LLVM
   ifdef GAIA_OS_WINDOWS
-    # LLVM, Windows: Ninja doesn't support toolsets like `-T ClangCL`, so select the MSVC-compatible driver
+    # LLVM, Windows: Ninja doesn’t support toolsets like `-T ClangCL`, so select the MSVC-compatible driver
     # directly
     export CC := clang-cl
     export CXX := clang-cl

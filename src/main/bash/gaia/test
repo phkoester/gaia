@@ -77,7 +77,7 @@ EXPECT-SUCCESS() {
 RUN-ALL-TESTS() {
   # Parse command line
 
-  # Accept the `-v` option to be compatible with Python's `unittest`
+  # Accept the `-v` option to be compatible with Python’s `unittest`
   eval $(cl-get-options-f $FUNCNAME "t:v" "$@")
 
   # Collect test functions
@@ -97,7 +97,7 @@ RUN-ALL-TESTS() {
     funcs=$all_funcs
   fi
 
-  # No, this ain't GoogleTest ...
+  # Make it look like GoogleTest
 
   local GRN="" RED="" OFF=""
   if [[ -t 1 ]]; then

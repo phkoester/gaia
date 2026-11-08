@@ -125,7 +125,7 @@ endfunction()
 
 # Windows functions -----------------------------------------------------------------------------------------
 
-if(WIN32) # `GAIA_OS_WINDOWS` isn't available yet
+if(WIN32) # `GAIA_OS_WINDOWS` isn’t available yet
 
 # GaiaWindowsUnixPath(in out)
 function(GaiaWindowsUnixPath in out)

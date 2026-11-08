@@ -6,7 +6,7 @@
 
 # Usage: string-amount N SINGULAR PLURAL
 string-amount() {
-  # Don't parse the command line here, this should be fast ...
+  # Don’t parse the command line here, this should be fast ...
   if [[ $1 == 1 ]]; then
     echo $1 $2
   else

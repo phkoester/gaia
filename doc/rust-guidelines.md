@@ -135,5 +135,5 @@ Feature names, e.g., **`no_std`**, should be set bold and monospaced. You achiev
 
 ### Known Issues with Rustfmt
 
-Rustfmt wraps Markdown-table lines if they don't start with a `|`. To protect your Markdown tables from
+Rustfmt wraps Markdown-table lines if they don’t start with a `|`. To protect your Markdown tables from
 Rustfmt, start each table line with a `|`.

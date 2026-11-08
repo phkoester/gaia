@@ -77,7 +77,7 @@ def filter_compile_commands(pattern, field='file', invert=False):
         # Convert non-string to string for matching
         match_found = regex.search(str(value)) is not None
     else:
-      # Field doesn't exist in entry
+      # Field doesn’t exist in entry
       match_found = False
 
     # Apply filter (with optional inversion)

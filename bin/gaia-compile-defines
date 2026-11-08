@@ -7,7 +7,7 @@
 Print the preprocessor definitions used in `compile_commands.json`.
 
 This script collects the `-D` options of all compilation commands whose file matches a regular expression
-pattern, and prints them on one line, separated by spaces. The output can be used for Doxygen's `PREDEFINED`.
+pattern, and prints them on one line, separated by spaces. The output can be used for Doxygen’s `PREDEFINED`.
 
 Usage:
   gaia-compile-defines INPUT_FILE PATTERN
