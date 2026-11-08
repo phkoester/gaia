@@ -6,13 +6,13 @@
 
 # Usage: path-append [-n] [-q] VAR DIR
 path-append() {
-  eval "$(cl-get-options-f $FUNCNAME nq "$@")"
-  eval $(cl-get-args-f $FUNCNAME VAR DIR)
+  eval "$(cl-get-options-fn $FUNCNAME nq "$@")"
+  eval $(cl-get-args-fn $FUNCNAME VAR DIR)
   if [[ ! $n && ! -d $dir ]]; then
     if [[ $q ]]; then
       return;
     else
-      shell-error-f -r1 $FUNCNAME Directory does not exist: \`$dir\`
+      shell-error-fn -r1 $FUNCNAME Directory does not exist: \`$dir\`
       return 1
     fi
   fi
@@ -28,8 +28,8 @@ path-append() {
 
 # Usage: path-list VAR
 path-list() {
-  eval "$(cl-get-options-f $FUNCNAME "" "$@")"
-  eval $(cl-get-args-f $FUNCNAME VAR)
+  eval "$(cl-get-options-fn $FUNCNAME "" "$@")"
+  eval $(cl-get-args-fn $FUNCNAME VAR)
   local IFS=:
   local dirs
   eval "dirs=(\$$var)"
@@ -40,13 +40,13 @@ path-list() {
 
 # Usage: path-prepend [-n] [-q] VAR DIR
 path-prepend() {
-  eval "$(cl-get-options-f $FUNCNAME nq "$@")"
-  eval $(cl-get-args-f $FUNCNAME VAR DIR)
+  eval "$(cl-get-options-fn $FUNCNAME nq "$@")"
+  eval $(cl-get-args-fn $FUNCNAME VAR DIR)
   if [[ ! $n && ! -d $dir ]]; then
     if [[ $q ]]; then
       return
     else
-      shell-error-f -r1 $FUNCNAME Directory does not exist: \`$dir\`
+      shell-error-fn -r1 $FUNCNAME Directory does not exist: \`$dir\`
       return 1
     fi
   fi
@@ -62,8 +62,8 @@ path-prepend() {
 
 # Usage: path-remove VAR DIR
 path-remove() {
-  eval "$(cl-get-options-f $FUNCNAME "" "$@")"
-  eval $(cl-get-args-f $FUNCNAME VAR DIR)
+  eval "$(cl-get-options-fn $FUNCNAME "" "$@")"
+  eval $(cl-get-args-fn $FUNCNAME VAR DIR)
   local IFS=:
   local dirs
   eval "dirs=(\$$var)"

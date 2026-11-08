@@ -12,7 +12,7 @@
 #
 # If neither `-e` nor `-r` is supplied, this function exits with status 1.
 shell-error() {
-  eval "$(cl-get-options-f $FUNCNAME "e:nr:" "$@")"
+  eval "$(cl-get-options-fn $FUNCNAME "e:nr:" "$@")"
 
   echo $(basename -- $0): error: $@ >&2
   [[ ! $n ]] && shell-print-stack-trace
@@ -24,16 +24,16 @@ shell-error() {
   exit 1
 }
 
-# Usage: shell-error-f [-eN] [-n] [-rN] $FUNCNAME [ARG]...
+# Usage: shell-error-fn [-eN] [-n] [-rN] $FUNCNAME [ARG]...
 #
 #  -eN  if N is not 0, exit with status N. If N is 0, return with status 0
 #  -n   do not print stack trace
 #  -rN  return with status N
 #
 # If neither `-e` nor `-r` is supplied, this function exits with status 1.
-shell-error-f() {
-  eval "$(cl-get-options-f $FUNCNAME "e:nr:" "$@")"
-  eval $(cl-get-args-f $FUNCNAME FUNC_NAME)
+shell-error-fn() {
+  eval "$(cl-get-options-fn $FUNCNAME "e:nr:" "$@")"
+  eval $(cl-get-args-fn $FUNCNAME FUNC_NAME)
 
   echo $(basename -- $0): error: In function \`$func_name\`: $@ >&2
   [[ ! $n ]] && shell-print-stack-trace

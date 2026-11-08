@@ -13,8 +13,6 @@ be used. It makes use of unstable Rustfmt features, so the Rust nightly toolchai
 
 ### Rustfmt in Visual Studio Code
 
-In Code, Alt+Shift+F formats the current Rust source file.
-
 To enable the unstable features, `settings.json` needs the following entry:
 
 ```json

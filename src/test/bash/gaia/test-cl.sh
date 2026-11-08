@@ -7,7 +7,7 @@ source "$GAIA_DIR/src/main/bash/gaia/test"
 
 # Local functions -------------------------------------------------------------------------------------------
 
-# We need a helper function to test `cl-get-options-f` and `cl-get-args-f` in there
+# We need a helper function to test `cl-get-options-fn` and `cl-get-args-fn` in there
 func__() {
   OUTPUT=$(func-helper__ "$@" 2>&1)
   STATUS=$?
@@ -16,14 +16,14 @@ func__() {
 }
 
 # This function works exactly in the same manner as the helper script `test-cl-helper.sh`, except that it
-# uses `cl-get-options-f` and `cl-get-args-f`
+# uses `cl-get-options-fn` and `cl-get-args-fn`
 func-helper__() {
   GAIA_NO_SHELL_PRINT_STACK_TRACE=1
 
   # Before parsing the command line, take arguments OPT_STRING and ARG_NAMES
 
   if (($# < 2)); then
-    shell-error-f -r2 $FUNCNAME Usage: func-helper OPT_STRING ARG_NAMES \[ARG\]...
+    shell-error-fn -r2 $FUNCNAME Usage: func-helper OPT_STRING ARG_NAMES \[ARG\]...
     GAIA_NO_SHELL_PRINT_STACK_TRACE=
     return 2
   fi
@@ -34,9 +34,9 @@ func-helper__() {
 
   # Parse command line
 
-  eval "$(cl-get-options-f $FUNCNAME "$OPT_STRING" "$@")"
+  eval "$(cl-get-options-fn $FUNCNAME "$OPT_STRING" "$@")"
   if [[ $ARG_NAMES ]]; then
-    eval $(cl-get-args-f $FUNCNAME $ARG_NAMES)
+    eval $(cl-get-args-fn $FUNCNAME $ARG_NAMES)
   fi
 
   # Print options
@@ -79,22 +79,22 @@ option-value__() {
   printf '%s.' "$m"
 }
 
-option-value-f__() {
-  eval "$(cl-get-options-f $FUNCNAME m:v "$@")"
+option-value-fn__() {
+  eval "$(cl-get-options-fn $FUNCNAME m:v "$@")"
   printf '%s.' "$m"
 }
 
 # Usage: expect-option-verbatim__ VALUE
 #
 # Checks that option `-m` delivers VALUE unchanged, in both separate and attached form, and with both
-# `cl-get-options` and `cl-get-options-f`.
+# `cl-get-options` and `cl-get-options-fn`.
 expect-option-verbatim__() {
   local value=$1 actual
 
   actual=$(option-value__ -m "$value")
   EXPECT-SAME "${actual%.}" "$value"
 
-  actual=$(option-value-f__ -m "$value")
+  actual=$(option-value-fn__ -m "$value")
   EXPECT-SAME "${actual%.}" "$value"
 
   # An empty value cannot be attached: `-m` alone would then be missing its argument
@@ -102,7 +102,7 @@ expect-option-verbatim__() {
     actual=$(option-value__ "-m$value")
     EXPECT-SAME "${actual%.}" "$value"
 
-    actual=$(option-value-f__ "-m$value")
+    actual=$(option-value-fn__ "-m$value")
     EXPECT-SAME "${actual%.}" "$value"
   fi
 }
@@ -153,7 +153,7 @@ TEST-func() {
   EXPECT-NO-MATCH "$(func__ "" "")" Usage:
 }
 
-TEST-cl-get-options-f() {
+TEST-cl-get-options-fn() {
   func__ "" "" -q >/dev/null
   EXPECT-MATCH "$OUTPUT" "error: In function \`func-helper__\`: Invalid option: \`-q\`"
   EXPECT-EQ $STATUS 2
@@ -171,7 +171,7 @@ TEST-cl-get-options-f() {
   EXPECT-EQ $STATUS 2
 }
 
-TEST-cl-get-args-f() {
+TEST-cl-get-args-fn() {
   func__ "" "A B" "a b" c "d e" f >/dev/null
   EXPECT-MATCH "$OUTPUT" "a=a b=" b=c= "1=d e=" 2=f=
   EXPECT-EQ $STATUS 0
@@ -246,7 +246,7 @@ TEST-options-last-value-wins() {
   actual=$(option-value__ -m first -m 'second  value')
   EXPECT-SAME "${actual%.}" 'second  value'
 
-  actual=$(option-value-f__ -m first -m 'second  value')
+  actual=$(option-value-fn__ -m first -m 'second  value')
   EXPECT-SAME "${actual%.}" 'second  value'
 }
 
@@ -256,7 +256,7 @@ TEST-options-unset-missing-option() {
   actual=$(m=stale; option-value__ -v)
   EXPECT-SAME "${actual%.}" ""
 
-  actual=$(m=stale; option-value-f__ -v)
+  actual=$(m=stale; option-value-fn__ -v)
   EXPECT-SAME "${actual%.}" ""
 }
 
@@ -268,18 +268,18 @@ TEST-options-keep-positional-arguments() {
     eval "$(cl-get-options m:v "$@")"
     printf '[%s]' "$v" "$m" "$@"
   }
-  print-f__() {
-    eval "$(cl-get-options-f $FUNCNAME m:v "$@")"
+  print-fn__() {
+    eval "$(cl-get-options-fn $FUNCNAME m:v "$@")"
     printf '[%s]' "$v" "$m" "$@"
   }
 
   actual=$(print__ -v -m 'a  b' c 'd  e' '$(f)')
   EXPECT-SAME "$actual" '[1][a  b][c][d  e][$(f)]'
 
-  actual=$(print-f__ -v -m 'a  b' c 'd  e' '$(f)')
+  actual=$(print-fn__ -v -m 'a  b' c 'd  e' '$(f)')
   EXPECT-SAME "$actual" '[1][a  b][c][d  e][$(f)]'
 
-  unset -f print__ print-f__
+  unset -f print__ print-fn__
 }
 
 TEST-options-invalid-option-characters() {
@@ -302,9 +302,9 @@ TEST-options-stop-at-first-invalid-option() {
   EXPECT-EQ $? 2
   EXPECT-SAME "$output" 'shell-error -e2 Invalid option: \`-x\`'
 
-  output=$(cl-get-options-f my-func m: -x -y)
+  output=$(cl-get-options-fn my-func m: -x -y)
   EXPECT-EQ $? 2
-  EXPECT-SAME "$output" 'shell-error-f -r2 "my-func" Invalid option: \`-x\`; return 2'
+  EXPECT-SAME "$output" 'shell-error-fn -r2 "my-func" Invalid option: \`-x\`; return 2'
 }
 
 # Main ------------------------------------------------------------------------------------------------------
