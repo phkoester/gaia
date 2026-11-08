@@ -61,7 +61,7 @@ fn first_function() { ... }
 fn second_function() { ... }
 ```
 
-Unit tests always come at the end of a source file, in a unique "Tests" section. To group the tests, the
+Unit tests always come at the end of a source file, in a single "Tests" section. To group the tests, the
 above sections from the source may be repeated, indented by one level:
 
 ```rust
@@ -104,7 +104,7 @@ For each documented item, start with a short but descriptive sentence in a parag
 ```rust
 /// Processes `x` in a state-of-the-art fashion.
 ///
-/// There is even more to say about this function. This happens starting a new paragraph.
+/// There is even more to say about this function. This goes in a new paragraph.
 pub fn frobnicate(x: i32) {
   Frobnicator::with(x).run();
 }

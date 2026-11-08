@@ -41,7 +41,7 @@ Wherever feasible, use Markdown. Resort to HTML only if what you want cannot be 
 
 In general, anything "code-ish" may be enclosed in backticks (<code>`</code>). This includes file names,
 pieces of code, names and values of environment variables, or command-line tools. To some extent, where they
-don’t impose too much noise, these backticks may even surface on the user interface:
+don’t impose too much noise, these backticks may even surface in the user interface:
 
 ```shell
 echo Loading file \`$file\` ...

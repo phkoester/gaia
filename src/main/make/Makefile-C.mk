@@ -201,7 +201,8 @@ check:
 	  -config-file=$(GAIA_DIR)/src/main/clang-tidy/clang-tidy-config.yaml \
 	  -j$(GAIA_NPROC_3_4) \
 	  -p. \
-	  $(CHECK_FILES) 2>&1 | tee $(CHECK_REPORT_FILE)
+	  $(CHECK_FILES) \
+	  2>&1 >$(CHECK_REPORT_FILE)
 	@echo Report written to $(CHECK_REPORT_FILE)
 
 clean:
@@ -220,8 +221,7 @@ rebuild: reconfigure build
 reconfigure:
 	@$(call print-target,$@)
 	@cmake --build --preset $(BUILD_PRESET) --target clean </dev/null
-	@cmake $(CMAKE_CONFIGURE_FLAGS) --fresh --preset $(CONFIGURE_PRESET) \
-	  -DFETCHCONTENT_FULLY_DISCONNECTED=ON </dev/null
+	@cmake $(CMAKE_CONFIGURE_FLAGS) --fresh --preset $(CONFIGURE_PRESET) </dev/null
 	@echo ">" compile_commands.json
 	@cat $(BUILD_DIR)/compile_commands.json | \
 	  gaia-filter-compile-commands --field file $(PROJECT_NAME)/src/ > compile_commands.json

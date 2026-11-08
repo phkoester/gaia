@@ -19,7 +19,7 @@ def get_version(dir: str) -> str | None:
   Returns `None` if no version is found.
   """
 
-  # Probe `CMakeLists.tst`
+  # Probe `CMakeLists.txt`
   path = dir + "/CMakeLists.txt"
   if os.path.isfile(path):
     with io.open(path, mode="r") as file:

@@ -1,6 +1,3 @@
-
-
-
 #!/usr/bin/env bash
 #
 # test-cl.sh

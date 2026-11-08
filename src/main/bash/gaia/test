@@ -75,7 +75,7 @@ EXPECT-NO-MATCH() {
 
 # Usage: EXPECT-SAME LHS RHS
 #
-# Unlike `EXPECT-EQ`, this compares literally, so RHSy contain pattern characters such as `*`.
+# Unlike `EXPECT-EQ`, this compares literally, so RHS may contain pattern characters such as `*`.
 EXPECT-SAME() {
   if [[ $1 != "$2" ]]; then
     TEST_FAILED=1

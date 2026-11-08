@@ -17,12 +17,12 @@ build C++ and Rust projects on Linux, macOS, and Windows.
 
 ## Set Up the Shell
 
-This section is only for developers who want to use Gaia on the shell directly. If you only consume Gaia via
-a transitive CMake dependency, you can skip this chapter.
+This section is only for developers who want to use Gaia in the shell directly. If you only consume Gaia via
+a transitive CMake dependency, you can skip it.
 
 ### Linux
 
-On Linux, Gaia runs on the standard Bash. In the following examples, `apt` will be assumed to be the system’s
+On Linux, Gaia runs in the standard Bash. In the following examples, `apt` will be assumed to be the system’s
 package manager. If you use a different manager, adjust the commands as appropriate.
 
 Run these commands:
@@ -69,7 +69,7 @@ command = /opt/homebrew/bin/bash
 First, enable the "Use Unicode UTF-8 for worldwide language support" option on Windows. Make sure Windows
 Terminal is installed.
 
-On Windows, Gaia runs on the Bash from the [Git for Windows SDK](https://gitforwindows.org/) on top
+On Windows, Gaia runs in the Bash from the [Git for Windows SDK](https://gitforwindows.org/) on top
 of the Developer Command Prompt from [Microsoft Visual Studio](https://visualstudio.microsoft.com/de/).
 
 Install both the Git for Windows SDK and Microsoft Visual Studio (with C/C++ and Clang). Add

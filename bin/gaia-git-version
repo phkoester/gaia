@@ -12,7 +12,7 @@ commit_hash=
 commit_date=
 
 if [[ -d .git ]]; then
-  tag_version=$(git tag | grep ^v | tail -1)
+  tag_version=$(git tag --list 'v*' --sort=v:refname | tail -1)
   commit_hash=$(git rev-parse HEAD)
   commit_date=$(git show -s --format=%cd --date=format:'%Y-%m-%d' HEAD)
 fi
