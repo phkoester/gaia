@@ -273,6 +273,9 @@ reconfigure: compile_commands.json
 	@cmake --build --preset $(BUILD_PRESET) --target clean </dev/null
 	@cmake $(CMAKE_CONFIGURE_FLAGS) --fresh --preset $(CONFIGURE_PRESET) \
 	  -DFETCHCONTENT_FULLY_DISCONNECTED=ON </dev/null
+	@echo ">" compile_commands.json
+	@gaia-filter-compile-commands --field file \
+	  -i $(BUILD_DIR)/compile_commands.json -o compile_commands.json $(PROJECT_NAME)/src
 
 run:
 	@$(call print-target,$@)
