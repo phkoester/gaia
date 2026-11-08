@@ -93,7 +93,7 @@ export PYTHONPATH
 # Paths (Windows) ...........................................................................................
 
 if [[ $SHLVL == 1 && $GAIA_OS_WINDOWS ]]; then
-  # Move all `PATH`` entries for Microsoft Visual Studio to the top, so Microsoft's `link.exe` is found first
+  # Move all `PATH`` entries for Microsoft Visual Studio to the top, so Microsoft’s `link.exe` is found first
 
   tmp=$(mktemp)
   path-list PATH | grep "Microsoft Visual Studio" | tac > $tmp # List in reverse order
