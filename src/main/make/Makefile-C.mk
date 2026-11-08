@@ -327,20 +327,22 @@ compile_commands.json: $(BUILD_DIR)/compile_commands.json
 
 # Auxiliary targets .........................................................................................
 
-doc-main:
+doc-main: $(if $(wildcard src/main/Doxyfile),compile_commands.json)
 ifneq ($(wildcard src/main/Doxyfile),)
 	@$(call print-target,$@)
-	@doxygen $(DOXYGEN_FLAGS) src/main/Doxyfile 2>&1 | grep -v \
+	@DOXYGEN_PREDEFINED="$$(gaia-compile-defines compile_commands.json /src/main/)" \
+	  doxygen $(DOXYGEN_FLAGS) src/main/Doxyfile 2>&1 | grep -v \
 	  -e "warning: Incomplete input: scope for class" \
 	  -e "warning: documented symbol 'T std::experimental::.*' was not declared or defined" || \
          true
 	@echo Created \`$(BUILD_DIR)/src/main/doc/html/index.html\`
 endif
 
-doc-test:
+doc-test: $(if $(wildcard src/test/Doxyfile),compile_commands.json)
 ifneq ($(wildcard src/test/Doxyfile),)
 	@$(call print-target,$@)
-	@doxygen $(DOXYGEN_FLAGS) src/test/Doxyfile 2>&1 | grep -v \
+	@DOXYGEN_PREDEFINED="$$(gaia-compile-defines compile_commands.json /src/test/)" \
+	  doxygen $(DOXYGEN_FLAGS) src/test/Doxyfile 2>&1 | grep -v \
 	  -e "warning: Incomplete input: scope for class" \
 	  -e "warning: documented symbol 'T std::experimental::.*' was not declared or defined" || \
           true

@@ -20,14 +20,17 @@ TAGFILES += "$(GAIA_DIR)/src/main/doxygen/cppreference-doxygen-web.tag.xml=https
 
 ALLOW_UNICODE_NAMES = YES
 EXCLUDE_SYMBOLS     = internal
+EXPAND_ONLY_PREDEF  = YES
 GENERATE_LATEX      = NO
 GENERATE_TREEVIEW   = YES
 HAVE_DOT            = YES
 JAVADOC_AUTOBRIEF   = NO
+MACRO_EXPANSION     = YES
+PREDEFINED          = $(DOXYGEN_PREDEFINED) # Set by `make doc` from `compile_commands.json`
 RECURSIVE           = YES
 TAB_SIZE            = 8
 USE_MATHJAX         = YES
-WARN_AS_ERROR       = NO # @todo Set this to `FAIL_ON_WARNINGS`
+WARN_AS_ERROR       = NO
 WARN_NO_PARAMDOC    = YES
 
 # EOF

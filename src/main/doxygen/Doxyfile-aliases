@@ -112,7 +112,7 @@ ALIASES += member_fn_hash="Returns a hash value for this instance. \
 
 # Type definitions ------------------------------------------------------------------------------------------
 
-ALIASES += type_alias="Type alias."
+ALIASES += type_alias="A type alias."
 ALIASES += type_base="The base type."
 
 # Operators -------------------------------------------------------------------------------------------------
@@ -156,6 +156,10 @@ ALIASES += fn_format_as{1}="`format_as` overload for \1, to be used by {fmt}. \
 ALIASES += fn_hash_value{1}="`hash_value` overload for \1, to be used by Boost. \
 @param val the value to hash \
 @return a hash value"
+
+# Templates -------------------------------------------------------------------------------------------------
+
+ALIASES += ctad_guide{1}="Class-template argument deduction (CTAD) guide for \1."
 
 # Template specializations ----------------------------------------------------------------------------------
 
