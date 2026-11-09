@@ -89,6 +89,7 @@ fi
 
 if [[ $GAIA_OS_WINDOWS ]]; then
   export GAIA_CXX_TOOLCHAIN=${GAIA_CXX_TOOLCHAIN:-msvc}
+  export GAIA_EXE_SUFFIX=.exe
   export USER=$USERNAME
 fi
 
