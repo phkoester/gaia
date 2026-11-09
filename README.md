@@ -47,8 +47,6 @@ $ clang++ # On a fresh system, this triggers the setup of the Developer Command-
 $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" # Install Homebrew
 ```
 
-Prepend `/opt/homebrew/bin` to your `PATH`.
-
 ```shell
 $ brew install bash # This installs a recent version
 $ brew install findutils # This installs a way better `find`

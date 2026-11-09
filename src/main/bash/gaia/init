@@ -3,10 +3,10 @@
 #
 # This is the central Gaia initialization script.
 #
-# To be included by `.bashrc` or executable shell scripts.
+# To be included by `.bashrc` or executable shell scripts. Include it with
 #
-
-dir__=$(dirname "$BASH_SOURCE")
+#   source "$GAIA_DIR/src/main/bash/gaia/init"
+#
 
 # Check prerequisites ---------------------------------------------------------------------------------------
 
@@ -21,9 +21,18 @@ fi
 
 # Call other initialization scripts -------------------------------------------------------------------------
 
+dir__=$(dirname "$BASH_SOURCE")
+
 source "$dir__/init-host-tuple" || return 2
 source "$dir__/init-target-tuple" || return 2
 source "$dir__/init-rust" || return 2
+
+# Aliases and functions -------------------------------------------------------------------------------------
+
+source "$dir__/init-aliases" || return 2
+source "$dir__/init-functions" || return 2
+
+unset dir__
 
 # Detect Gaia version ---------------------------------------------------------------------------------------
 
@@ -64,6 +73,12 @@ if [[ $GAIA_OS_LINUX ]]; then
   export GAIA_CXX_TOOLCHAIN=${GAIA_CXX_TOOLCHAIN:-gnu}
 fi
 
+# Environment (WSL) .........................................................................................
+
+if [[ $GAIA_WSL ]]; then
+  export USERPROFILE=$(wsl-env USERPROFILE)
+fi
+
 # Environment (macOS) .......................................................................................
 
 if [[ $GAIA_OS_MACOS ]]; then
@@ -77,37 +92,48 @@ if [[ $GAIA_OS_WINDOWS ]]; then
   export USER=$USERNAME
 fi
 
-# Aliases and functions -------------------------------------------------------------------------------------
-
-source "$dir__/init-aliases" || return 2
-source "$dir__/init-functions" || return 2
-
 # Paths -----------------------------------------------------------------------------------------------------
 
+path-append -q PATH ~/.cargo/bin
 path-append PATH "$GAIA_DIR/bin"
 export PATH
 
 path-append PYTHONPATH "$GAIA_DIR/src/main/python"
 export PYTHONPATH
 
+# Paths (macOS) .............................................................................................
+
+if [[ $GAIA_OS_MACOS ]]; then
+  path-prepend -q PATH /opt/homebrew/bin
+  path-prepend -q PATH /opt/homebrew/opt/findutils/libexec/gnubin
+fi
+
 # Paths (Windows) ...........................................................................................
 
 if [[ $SHLVL == 1 && $GAIA_OS_WINDOWS ]]; then
   # Move all `PATH` entries for Microsoft Visual Studio to the top, so Microsoft’s `link.exe` is found first
 
-  tmp=$(mktemp)
-  path-list PATH | grep "Microsoft Visual Studio" | tac > $tmp # List in reverse order
+  tmp__=$(mktemp)
+  path-list PATH | grep "Microsoft Visual Studio" | tac > $tmp__ # List in reverse order
   while IFS= read -r path || [[ -n "$path" ]]; do
     path-prepend PATH "$path"
-  done < $tmp
-  rm $tmp
+  done < $tmp__
+  rm $tmp__
+  unset tmp__
+fi
+
+# Tab completion --------------------------------------------------------------------------------------------
+
+if [[ $GAIA_OS_MACOS ]]; then
+  if [[ -r /opt/homebrew/etc/profile.d/bash_completion.sh ]]; then
+    source /opt/homebrew/etc/profile.d/bash_completion.sh
+  fi
 fi
 
 # Say hello -------------------------------------------------------------------------------------------------
 
 if shell-is-interactive && [[ $SHLVL == 1 && ! $GAIA_REINIT ]]; then
   ruler__=$(string-repeat \# $(($COLUMNS - 1)))
-
   echo $ruler__
   echo \#
   echo \# This is Gaia $GAIA_VERSION
@@ -116,8 +142,7 @@ if shell-is-interactive && [[ $SHLVL == 1 && ! $GAIA_REINIT ]]; then
   echo \# "Selected default target: $GAIA_TARGET"
   echo \#
   echo $ruler__
+  unset ruler__
 fi
-
-unset dir__ ruler__
 
 # EOF

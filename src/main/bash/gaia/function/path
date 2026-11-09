@@ -5,6 +5,11 @@
 #
 
 # Usage: path-append [-n] [-q] VAR DIR
+#
+# Options:
+#
+#   -n  append directory even if it does not exist
+#   -q  quiet mode, do not print error messages
 path-append() {
   eval "$(cl-get-opts-fn $FUNCNAME nq "$@")"
   eval $(cl-get-args-fn $FUNCNAME VAR DIR)
@@ -39,6 +44,11 @@ path-list() {
 }
 
 # Usage: path-prepend [-n] [-q] VAR DIR
+#
+# Options:
+#
+#   -n  prepend directory even if it does not exist
+#   -q  quiet mode, do not print error messages
 path-prepend() {
   eval "$(cl-get-opts-fn $FUNCNAME nq "$@")"
   eval $(cl-get-args-fn $FUNCNAME VAR DIR)
