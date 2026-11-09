@@ -6,8 +6,8 @@ Since we write in American English, [Merriam-Webster](https://www.merriam-webste
 reference.
 
 In some cases, where technical terms tend to be used as closed compounds, e.g., *toolchain*, the closed form
-is preferred even though Merriam-Webster does not list it. If a technical term is listed in the
-Wikipedia—which is true for **toolchain**—, then the Wikipedia may be an acceptable reference.
+is preferred even though Merriam-Webster does not list it. The Wikipedia may be an acceptable reference for
+such technical terms.
 
 On open, closed, and hyphenated compounds, see
 ["Should that word have a hyphen?"](https://www.merriam-webster.com/grammar/hyphen-rules-open-closed-compound-words).

@@ -70,7 +70,7 @@ First, enable the "Use Unicode UTF-8 for worldwide language support" option on W
 Terminal is installed.
 
 On Windows, Gaia runs in the Bash from the [Git for Windows SDK](https://gitforwindows.org/) on top
-of the Developer Command Prompt from [Microsoft Visual Studio](https://visualstudio.microsoft.com/de/).
+of the Developer Command Prompt from [Microsoft Visual Studio](https://visualstudio.microsoft.com/).
 
 Install both the Git for Windows SDK and Microsoft Visual Studio (with C/C++ and Clang). Add
 `C:\git-sdk-64\usr\bin` to the system variable `PATH`.

@@ -128,7 +128,7 @@ Common sections in doc comments include, in this order:
 
 ### Features
 
-Feature names, e.g., **`no_std`**, should be set bold and monospaced. You achieve this by typing
+Feature names, e.g., **`no_std`**, should be set in bold and a monospaced font. You achieve this by typing
 <code>\*\*&grave;name&grave;\*\*</code>.
 
 ### Known Issues with Rustfmt

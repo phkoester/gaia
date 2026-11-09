@@ -63,7 +63,7 @@ shell-print-stack-trace() {
   local i; for ((i = 0; i <= n - 2; ++i)); do
     local file=${BASH_SOURCE[i + 1]}
 
-    # Filter-out first caller from this script
+    # Filter out first caller from this script
     [[ $i == 0 && $file == $BASH_SOURCE ]] && continue
 
     # Print entry

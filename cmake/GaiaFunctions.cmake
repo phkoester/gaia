@@ -93,7 +93,7 @@ function(GaiaDetectPython)
     set(CACHE{GAIA_PYTHON_NATIVE_WINDOWS} VALUE OFF)
     GaiaStatus("Python 3 uses Unix paths: `${Python3_EXECUTABLE}`")
   else()
-    GaiaFatalError("Invalid path separator from `${Python3_EXECUTABLE}`: `${sep}`")
+    GaiaFatalError("Invalid path separator `${sep}` from `${Python3_EXECUTABLE}`")
   endif()
 endfunction()
 

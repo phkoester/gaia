@@ -36,7 +36,7 @@ def error(msg: str, exit_status: int = 1, stack_trace=True) -> None:
 
 def _get_shebang(file: str) -> list[str]:
   """
-  Looks for the file `file`` in `PATH` and tries to read its shebang line.
+  Looks for the file `file` in `PATH` and tries to read its shebang line.
 
   Upon success, returns a command line as a string list of the form `["awk", "-f", "file"]`. Otherwise,
   returns `None`

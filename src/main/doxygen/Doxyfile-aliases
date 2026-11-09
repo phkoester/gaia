@@ -125,7 +125,7 @@ ALIASES += op_eq{1}="Equality operator for \1.^^^^ \
 ALIASES += op_ne{1}="Inequality operator for \1.^^^^ \
 @param lhs the left-hand side \
 @param rhs the right-hand side \
-@return whether @p lhs does not equal to @p rhs"
+@return whether @p lhs does not equal @p rhs"
 
 ALIASES += op_cmp{1}="Three-way-comparison operator for \1.^^^^ \
 @param lhs the left-hand side \
@@ -133,7 +133,8 @@ ALIASES += op_cmp{1}="Three-way-comparison operator for \1.^^^^ \
 @return the ordering result"
 
 ALIASES += op_input{1}="Input operator for \1.^^^^ \
-If the scanning fails, the fail bit of the input stream @p lhs set, and @p rhs is not assigned any value. \
+If the scanning fails, the fail bit of the input stream @p lhs is set, and @p rhs is not assigned any \
+value. \
 @param lhs the input stream \
 @param rhs the value to assign to \
 @return @p lhs"

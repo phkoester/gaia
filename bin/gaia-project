@@ -121,7 +121,7 @@ def parse_projects() -> list[str]:
     ret = ["all"]
   gaia.log.debug(f"{ret=}, {cl.args=}")
 
-  # Resolve `all``
+  # Resolve `all`
   tmp = ret
   ret = []
   for prj in tmp:
