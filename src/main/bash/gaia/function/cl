@@ -40,10 +40,10 @@ cl-get-args-fn() {
   echo $result
 }
 
-# Usage: eval "$(cl-get-options OPT_STRING "$@")"
+# Usage: eval "$(cl-get-opts OPT_STRING "$@")"
 #
 # OPT_STRING is passed to `getopts`. No leading `:` is allowed.
-cl-get-options() {
+cl-get-opts() {
   [[ ! ${1+x} ]] && { echo "shell-error-fn -e2 $FUNCNAME Missing argument: \\\`OPT_STRING\\\`"; return 2; }
   local opt_string=$1; shift 1
 
@@ -90,10 +90,10 @@ cl-get-options() {
   printf '%s\n' "$result"
 }
 
-# Usage: eval "$(cl-get-options-fn $FUNCNAME OPT_STRING "$@")"
+# Usage: eval "$(cl-get-opts-fn $FUNCNAME OPT_STRING "$@")"
 #
 # OPT_STRING is passed to `getopts`. No leading `:` is allowed.
-cl-get-options-fn() {
+cl-get-opts-fn() {
   [[ ! ${1+x} ]] && { echo "shell-error-fn -r2 $FUNCNAME Missing argument: \\\`FUNC_NAME\\\`; return 2"; return 2; }
   local func_name=$1; shift 1
   [[ ! ${1+x} ]] && { echo "shell-error-fn -r2 $FUNCNAME Missing argument: \\\`OPT_STRING\\\`; return 2"; return 2; }

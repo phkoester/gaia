@@ -99,7 +99,7 @@ RUN-ALL-TESTS() {
   # Parse command line
 
   # Accept the `-v` option to be compatible with Python’s `unittest`
-  eval "$(cl-get-options-fn $FUNCNAME "t:v" "$@")"
+  eval "$(cl-get-opts-fn $FUNCNAME "t:v" "$@")"
 
   # Collect test functions
 

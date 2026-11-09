@@ -6,7 +6,7 @@
 
 # Usage: path-append [-n] [-q] VAR DIR
 path-append() {
-  eval "$(cl-get-options-fn $FUNCNAME nq "$@")"
+  eval "$(cl-get-opts-fn $FUNCNAME nq "$@")"
   eval $(cl-get-args-fn $FUNCNAME VAR DIR)
   if [[ ! $n && ! -d $dir ]]; then
     if [[ $q ]]; then
@@ -28,7 +28,7 @@ path-append() {
 
 # Usage: path-list VAR
 path-list() {
-  eval "$(cl-get-options-fn $FUNCNAME "" "$@")"
+  eval "$(cl-get-opts-fn $FUNCNAME "" "$@")"
   eval $(cl-get-args-fn $FUNCNAME VAR)
   local IFS=:
   local dirs
@@ -40,7 +40,7 @@ path-list() {
 
 # Usage: path-prepend [-n] [-q] VAR DIR
 path-prepend() {
-  eval "$(cl-get-options-fn $FUNCNAME nq "$@")"
+  eval "$(cl-get-opts-fn $FUNCNAME nq "$@")"
   eval $(cl-get-args-fn $FUNCNAME VAR DIR)
   if [[ ! $n && ! -d $dir ]]; then
     if [[ $q ]]; then
@@ -62,7 +62,7 @@ path-prepend() {
 
 # Usage: path-remove VAR DIR
 path-remove() {
-  eval "$(cl-get-options-fn $FUNCNAME "" "$@")"
+  eval "$(cl-get-opts-fn $FUNCNAME "" "$@")"
   eval $(cl-get-args-fn $FUNCNAME VAR DIR)
   local IFS=:
   local dirs

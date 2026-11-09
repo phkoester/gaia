@@ -17,22 +17,11 @@ import traceback
 from os import environ as env
 from typing import NoReturn
 
-# Variables -------------------------------------------------------------------------------------------
+# Local variables -------------------------------------------------------------------------------------------
 
 _inv_name = os.path.basename(sys.argv[0]) # Invocation name
 
-# Functions -------------------------------------------------------------------------------------------------
-
-def error(msg: str, exit_status: int = 1, stack_trace=True) -> None:
-  """
-  Prints the error message `msg` to `sys.stderr` and exits if `exit_status` is not 0.
-  """
-
-  sys.stderr.write(f"{_inv_name}: error: {msg}\n")
-  if stack_trace:
-    print_stack_trace()
-  if exit_status != 0:
-    sys.exit(exit_status)
+# Local functions -------------------------------------------------------------------------------------------
 
 def _get_shebang(file: str) -> list[str]:
   """
@@ -55,13 +44,6 @@ def _get_shebang(file: str) -> list[str]:
 
   return None
 
-def note(msg: str) -> None:
-  """
-  Prints the note message `msg` to `sys.stdout`.
-  """
-
-  sys.stdout.write(f"{_inv_name}: note: {msg}\n")
-
 def _on_sigint(signal, frame) -> NoReturn:
   """
   `SIGINT` handler.
@@ -71,6 +53,26 @@ def _on_sigint(signal, frame) -> NoReturn:
 
   # sys.exit(130)
   os._exit(130) # Cold exit
+
+# Functions -------------------------------------------------------------------------------------------------
+
+def error(msg: str, exit_status: int = 1, stack_trace=True) -> None:
+  """
+  Prints the error message `msg` to `sys.stderr` and exits if `exit_status` is not 0.
+  """
+
+  sys.stderr.write(f"{_inv_name}: error: {msg}\n")
+  if stack_trace:
+    print_stack_trace()
+  if exit_status != 0:
+    sys.exit(exit_status)
+
+def note(msg: str) -> None:
+  """
+  Prints the note message `msg` to `sys.stdout`.
+  """
+
+  sys.stdout.write(f"{_inv_name}: note: {msg}\n")
 
 def print_stack_trace() -> None:
   """

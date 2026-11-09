@@ -21,7 +21,7 @@ shift 2
 
 # Parse command line
 
-eval "$(cl-get-options "$OPT_STRING" "$@")"
+eval "$(cl-get-opts "$OPT_STRING" "$@")"
 if [[ $ARG_NAMES ]]; then
   eval $(cl-get-args $ARG_NAMES)
 fi

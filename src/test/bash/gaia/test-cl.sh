@@ -7,7 +7,7 @@ source "$GAIA_DIR/src/main/bash/gaia/test"
 
 # Local functions -------------------------------------------------------------------------------------------
 
-# We need a helper function to test `cl-get-options-fn` and `cl-get-args-fn` in there
+# We need a helper function to test `cl-get-opts-fn` and `cl-get-args-fn` in there
 func__() {
   OUTPUT=$(func-helper__ "$@" 2>&1)
   STATUS=$?
@@ -16,7 +16,7 @@ func__() {
 }
 
 # This function works exactly in the same manner as the helper script `test-cl-helper.sh`, except that it
-# uses `cl-get-options-fn` and `cl-get-args-fn`
+# uses `cl-get-opts-fn` and `cl-get-args-fn`
 func-helper__() {
   GAIA_NO_SHELL_PRINT_STACK_TRACE=1
 
@@ -34,7 +34,7 @@ func-helper__() {
 
   # Parse command line
 
-  eval "$(cl-get-options-fn $FUNCNAME "$OPT_STRING" "$@")"
+  eval "$(cl-get-opts-fn $FUNCNAME "$OPT_STRING" "$@")"
   if [[ $ARG_NAMES ]]; then
     eval $(cl-get-args-fn $FUNCNAME $ARG_NAMES)
   fi
@@ -64,7 +64,7 @@ func-helper__() {
   GAIA_NO_SHELL_PRINT_STACK_TRACE=
 }
 
-# We need a helper script to test `cl-get-options` and `cl-get-args` in there
+# We need a helper script to test `cl-get-opts` and `cl-get-args` in there
 script__() {
   OUTPUT=$(src/test/bash/gaia/test-cl-helper.sh "$@" 2>&1)
   STATUS=$?
@@ -75,19 +75,19 @@ script__() {
 # The helpers above print values with an unquoted `echo`, which collapses whitespace. These print the value
 # of option `-m` exactly. The trailing `.` keeps `$(...)` from stripping trailing line feeds
 option-value__() {
-  eval "$(cl-get-options m:v "$@")"
+  eval "$(cl-get-opts m:v "$@")"
   printf '%s.' "$m"
 }
 
 option-value-fn__() {
-  eval "$(cl-get-options-fn $FUNCNAME m:v "$@")"
+  eval "$(cl-get-opts-fn $FUNCNAME m:v "$@")"
   printf '%s.' "$m"
 }
 
 # Usage: expect-option-verbatim__ VALUE
 #
 # Checks that option `-m` delivers VALUE unchanged, in both separate and attached form, and with both
-# `cl-get-options` and `cl-get-options-fn`.
+# `cl-get-opts` and `cl-get-opts-fn`.
 expect-option-verbatim__() {
   local value=$1 actual
 
@@ -117,7 +117,7 @@ TEST-script() {
   EXPECT-NO-MATCH "$(script__ "" "")" Usage:
 }
 
-TEST-cl-get-options() {
+TEST-cl-get-opts() {
   script__ "" "" -q >/dev/null
   EXPECT-MATCH "$OUTPUT" "error: Invalid option: \`-q\`"
   EXPECT-EQ $STATUS 2
@@ -153,7 +153,7 @@ TEST-func() {
   EXPECT-NO-MATCH "$(func__ "" "")" Usage:
 }
 
-TEST-cl-get-options-fn() {
+TEST-cl-get-opts-fn() {
   func__ "" "" -q >/dev/null
   EXPECT-MATCH "$OUTPUT" "error: In function \`func-helper__\`: Invalid option: \`-q\`"
   EXPECT-EQ $STATUS 2
@@ -265,11 +265,11 @@ TEST-options-keep-positional-arguments() {
 
   # Print the options and the remaining arguments, each one in brackets
   print__() {
-    eval "$(cl-get-options m:v "$@")"
+    eval "$(cl-get-opts m:v "$@")"
     printf '[%s]' "$v" "$m" "$@"
   }
   print-fn__() {
-    eval "$(cl-get-options-fn $FUNCNAME m:v "$@")"
+    eval "$(cl-get-opts-fn $FUNCNAME m:v "$@")"
     printf '[%s]' "$v" "$m" "$@"
   }
 
@@ -298,11 +298,11 @@ TEST-options-invalid-option-characters() {
 TEST-options-stop-at-first-invalid-option() {
   local output
 
-  output=$(cl-get-options m: -x -y)
+  output=$(cl-get-opts m: -x -y)
   EXPECT-EQ $? 2
   EXPECT-SAME "$output" 'shell-error -e2 Invalid option: \`-x\`'
 
-  output=$(cl-get-options-fn my-func m: -x -y)
+  output=$(cl-get-opts-fn my-func m: -x -y)
   EXPECT-EQ $? 2
   EXPECT-SAME "$output" 'shell-error-fn -r2 "my-func" Invalid option: \`-x\`; return 2'
 }

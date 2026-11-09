@@ -22,7 +22,7 @@ wsl-mount-google-drive() {
 
 # Usage: wsl-open FILE
 wsl-open() {
-  eval "$(cl-get-options-fn $FUNCNAME "" "$@")"
+  eval "$(cl-get-opts-fn $FUNCNAME "" "$@")"
   eval $(cl-get-args-fn $FUNCNAME FILE)
 
   explorer.exe $(wslpath -aw "$file")

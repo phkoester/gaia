@@ -11,7 +11,7 @@ arg-count() {
 
 # Usage: arg-sort [-u] [ARG]...
 arg-sort() {
-  eval "$(cl-get-options-fn $FUNCNAME u "$@")"
+  eval "$(cl-get-opts-fn $FUNCNAME u "$@")"
   echo "$@" | tr ' ' '\n' | sort ${u+-u} | tr '\n' ' '
 }
 
