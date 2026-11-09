@@ -43,7 +43,7 @@ clusters correctly, which the standard terminal doesn’t.
 In the standard zsh that opens with the standard terminal, run
 
 ```shell
-$ clang++ # On a fresh system, this triggers the setup of the Developer Command-Line Tools
+$ clang++ # On a fresh system, this triggers the setup of the Xcode command-line tools
 $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" # Install Homebrew
 ```
 
@@ -60,6 +60,9 @@ In your Ghostty configuration file, add
 
 ```
 command = /opt/homebrew/bin/bash
+
+window-width = 110
+window-height = 40
 ```
 
 ### Windows

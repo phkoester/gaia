@@ -15,7 +15,7 @@
 #     The C++ toolchain: `gnu`, `llvm`, or `msvc`
 # - GAIA_DIR
 # - MEMCHECK
-#     If set to 1, run executables with a memory checker such as valgrind
+#     If set to 1, run executables with a memory checker (valgrind on Linux, leaks on macOS)
 # - PATTERN
 #     - Run only benchmarks or tests matching PATTERN
 #     - Check only source files matching PATTERN
@@ -116,21 +116,6 @@ ifeq ($(GAIA_CXX_TOOLCHAIN),llvm)
   endif
 endif
 
-# Configure valgrind ----------------------------------------------------------------------------------------
-
-VALGRIND_FLAGS := \
-  --leak-check=full \
-  --show-leak-kinds=all \
-  --suppressions=$(GAIA_DIR)/src/main/valgrind/gaia-valgrind.supp \
-  --track-origins=yes \
-  --vgdb=no
-
-ifeq ($(MEMCHECK),1)
-  ifdef GAIA_OS_WINDOWS
-    $(error `MEMCHECK=1` is not available on Windows)
-  endif
-endif
-
 # Configure CMake -------------------------------------------------------------------------------------------
 
 CMAKE_CONFIGURE_FLAGS :=
@@ -171,6 +156,27 @@ ifdef GAIA_OS_MACOS
 endif
 ifdef GAIA_OS_WINDOWS
   TEST_PRESET := windows-$(GAIA_BUILD_TYPE)
+endif
+
+# Configure memory checker ----------------------------------------------------------------------------------
+
+ifeq ($(MEMCHECK),1)
+  ifdef GAIA_OS_LINUX
+    MEMCHECK_COMMAND := valgrind
+    MEMCHECK_FLAGS := \
+      --leak-check=full \
+      --show-leak-kinds=all \
+      --suppressions=$(GAIA_DIR)/src/main/valgrind/gaia-valgrind.supp \
+      --track-origins=yes \
+      --vgdb=no
+  endif
+  ifdef GAIA_OS_MACOS
+    MEMCHECK_COMMAND := leaks
+    MEMCHECK_FLAGS := -atExit
+  endif
+  ifdef GAIA_OS_WINDOWS
+    $(error `MEMCHECK=1` is not available on Windows)
+  endif
 endif
 
 # Configure Doxygen -----------------------------------------------------------------------------------------
@@ -219,7 +225,8 @@ rebuild: reconfigure build
 reconfigure:
 	@$(call print-target,$@)
 	@cmake --build --preset $(BUILD_PRESET) --target clean </dev/null
-	@cmake $(CMAKE_CONFIGURE_FLAGS) --fresh --preset $(CONFIGURE_PRESET) </dev/null
+	@cmake $(CMAKE_CONFIGURE_FLAGS) --fresh --preset $(CONFIGURE_PRESET) \
+	  -DFETCHCONTENT_FULLY_DISCONNECTED=ON </dev/null </dev/null
 	@echo ">" compile_commands.json
 	@cat $(BUILD_DIR)/compile_commands.json | \
 	  gaia-filter-compile-commands --field file $(PROJECT_NAME)/src/ > compile_commands.json
@@ -229,7 +236,7 @@ run:
 ifneq ($(MEMCHECK),1)
 	$(RUN_EXECUTABLE) $(ARGS)
 else
-	ROCKET_EXIT=1 valgrind $(VALGRIND_FLAGS) $(RUN_EXECUTABLE) $(ARGS)
+	ROCKET_EXIT=1 $(MEMCHECK_COMMAND) $(MEMCHECK_FLAGS) -- $(RUN_EXECUTABLE) $(ARGS)
 endif
 
 test:
