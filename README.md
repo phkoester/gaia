@@ -60,7 +60,7 @@ In your Ghostty configuration file, add
 
 ```
 command = /opt/homebrew/bin/bash
-
+copy-on-select = clipboard
 window-width = 110
 window-height = 40
 ```
