@@ -11,7 +11,7 @@ source "$GAIA_DIR/src/main/bash/gaia/test"
 func__() {
   OUTPUT=$(func-helper__ "$@" 2>&1)
   STATUS=$?
-  # echo "***" $OUTPUT >/dev/stderr # Debug
+  # echo "***" $OUTPUT >&2 # Debug
   echo $OUTPUT
 }
 
@@ -68,7 +68,7 @@ func-helper__() {
 script__() {
   OUTPUT=$(src/test/bash/gaia/test-cl-helper.sh "$@" 2>&1)
   STATUS=$?
-  # echo "***" $OUTPUT >/dev/stderr # Debug
+  # echo "***" $OUTPUT >&2 # Debug
   echo $OUTPUT
 }
 

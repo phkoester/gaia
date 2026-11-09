@@ -17,7 +17,7 @@ Arguments:
 
 Options:
       --field FIELD  field to match against: `file` (default), `command`, `directory`, or `all`
-      --invert       invert the filter (keep non-matching blocks)
+      --invert       invert the filter (keep nonmatching blocks)
       --help         display this help message and exit
 """
 
@@ -32,14 +32,14 @@ def filter_compile_commands(pattern, field='file', invert=False):
   try:
     data = json.load(sys.stdin.buffer)
   except json.JSONDecodeError as e:
-    print(f"Error: Invalid JSON on stdin: {e}", file=sys.stderr)
+    print(f"error: Invalid JSON on stdin: {e}", file=sys.stderr)
     return 1
   except Exception as e:
-    print(f"Error: Cannot read stdin: {e}", file=sys.stderr)
+    print(f"error: Cannot read stdin: {e}", file=sys.stderr)
     return 1
 
   if not isinstance(data, list):
-    print(f"Error: Expected JSON array, got {type(data).__name__}", file=sys.stderr)
+    print(f"error: Expected JSON array, got {type(data).__name__}", file=sys.stderr)
     return 1
 
   # Compile regex pattern
@@ -47,7 +47,7 @@ def filter_compile_commands(pattern, field='file', invert=False):
   try:
     regex = re.compile(pattern)
   except re.error as e:
-    print(f"Error: Invalid regular expression `{pattern}`: {e}", file=sys.stderr)
+    print(f"error: Invalid regular expression `{pattern}`: {e}", file=sys.stderr)
     return 1
 
   # Filter entries
@@ -57,7 +57,7 @@ def filter_compile_commands(pattern, field='file', invert=False):
 
   for entry in data:
     if not isinstance(entry, dict):
-      print(f"warning: Skipping non-dict entry: {entry}", file=sys.stderr)
+      print(f"warning: Skipping nondict entry: {entry}", file=sys.stderr)
       continue
 
     match_found = False
@@ -74,7 +74,7 @@ def filter_compile_commands(pattern, field='file', invert=False):
       if isinstance(value, str):
         match_found = regex.search(value) is not None
       else:
-        # Convert non-string to string for matching
+        # Convert nonstring to string for matching
         match_found = regex.search(str(value)) is not None
     else:
       # Field doesn’t exist in entry
@@ -116,7 +116,7 @@ def main():
   parser.add_argument(
     '--invert',
     action='store_true',
-    help='invert the filter (keep non-matching blocks)'
+    help='invert the filter (keep nonmatching blocks)'
   )
   parser.add_argument(
     'pattern',

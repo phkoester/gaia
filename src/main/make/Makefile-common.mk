@@ -6,7 +6,7 @@
 # - GAIA_BUILD_TYPE
 #     The build type: `debug` or `release`
 # - GAIA_CXX_TOOLCHAIN
-#     The C++ toolchain: `gnu`, `llvm` or `msvc`
+#     The C++ toolchain: `gnu`, `llvm`, or `msvc`
 # - GAIA_DIR
 #
 # Targets:

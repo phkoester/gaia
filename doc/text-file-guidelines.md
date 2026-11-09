@@ -45,7 +45,7 @@ don’t impose too much noise, these backticks may even surface in the user inte
 
 ```shell
 echo Loading file \`$file\` ...
-echo error: Invalid option \`-$opt\` >/dev/stderr
+echo error: Invalid option \`-$opt\` >&2
 ```
 
 Some basic Markdown features:

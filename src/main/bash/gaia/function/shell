@@ -57,7 +57,7 @@ shell-is-login() {
 shell-print-stack-trace() {
   [[ $GAIA_NO_SHELL_PRINT_STACK_TRACE ]] && return
 
-  echo Stack trace: >/dev/stderr
+  echo Stack trace: >&2
   local n=${#BASH_LINENO[@]}
   # `n - 2` skips `main`
   local i; for ((i = 0; i <= n - 2; ++i)); do
@@ -67,7 +67,7 @@ shell-print-stack-trace() {
     [[ $i == 0 && $file == $BASH_SOURCE ]] && continue
 
     # Print entry
-    echo "  at ${FUNCNAME[i + 1]} ($file:${BASH_LINENO[i]})" >/dev/stderr
+    echo "  at ${FUNCNAME[i + 1]} ($file:${BASH_LINENO[i]})" >&2
   done
 }
 

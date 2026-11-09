@@ -61,15 +61,19 @@ endfunction()
 
 # GaiaDetectPython()
 #
-# Sets the cache variable `Python3_EXECUTABLE`. Then sets the cache variable `GAIA_PYTHON_NATIVE_WINDOWS`
-# from the path separator returned by `Python3_EXECUTABLE`. A native Windows Python interpreter reports `\`.
-# Other Python interpreters report `/`.
+# Sets the cache variable `Python3_EXECUTABLE`, unless the user has already set it. Then sets the cache
+# variable `GAIA_PYTHON_NATIVE_WINDOWS` from the path separator returned by `Python3_EXECUTABLE`. A native
+# Windows Python interpreter reports `\`. Other Python interpreters report `/`.
 function(GaiaDetectPython)
-  if(DEFINED CACHE{Python3_EXECUTABLE})
+  # Do not test `Python3_EXECUTABLE` here. It is already in the cache on the first run if the user passes
+  # `-DPython3_EXECUTABLE=...`, and the detection below must not be skipped then
+  if(DEFINED CACHE{GAIA_PYTHON_NATIVE_WINDOWS})
     return()
   endif()
 
-  set(CACHE{Python3_EXECUTABLE} VALUE ${Python3_EXECUTABLE})
+  if(NOT DEFINED CACHE{Python3_EXECUTABLE})
+    set(CACHE{Python3_EXECUTABLE} VALUE ${Python3_EXECUTABLE})
+  endif()
   if(NOT WIN32)
     set(CACHE{GAIA_PYTHON_NATIVE_WINDOWS} VALUE OFF)
     return()
@@ -83,7 +87,7 @@ function(GaiaDetectPython)
     RESULT_VARIABLE result
   )
   if(NOT result EQUAL 0)
-    GaiaFatalError("Could not run `${Python3_EXECUTABLE}`: ${error}")
+    GaiaFatalError("Cannot run `${Python3_EXECUTABLE}`: ${error}")
   endif()
 
   if(sep STREQUAL "backslash")

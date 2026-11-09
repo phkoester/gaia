@@ -22,7 +22,7 @@ EPILOG = """If no PROJECT is given, `all` is assumed.
 
 Examples:
 
-  gaia-project   # Execute command line `make` for all projects
+  gaia-project   # Execute command line `make version` for all projects
   gaia-project g # Execute command line `gaia-git` for all projects"""
 
 USAGE = "%(prog)s [OPTION]... [PROJECT]... [ARG]..."
@@ -37,7 +37,7 @@ def find_root_dir() -> str:
     gaia.log.debug(f"{dir=}")
     if test_root_dir(dir):
       return dir
-    if dir == "/":
+    if is_file_system_root(dir):
       break
     dir = os.path.abspath(dir + "/..")
 
@@ -67,13 +67,17 @@ def get_gaia_project_json(prj: str) -> dict[str, any]:
 def get_project_dir(prj: str) -> str:
   return root_dir + "/" + prj
 
+def is_file_system_root(dir: str) -> bool:
+  # The root has no parent, on POSIX (`/`) as well as on Windows (`C:\`)
+  return os.path.dirname(dir) == dir
+
 def parse_args() -> list[str]:
   ret = cl.args
   # `--` may separate the projects from the command, but it isn't part of the command
   if ret and ret[0] == "--":
     del ret[0]
   if not ret:
-    ret = ["make"]
+    ret = ["make", "version"]
   elif ret[0] == "g":
     ret[0] = "gaia-git"
   elif ret[0] == "m":
@@ -96,7 +100,7 @@ def parse_cl() -> argparse.Namespace:
   parser.add_argument("-s", "--skip", action="store_true", dest="skip",
     help="skip processing dependencies")
 
-  # Our own options must come first. Everything from the first non-option on is left alone, so the command
+  # Our own options must come first. Everything from the first nonoption on is left alone, so the command
   # can have options of its own
   parser.add_argument("args", action="store", nargs=argparse.REMAINDER, type=str)
 
@@ -166,7 +170,7 @@ def resolve(prj: str) -> list[str]:
 
 def test_root_dir(dir: str) -> bool:
   gaia.log.debug(f"test_root_dir: {dir=}");
-  if dir == "/":
+  if is_file_system_root(dir):
     gaia.log.debug(f"test_root_dir: {dir=} is not a root directory")
     return False
   if not os.path.isdir(dir):
