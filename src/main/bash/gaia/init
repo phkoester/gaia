@@ -107,6 +107,7 @@ export PYTHONPATH
 
 if [[ $GAIA_OS_MACOS ]]; then
   path-prepend -q PATH /opt/homebrew/bin
+  path-prepend -q PATH /opt/homebrew/opt/coreutils/libexec/gnubin
   path-prepend -q PATH /opt/homebrew/opt/findutils/libexec/gnubin
 fi
 
