@@ -32,9 +32,13 @@ cl-get-args() {
 # Arguments are taken literally, including `--`. Call `cl-get-opts-fn` first, which removes the `--` that
 # ends the options.
 cl-get-args-fn() {
-  [[ ! ${1+x} ]] && { echo "shell-error-fn -r2 $FUNCNAME Missing argument: \\\`FUNC_NAME\\\`; return 2"; return 2; }
+  [[ ! ${1+x} ]] && { \
+    echo "shell-error-fn -r2 $FUNCNAME Missing argument: \\\`FUNC_NAME\\\`; return 2"; return 2; \
+  }
   local func_name=$1; shift 1
-  [[ ! ${1+x} ]] && { echo "shell-error-fn -r2 $FUNCNAME Missing argument: \\\`ARG_NAME\\\`; return 2"; return 2; }
+  [[ ! ${1+x} ]] && { \
+    echo "shell-error-fn -r2 $FUNCNAME Missing argument: \\\`ARG_NAME\\\`; return 2"; return 2; \
+  }
 
   local result=""
   local arg_name; for arg_name in "$@"; do
@@ -109,9 +113,13 @@ cl-get-opts() {
 # stay positional, even if they start with `-`. As the value of an option, as in `-m --`, `--` does not end
 # the options.
 cl-get-opts-fn() {
-  [[ ! ${1+x} ]] && { echo "shell-error-fn -r2 $FUNCNAME Missing argument: \\\`FUNC_NAME\\\`; return 2"; return 2; }
+  [[ ! ${1+x} ]] && { \
+    echo "shell-error-fn -r2 $FUNCNAME Missing argument: \\\`FUNC_NAME\\\`; return 2"; return 2; \
+  }
   local func_name=$1; shift 1
-  [[ ! ${1+x} ]] && { echo "shell-error-fn -r2 $FUNCNAME Missing argument: \\\`OPT_STRING\\\`; return 2"; return 2; }
+  [[ ! ${1+x} ]] && { \
+    echo "shell-error-fn -r2 $FUNCNAME Missing argument: \\\`OPT_STRING\\\`; return 2"; return 2; \
+  }
   local opt_string=$1; shift 1
 
   # Collect options, which ones take an argument?
@@ -131,7 +139,7 @@ cl-get-opts-fn() {
     fi
   done
 
-  # Without options, there is nothing to declare. A bare `local` would print the caller's local variables,
+  # Without options, there is nothing to declare. A bare `local` would print the caller’s local variables,
   # so the code starts with the no-op `:` instead
   local result=:
   ((${#map[@]} > 0)) && result="local ${!map[@]}"

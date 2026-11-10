@@ -359,7 +359,7 @@ TEST-opts-double-dash() {
 }
 
 TEST-opts-double-dash-script() {
-  # The same through the helper script, where `getopts` works on the script's own arguments, and through the
+  # The same through the helper script, where `getopts` works on the script’s own arguments, and through the
   # helper function
   script__ vf: "" -v -- -f x >/dev/null
   EXPECT-MATCH "$OUTPUT" v=1= f== 1=-f= 2=x=

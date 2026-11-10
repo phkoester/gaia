@@ -58,27 +58,27 @@ ALIASES += member_op_subscript="Subscript operator. \
 
 ALIASES += member_op_eq="Tests if this instance is equal to @p rhs. \
 @param rhs the right-hand side \
-@return whether this instance is equal to @p rhs"
+@return if this instance is equal to @p rhs"
 
 ALIASES += member_op_ne="Tests if this instance is not equal to @p rhs. \
 @param rhs the right-hand side \
-@return whether this instance is not equal to @p rhs"
+@return if this instance is not equal to @p rhs"
 
 ALIASES += member_op_lt="Tests if this instance is less than @p rhs. \
 @param rhs the right-hand side \
-@return whether this instance is less than @p rhs"
+@return if this instance is less than @p rhs"
 
 ALIASES += member_op_le="Tests if this instance is less than or equal to @p rhs. \
 @param rhs the right-hand side \
-@return whether this instance is less than or equal to @p rhs"
+@return if this instance is less than or equal to @p rhs"
 
 ALIASES += member_op_gt="Tests if this instance is greater than @p rhs. \
 @param rhs the right-hand side \
-@return whether this instance is greater than @p rhs"
+@return if this instance is greater than @p rhs"
 
 ALIASES += member_op_ge="Tests if this instance is greater than or equal to @p rhs. \
 @param rhs the right-hand side \
-@return whether this instance is greater than or equal to @p rhs"
+@return if this instance is greater than or equal to @p rhs"
 
 ALIASES += member_op_cmp_strong_ordering="Compares this instance with @p rhs and returns a value of type \
 std::strong_ordering. \
@@ -110,6 +110,9 @@ ALIASES += member_op_sub_assign="`-=` operator. \
 ALIASES += member_fn_hash="Returns a hash value for this instance. \
 @return a hash value"
 
+ALIASES += member_fn_swap="Swaps the state of this instance with that of @p rhs. \
+@param rhs the right-hand side"
+
 # Type definitions ------------------------------------------------------------------------------------------
 
 ALIASES += type_alias="A type alias."
@@ -139,7 +142,7 @@ value. \
 @param rhs the value to assign to \
 @return @p lhs"
 
-ALIASES += op_output{1}="Output operator for \1. \
+ALIASES += op_output{1}="Output operator for \1.^^^^ \
 @param lhs the output stream \
 @param rhs the value to print \
 @return @p lhs"
@@ -158,6 +161,10 @@ ALIASES += fn_hash_value{1}="`hash_value` overload for \1, to be used by Boost. 
 @param val the value to hash \
 @return a hash value"
 
+ALIASES += fn_swap{1}="Swaps the state of two \1 instances. \
+@param lhs the left-hand side \
+@param rhs the right-hand side"
+
 # Templates -------------------------------------------------------------------------------------------------
 
 ALIASES += ctad_guide{1}="Class-template argument deduction (CTAD) guide for \1."
@@ -166,11 +173,11 @@ ALIASES += ctad_guide{1}="Class-template argument deduction (CTAD) guide for \1.
 
 ALIASES += spec{2}="\1 template specialization for \2."
 
-ALIASES += spec_fmt_formatter{1}="@spec{`fmt::formatter`, \1}"
+ALIASES += spec_fmt_formatter{1}="@spec{fmt::formatter, \1}"
 
 ALIASES += spec_rocket_StringConvert{1}="@spec{rocket::StringConvert, \1}"
 
-ALIASES += spec_scn_scanner{1}="@spec{`scn::scanner`, \1}"
+ALIASES += spec_scn_scanner{1}="@spec{scn::scanner, \1}"
 
 ALIASES += spec_std_equal_to{1}="@spec{std::equal_to, \1}"
 

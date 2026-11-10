@@ -15,7 +15,7 @@
 # - `x86_64-pc-windows`
 #
 
-# Detect host tuple ----------------------------------------------------------------------------------------
+# Detect host tuple -----------------------------------------------------------------------------------------
 
 unset GAIA_HOST_ARCH GAIA_HOST_VENDOR GAIA_HOST_OS GAIA_HOST
 export GAIA_HOST_ARCH GAIA_HOST_VENDOR GAIA_HOST_OS GAIA_HOST
@@ -71,8 +71,6 @@ elif [[ $OS == Windows_NT ]]; then
     echo init-host-tuple: error: Invalid \`PROCESSOR_ARCHITECTURE\`: \`$PROCESSOR_ARCHITECTURE\` >&2
     return 2
   fi
-
-  export GAIA_WINDOWS=1
 
   GAIA_HOST_ARCH=x86_64
   GAIA_HOST_VENDOR=pc

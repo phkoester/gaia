@@ -76,7 +76,7 @@ def is_file_system_root(dir: str) -> bool:
 
 def parse_args() -> list[str]:
   ret = cl.args
-  # `--` may separate the projects from the command, but it isn't part of the command
+  # `--` may separate the projects from the command, but it isn’t part of the command
   if ret and ret[0] == "--":
     del ret[0]
   if not ret:
@@ -99,7 +99,7 @@ def parse_cl() -> argparse.Namespace:
   )
 
   parser.add_argument("-h", "--help", action="help",
-    help="show this help message and exit")
+    help="display this help and exit")
   parser.add_argument("-s", "--skip", action="store_true", dest="skip",
     help="skip processing dependencies")
 

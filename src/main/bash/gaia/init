@@ -37,7 +37,8 @@ unset dir__
 # Detect Gaia version ---------------------------------------------------------------------------------------
 
 # Extract version from `CMakeLists.txt`
-export GAIA_VERSION=$(sed -nE 's/^project\(gaia VERSION ([0-9.]+).*/\1/p' "$GAIA_DIR/CMakeLists.txt" | head -n 1)
+export GAIA_VERSION=$(sed -nE 's/^project\(gaia VERSION ([0-9.]+).*/\1/p' "$GAIA_DIR/CMakeLists.txt" | \
+  head -n 1)
 
 if [[ ! $GAIA_VERSION =~ [0-9]+\.[0-9]+\.[0-9]+ ]]; then
   echo init: error: Cannot find a valid version in \`$GAIA_DIR/CMakeLists.txt\` >&2

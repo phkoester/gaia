@@ -35,7 +35,7 @@ elif [[ $1 == acp ]]; then
   else
     echo Nothing to commit
   fi
-  # Count the commits the upstream of the current branch doesn't have yet. This fails if there is no upstream
+  # Count the commits the upstream of the current branch doesn’t have yet. This fails if there is no upstream
   if ! ahead=$(git rev-list --count '@{upstream}..HEAD' 2>/dev/null); then
     shell-error The current branch has no upstream
   elif ((ahead > 0)); then

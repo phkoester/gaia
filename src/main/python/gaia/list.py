@@ -7,10 +7,10 @@
 def dedup(list: list[any]) -> None:
   """
   Modifies the list `list` such that it contains no duplicates.
-  
+
   The order of the elements in the list is retained.
   """
-  
+
   seen = set()
   i, length = 0, len(list)
   while True:
@@ -28,7 +28,7 @@ def filter(list: list[any], filter: list[any]) -> list[any]:
   """
   Returns a new list that contains all elements from `list` that are in `filter`.
   """
-  
+
   result=[]
   for elem in list:
     if elem in filter:

@@ -191,7 +191,9 @@ endif
 bench:
 ifneq ($(wildcard $(BUILD_DIR)/src/bench/),)
 	@$(call print-target,$@)
-	@ctest $(CTEST_FLAGS) --preset $(TEST_PRESET) --test-dir $(BUILD_DIR)/src/bench $(if $(PATTERN),-R '$(PATTERN)',) -V
+	@ctest $(CTEST_FLAGS) \
+	  --preset $(TEST_PRESET) \
+	  --test-dir $(BUILD_DIR)/src/bench $(if $(PATTERN),-R '$(PATTERN)',) -V
 endif
 
 build: configure
