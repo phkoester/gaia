@@ -82,10 +82,9 @@ else
   ifndef GAIA_OS_WINDOWS
 	@rm -rf $(COVERAGE_DIR)
 	@CARGO_INCREMENTAL=0 \
-	    LLVM_PROFILE_FILE=cargo-test-%p-%m.profraw \
-	    RUSTDOCFLAGS="-C instrument-coverage -Z unstable-options --persist-doctests $(TEST_BIN_DIR)" \
-	    RUSTFLAGS="-C instrument-coverage" \
-   	    cargo +nightly test $(CARGO_FLAGS)
+	  LLVM_PROFILE_FILE=cargo-test-%p-%m.profraw \
+	  RUSTDOCFLAGS="-C instrument-coverage -Z unstable-options --persist-doctests $(TEST_BIN_DIR)" \
+	  RUSTFLAGS="-C instrument-coverage" cargo +nightly test $(CARGO_FLAGS)
 	@grcov --binary-path $(TEST_BIN_DIR) -s . -t html --branch --ignore-not-existing \
 	  -o $(COVERAGE_DIR)/html .
 	@# Remove `.profraw` files
