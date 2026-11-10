@@ -206,8 +206,8 @@ check:
 	  -j$(GAIA_NPROC_3_4) \
 	  -p. \
 	  $(CHECK_FILES) \
-	  2>&1 >$(CHECK_REPORT_FILE)
-	@echo Report written to $(CHECK_REPORT_FILE)
+	  >$(CHECK_REPORT_FILE) 2>&1; \
+	  status=$$?; echo Report written to $(CHECK_REPORT_FILE); exit $$status
 
 clean:
 	@$(call print-target,$@)
@@ -257,25 +257,30 @@ compile_commands.json: $(BUILD_DIR)/compile_commands.json
 
 # Auxiliary targets .........................................................................................
 
+# The Doxygen recipes need Bash for `pipefail`. Without it, the status of `doxygen` is lost in the pipeline
+doc-main doc-test: SHELL := bash
+
 doc-main: $(if $(wildcard src/main/Doxyfile),compile_commands.json)
 ifneq ($(wildcard src/main/Doxyfile),)
 	@$(call print-target,$@)
-	@DOXYGEN_PREDEFINED="$$(gaia-compile-defines compile_commands.json /src/main/)" \
-	  doxygen $(DOXYGEN_FLAGS) src/main/Doxyfile 2>&1 | grep -v \
+	@set -o pipefail; \
+	  DOXYGEN_PREDEFINED="$$(gaia-compile-defines compile_commands.json /src/main/)" \
+	  doxygen $(DOXYGEN_FLAGS) src/main/Doxyfile 2>&1 | { grep -v \
 	  -e "warning: Incomplete input: scope for class" \
 	  -e "warning: documented symbol 'T std::experimental::.*' was not declared or defined" || \
-	  true
+	  true; }
 	@echo Created $(BUILD_DIR)/src/main/doc/html/index.html
 endif
 
 doc-test: $(if $(wildcard src/test/Doxyfile),compile_commands.json)
 ifneq ($(wildcard src/test/Doxyfile),)
 	@$(call print-target,$@)
-	@DOXYGEN_PREDEFINED="$$(gaia-compile-defines compile_commands.json /src/test/)" \
-	  doxygen $(DOXYGEN_FLAGS) src/test/Doxyfile 2>&1 | grep -v \
+	@set -o pipefail; \
+	  DOXYGEN_PREDEFINED="$$(gaia-compile-defines compile_commands.json /src/test/)" \
+	  doxygen $(DOXYGEN_FLAGS) src/test/Doxyfile 2>&1 | { grep -v \
 	  -e "warning: Incomplete input: scope for class" \
 	  -e "warning: documented symbol 'T std::experimental::.*' was not declared or defined" || \
-          true
+	  true; }
 	@echo Created $(BUILD_DIR)/src/test/doc/html/index.html
 endif
 

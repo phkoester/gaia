@@ -131,7 +131,10 @@ cl-get-opts-fn() {
     fi
   done
 
-  local result="local ${!map[@]}"
+  # Without options, there is nothing to declare. A bare `local` would print the caller's local variables,
+  # so the code starts with the no-op `:` instead
+  local result=:
+  ((${#map[@]} > 0)) && result="local ${!map[@]}"
 
   # Parse options using `getopts`. Start at the first argument, whatever `OPTIND` the caller left behind
   local OPTIND=1

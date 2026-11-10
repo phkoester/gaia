@@ -140,6 +140,19 @@ literal-args-fn__() {
   printf '[%s]' "$a" "$@"
 }
 
+# These pass an empty OPT_STRING and print the remaining arguments, each one in brackets. `no-opts-fn__`
+# declares a local variable first, which a bare `local` in the code from `cl-get-opts-fn` would print
+no-opts__() {
+  eval "$(cl-get-opts "" "$@")"
+  printf '[%s]' "$@"
+}
+
+no-opts-fn__() {
+  local before=1
+  eval "$(cl-get-opts-fn $FUNCNAME "" "$@")"
+  printf '[%s]' "$@"
+}
+
 # These print the option `-v`, the named argument `A`, and the remaining arguments, each one in brackets
 print-args__() {
   eval "$(cl-get-opts v "$@")"
@@ -369,6 +382,15 @@ TEST-opts-ignore-caller-optind() {
 
   actual=$(OPTIND=2; print-opts-fn__ -v -- -m x)
   EXPECT-SAME "$actual" '[1][][-m][x]'
+}
+
+TEST-opts-empty-opt-string() {
+  # With an empty OPT_STRING, nothing is declared and nothing is printed. `--` is still removed
+  EXPECT-SAME "$(no-opts__ a b)" '[a][b]'
+  EXPECT-SAME "$(no-opts-fn__ a b)" '[a][b]'
+
+  EXPECT-SAME "$(no-opts__ -- -a)" '[-a]'
+  EXPECT-SAME "$(no-opts-fn__ -- -a)" '[-a]'
 }
 
 TEST-args-double-dash() {
