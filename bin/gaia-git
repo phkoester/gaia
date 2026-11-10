@@ -9,10 +9,15 @@ set -e
 
 ssh-init
 
+export LC_ALL=en_US.UTF-8
+
 if [[ $1 == "" ]]; then
   exec git status
 elif [[ $1 == acp ]]; then
   # `acp` = add, commit, push
+
+  [[ ! -e .git ]] && shell-error There is no Git repository in this directory
+
   shift
   eval "$(cl-get-opts m: "$@")"
   if [[ ! $m ]]; then
@@ -32,7 +37,7 @@ elif [[ $1 == acp ]]; then
   fi
   # Count the commits the upstream of the current branch doesn't have yet. This fails if there is no upstream
   if ! ahead=$(git rev-list --count '@{upstream}..HEAD' 2>/dev/null); then
-    echo Not pushing: The current branch has no upstream
+    shell-error The current branch has no upstream
   elif ((ahead > 0)); then
     echo Pushing ...
     exec git push

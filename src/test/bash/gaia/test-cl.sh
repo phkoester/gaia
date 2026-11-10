@@ -7,6 +7,51 @@ source "$GAIA_DIR/src/main/bash/gaia/test"
 
 # Local functions -------------------------------------------------------------------------------------------
 
+# Usage: expect-args__ EXPECTED [ARG]...
+#
+# Checks that both `print-args__` and `print-args-fn__` print EXPECTED for ARG...
+expect-args__() {
+  local expected=$1
+  shift 1
+
+  EXPECT-SAME "$(print-args__ "$@")" "$expected"
+  EXPECT-SAME "$(print-args-fn__ "$@")" "$expected"
+}
+
+# Usage: expect-opt-verbatim__ VALUE
+#
+# Checks that option `-m` delivers VALUE unchanged, in both separate and attached form, and with both
+# `cl-get-opts` and `cl-get-opts-fn`.
+expect-opt-verbatim__() {
+  local value=$1 actual
+
+  actual=$(option-value__ -m "$value")
+  EXPECT-SAME "${actual%.}" "$value"
+
+  actual=$(option-value-fn__ -m "$value")
+  EXPECT-SAME "${actual%.}" "$value"
+
+  # An empty value cannot be attached: `-m` alone would then be missing its argument
+  if [[ $value ]]; then
+    actual=$(option-value__ "-m$value")
+    EXPECT-SAME "${actual%.}" "$value"
+
+    actual=$(option-value-fn__ "-m$value")
+    EXPECT-SAME "${actual%.}" "$value"
+  fi
+}
+
+# Usage: expect-opts__ EXPECTED [ARG]...
+#
+# Checks that both `print-opts__` and `print-opts-fn__` print EXPECTED for ARG...
+expect-opts__() {
+  local expected=$1
+  shift 1
+
+  EXPECT-SAME "$(print-opts__ "$@")" "$expected"
+  EXPECT-SAME "$(print-opts-fn__ "$@")" "$expected"
+}
+
 # We need a helper function to test `cl-get-opts-fn` and `cl-get-args-fn` in there
 func__() {
   OUTPUT=$(func-helper__ "$@" 2>&1)
@@ -64,14 +109,6 @@ func-helper__() {
   GAIA_NO_SHELL_PRINT_STACK_TRACE=
 }
 
-# We need a helper script to test `cl-get-opts` and `cl-get-args` in there
-script__() {
-  OUTPUT=$(src/test/bash/gaia/test-cl-helper.sh "$@" 2>&1)
-  STATUS=$?
-  # echo "***" $OUTPUT >&2 # Debug
-  echo $OUTPUT
-}
-
 # The helpers above print values with an unquoted `echo`, which collapses whitespace. These print the value
 # of option `-m` exactly. The trailing `.` keeps `$(...)` from stripping trailing line feeds
 option-value__() {
@@ -84,27 +121,48 @@ option-value-fn__() {
   printf '%s.' "$m"
 }
 
-# Usage: expect-option-verbatim__ VALUE
-#
-# Checks that option `-m` delivers VALUE unchanged, in both separate and attached form, and with both
-# `cl-get-opts` and `cl-get-opts-fn`.
-expect-option-verbatim__() {
-  local value=$1 actual
+# We need a helper script to test `cl-get-opts` and `cl-get-args` in there
+script__() {
+  OUTPUT=$(src/test/bash/gaia/test-cl-helper.sh "$@" 2>&1)
+  STATUS=$?
+  # echo "***" $OUTPUT >&2 # Debug
+  echo $OUTPUT
+}
 
-  actual=$(option-value__ -m "$value")
-  EXPECT-SAME "${actual%.}" "$value"
+# These take the named argument `A` without parsing options first
+literal-args__() {
+  eval $(cl-get-args A)
+  printf '[%s]' "$a" "$@"
+}
 
-  actual=$(option-value-fn__ -m "$value")
-  EXPECT-SAME "${actual%.}" "$value"
+literal-args-fn__() {
+  eval $(cl-get-args-fn $FUNCNAME A)
+  printf '[%s]' "$a" "$@"
+}
 
-  # An empty value cannot be attached: `-m` alone would then be missing its argument
-  if [[ $value ]]; then
-    actual=$(option-value__ "-m$value")
-    EXPECT-SAME "${actual%.}" "$value"
+# These print the option `-v`, the named argument `A`, and the remaining arguments, each one in brackets
+print-args__() {
+  eval "$(cl-get-opts v "$@")"
+  eval $(cl-get-args A)
+  printf '[%s]' "$v" "$a" "$@"
+}
 
-    actual=$(option-value-fn__ "-m$value")
-    EXPECT-SAME "${actual%.}" "$value"
-  fi
+print-args-fn__() {
+  eval "$(cl-get-opts-fn $FUNCNAME v "$@")"
+  eval $(cl-get-args-fn $FUNCNAME A)
+  printf '[%s]' "$v" "$a" "$@"
+}
+
+# These print the options `-v` and `-m` and the remaining arguments, each one in brackets, so that empty
+# arguments and arguments that look like options show exactly
+print-opts__() {
+  eval "$(cl-get-opts m:v "$@")"
+  printf '[%s]' "$v" "$m" "$@"
+}
+
+print-opts-fn__() {
+  eval "$(cl-get-opts-fn $FUNCNAME m:v "$@")"
+  printf '[%s]' "$v" "$m" "$@"
 }
 
 # Tests -----------------------------------------------------------------------------------------------------
@@ -181,7 +239,7 @@ TEST-cl-get-args-fn() {
   EXPECT-EQ $STATUS 2
 }
 
-TEST-options-do-not-execute-values() {
+TEST-opts-do-not-execute-values() {
   local tmp marker value
   tmp=$(mktemp -d)
   marker=$tmp/injected
@@ -196,21 +254,21 @@ TEST-options-do-not-execute-values() {
     "\"; touch $marker; \"" \
     "'; touch $marker; '" \
     "\\\"; touch $marker; \\\""; do
-    expect-option-verbatim__ "$value"
+    expect-opt-verbatim__ "$value"
   done
 
   EXPECT-FAILURE test -e "$marker"
   rm -rf "$tmp"
 }
 
-TEST-options-do-not-expand-values() {
+TEST-opts-do-not-expand-values() {
   local value
   for value in '$HOME' '${HOME}' '$((1 + 1))' '~' '*' '?' '[a-z]' '{a,b}'; do
-    expect-option-verbatim__ "$value"
+    expect-opt-verbatim__ "$value"
   done
 }
 
-TEST-options-preserve-whitespace() {
+TEST-opts-preserve-whitespace() {
   local value
   for value in \
     'two   spaces' \
@@ -221,26 +279,26 @@ TEST-options-preserve-whitespace() {
     $'line\nfeed' \
     $'trailing line feed\n' \
     $'a  b\tc*  d'; do
-    expect-option-verbatim__ "$value"
+    expect-opt-verbatim__ "$value"
   done
 }
 
-TEST-options-preserve-special-characters() {
+TEST-opts-preserve-special-characters() {
   local value
   for value in \
     '"' "'" 'a"b' "a'b" '\' 'a\' 'a\b' '\\' '\"' "\\'" \
     '#a' '!a' '&' ';' '|' '<' '>' '(' ')' 'a=b' \
     '-n' '-e' '-v' '--' \
     'äöü €'; do
-    expect-option-verbatim__ "$value"
+    expect-opt-verbatim__ "$value"
   done
 }
 
-TEST-options-accept-empty-value() {
-  expect-option-verbatim__ ""
+TEST-opts-accept-empty-value() {
+  expect-opt-verbatim__ ""
 }
 
-TEST-options-last-value-wins() {
+TEST-opts-last-value-wins() {
   local actual
 
   actual=$(option-value__ -m first -m 'second  value')
@@ -250,7 +308,7 @@ TEST-options-last-value-wins() {
   EXPECT-SAME "${actual%.}" 'second  value'
 }
 
-TEST-options-unset-missing-option() {
+TEST-opts-unset-missing-option() {
   local actual
 
   actual=$(m=stale; option-value__ -v)
@@ -260,29 +318,98 @@ TEST-options-unset-missing-option() {
   EXPECT-SAME "${actual%.}" ""
 }
 
-TEST-options-keep-positional-arguments() {
-  local actual
-
-  # Print the options and the remaining arguments, each one in brackets
-  print__() {
-    eval "$(cl-get-opts m:v "$@")"
-    printf '[%s]' "$v" "$m" "$@"
-  }
-  print-fn__() {
-    eval "$(cl-get-opts-fn $FUNCNAME m:v "$@")"
-    printf '[%s]' "$v" "$m" "$@"
-  }
-
-  actual=$(print__ -v -m 'a  b' c 'd  e' '$(f)')
-  EXPECT-SAME "$actual" '[1][a  b][c][d  e][$(f)]'
-
-  actual=$(print-fn__ -v -m 'a  b' c 'd  e' '$(f)')
-  EXPECT-SAME "$actual" '[1][a  b][c][d  e][$(f)]'
-
-  unset -f print__ print-fn__
+TEST-opts-keep-positional-arguments() {
+  expect-opts__ '[1][a  b][c][d  e][$(f)]' -v -m 'a  b' c 'd  e' '$(f)'
 }
 
-TEST-options-invalid-option-characters() {
+TEST-opts-double-dash() {
+  # `--` ends the options and is removed. What follows is positional, even if it looks like an option
+  expect-opts__ '[1][][-m][x]' -v -- -m x
+  expect-opts__ '[][][-v]' -- -v
+  expect-opts__ '[][][-q]' -- -q # Not a valid option, but no error, because it is positional
+  expect-opts__ '[][][]' -- ''
+  expect-opts__ '[1][a][b]' -vma -- b
+
+  # `--` alone leaves no positional arguments
+  expect-opts__ '[][]' --
+  expect-opts__ '[1][]' -v --
+
+  # Only the first `--` is removed
+  expect-opts__ '[1][a][--][b]' -v -m a -- -- b
+
+  # Parsing stops at the first nonoption, so a later `--` is just another positional argument
+  expect-opts__ '[][][a][--][-v]' a -- -v
+
+  # As the value of an option, `--` does not end the options
+  expect-opts__ '[1][--]' -m -- -v
+  expect-opts__ '[][--][x]' -m -- -- x
+}
+
+TEST-opts-double-dash-script() {
+  # The same through the helper script, where `getopts` works on the script's own arguments, and through the
+  # helper function
+  script__ vf: "" -v -- -f x >/dev/null
+  EXPECT-MATCH "$OUTPUT" v=1= f== 1=-f= 2=x=
+  EXPECT-NO-MATCH "$OUTPUT" "=--=" "(^| )3="
+  EXPECT-EQ $STATUS 0
+
+  func__ vf: "" -v -- -f x >/dev/null
+  EXPECT-MATCH "$OUTPUT" v=1= f== 1=-f= 2=x=
+  EXPECT-NO-MATCH "$OUTPUT" "=--=" "(^| )3="
+  EXPECT-EQ $STATUS 0
+}
+
+TEST-opts-ignore-caller-optind() {
+  # A caller that runs `getopts` itself leaves `OPTIND` changed. Parsing must start at the first argument
+  # anyway, or the arguments in front of `--` would be skipped
+  local actual
+
+  actual=$(OPTIND=2; print-opts__ -v -- -m x)
+  EXPECT-SAME "$actual" '[1][][-m][x]'
+
+  actual=$(OPTIND=2; print-opts-fn__ -v -- -m x)
+  EXPECT-SAME "$actual" '[1][][-m][x]'
+}
+
+TEST-args-double-dash() {
+  # Once `--` is removed, `A` takes the next argument, even if that looks like an option or is another `--`
+  expect-args__ '[1][-x][y]' -v -- -x y
+  expect-args__ '[][-v]' -- -v
+  expect-args__ '[][--][y]' -- -- y
+  expect-args__ '[][a][--][y]' a -- y
+
+  script__ v A -v -- -x y >/dev/null
+  EXPECT-MATCH "$OUTPUT" v=1= a=-x= 1=y=
+  EXPECT-NO-MATCH "$OUTPUT" "=--="
+  EXPECT-EQ $STATUS 0
+
+  func__ v A -v -- -x y >/dev/null
+  EXPECT-MATCH "$OUTPUT" v=1= a=-x= 1=y=
+  EXPECT-NO-MATCH "$OUTPUT" "=--="
+  EXPECT-EQ $STATUS 0
+
+  # `--` is not an argument, so `A` is missing
+  script__ "" A -- >/dev/null
+  EXPECT-MATCH "$OUTPUT" "error: Missing argument: \`A\`"
+  EXPECT-EQ $STATUS 2
+
+  func__ "" A -- >/dev/null
+  EXPECT-MATCH "$OUTPUT" "error: In function \`func-helper__\`: Missing argument: \`A\`"
+  EXPECT-EQ $STATUS 2
+}
+
+TEST-args-take-double-dash-literally() {
+  # Without option parsing in front, `--` is an ordinary argument
+  local actual
+
+  actual=$(literal-args__ -- y)
+  EXPECT-SAME "$actual" '[--][y]'
+
+  actual=$(literal-args-fn__ -- y)
+  EXPECT-SAME "$actual" '[--][y]'
+}
+
+TEST-opts-invalid-option-characters() {
   local option
   for option in q ';' '$' "'" '"' '`' '&' '*' '(' '|' '<'; do
     script__ m: "" "-$option" >/dev/null
@@ -295,7 +422,7 @@ TEST-options-invalid-option-characters() {
   done
 }
 
-TEST-options-stop-at-first-invalid-option() {
+TEST-opts-stop-at-first-invalid-option() {
   local output
 
   output=$(cl-get-opts m: -x -y)

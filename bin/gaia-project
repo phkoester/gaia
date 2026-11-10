@@ -48,13 +48,16 @@ def find_root_dir() -> str:
     if test_root_dir(dir):
       return dir
 
-  # Test `~/project`
+  # Test `~/project`. Unlike `HOME`, `expanduser` also finds the home directory on Windows. If it finds
+  # none, it returns `~` unchanged
   gaia.log.debug("Test `~/project`");
-  dir = env.get("HOME") + "/project"
-  if test_root_dir(dir):
-    return dir
+  home = os.path.expanduser("~")
+  if home != "~":
+    dir = home + "/project"
+    if test_root_dir(dir):
+      return dir
 
-  raise RuntimeError("Cannot find root directory")
+  error("Cannot find root directory", stack_trace=False)
 
 def get_gaia_project_json(prj: str) -> dict[str, any]:
   dir = get_project_dir(prj)
@@ -156,16 +159,25 @@ def print_section(what: str, cl: list[str] = None) -> None:
   str += "\n#\n" + 40 * "#"
   print(str)
 
+# Returns `prj` and all its dependencies, dependencies first. Exits with an error if a dependency is unknown
+# or cyclic
 def resolve(prj: str) -> list[str]:
-  def resolve0(prj: str, out: list[str]):
-    deps = projects[prj]
-    for dep in deps:
-      resolve0(dep, out) # Recursive call
-    if prj not in out:
+  # `path` holds the projects whose dependencies are being resolved, from `prj` down to the current one
+  def resolve0(prj: str, path: list[str]) -> None:
+    if prj in path:
+      cycle = path[path.index(prj):] + [prj]
+      error(f"Cyclic dependency: {' -> '.join(cycle)}", stack_trace=False)
+    path.append(prj)
+    for dep in projects[prj]:
+      if dep not in projects:
+        error(f"Project `{prj}` depends on unknown project `{dep}`", stack_trace=False)
+      resolve0(dep, path) # Recursive call
+    path.pop()
+    if prj not in ret:
       ret.append(prj)
 
   ret = []
-  resolve0(prj, ret)
+  resolve0(prj, [])
   return ret
 
 def test_root_dir(dir: str) -> bool:

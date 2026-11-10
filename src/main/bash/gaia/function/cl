@@ -8,6 +8,9 @@
 #
 # ARG_NAME should be all uppercase, using the underscore (`_`) as a word delimiter. The corresponding
 # variable will be named in lowercase.
+#
+# Arguments are taken literally, including `--`. Call `cl-get-opts` first, which removes the `--` that ends
+# the options.
 cl-get-args() {
   [[ ! ${1+x} ]] && { echo "shell-error-fn -e2 $FUNCNAME Missing argument: \\\`ARG_NAME\\\`"; return 2; }
 
@@ -25,6 +28,9 @@ cl-get-args() {
 #
 # ARG_NAME should be all uppercase, using the underscore (`_`) as a word delimiter. The corresponding
 # variable will be named in lowercase.
+#
+# Arguments are taken literally, including `--`. Call `cl-get-opts-fn` first, which removes the `--` that
+# ends the options.
 cl-get-args-fn() {
   [[ ! ${1+x} ]] && { echo "shell-error-fn -r2 $FUNCNAME Missing argument: \\\`FUNC_NAME\\\`; return 2"; return 2; }
   local func_name=$1; shift 1
@@ -43,6 +49,10 @@ cl-get-args-fn() {
 # Usage: eval "$(cl-get-opts OPT_STRING "$@")"
 #
 # OPT_STRING is passed to `getopts`. No leading `:` is allowed.
+#
+# Parsing stops at the first nonoption argument or at `--`. The `--` is removed. All remaining arguments
+# stay positional, even if they start with `-`. As the value of an option, as in `-m --`, `--` does not end
+# the options.
 cl-get-opts() {
   [[ ! ${1+x} ]] && { echo "shell-error-fn -e2 $FUNCNAME Missing argument: \\\`OPT_STRING\\\`"; return 2; }
   local opt_string=$1; shift 1
@@ -66,7 +76,8 @@ cl-get-opts() {
 
   local result="unset ${!map[@]}"
 
-  # Parse options using `getopts`
+  # Parse options using `getopts`. Start at the first argument, whatever `OPTIND` the caller left behind
+  local OPTIND=1
   local found=0
   local opt quoted; while getopts :$opt_string opt; do # Leading `:`: silent mode
     # The caller evals our output, so `OPTARG` must be quoted or it would be executed
@@ -93,6 +104,10 @@ cl-get-opts() {
 # Usage: eval "$(cl-get-opts-fn $FUNCNAME OPT_STRING "$@")"
 #
 # OPT_STRING is passed to `getopts`. No leading `:` is allowed.
+#
+# Parsing stops at the first nonoption argument or at `--`. The `--` is removed. All remaining arguments
+# stay positional, even if they start with `-`. As the value of an option, as in `-m --`, `--` does not end
+# the options.
 cl-get-opts-fn() {
   [[ ! ${1+x} ]] && { echo "shell-error-fn -r2 $FUNCNAME Missing argument: \\\`FUNC_NAME\\\`; return 2"; return 2; }
   local func_name=$1; shift 1
@@ -118,7 +133,8 @@ cl-get-opts-fn() {
 
   local result="local ${!map[@]}"
 
-  # Parse options using `getopts`
+  # Parse options using `getopts`. Start at the first argument, whatever `OPTIND` the caller left behind
+  local OPTIND=1
   local found=0
   local opt quoted; while getopts :$opt_string opt; do # Leading `:`: silent mode
     # The caller evals our output, so `OPTARG` must be quoted or it would be executed

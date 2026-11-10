@@ -36,7 +36,7 @@ string-remove-leading() {
   if string-begins-with "$str" "$sub"; then
     str=${str:${#sub}}
   fi
-  echo $str
+  echo "$str"
 }
 
 # Usage: string-remove-trailing STR SUB
@@ -47,7 +47,7 @@ string-remove-trailing() {
   if string-ends-with "$str" "$sub"; then
     str=${str:0:${#str} - ${#sub}}
   fi
-  echo $str
+  echo "$str"
 }
 
 # Usage: string-repeat STR N
@@ -55,8 +55,9 @@ string-repeat() {
   eval "$(cl-get-opts-fn $FUNCNAME "" "$@")"
   eval $(cl-get-args-fn $FUNCNAME STR N)
 
+  local i
   for ((i = 0; i < $n; ++i)); do
-    echo -n $str
+    echo -n "$str"
   done
 }
 

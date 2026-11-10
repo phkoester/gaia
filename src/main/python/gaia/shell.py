@@ -101,7 +101,7 @@ def run(*cl, input=None, timeout=None, check=False, **kwargs) -> subprocess.Comp
 
 def warn(msg: str) -> None:
   """
-  Prints the warning message `msg` to `sys.stderr`
+  Prints the warning message `msg` to `sys.stderr`.
   """
 
   sys.stderr.write(f"{_inv_name}: warning: {msg}\n")
