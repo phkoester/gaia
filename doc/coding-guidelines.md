@@ -4,6 +4,50 @@ The general text-file rules from [Text-File Guidelines](text-file-guidelines.md)
 
 In this document you will find a loose collection of general, language-independent style recommendations.
 
+## Source-File Sections
+
+A source file may be divided into sections so that a reader can better understand its structure.
+
+For example, if you define a C++ class `MyStruct`, you can place it in a section of its own:
+
+```c++
+// `MyStruct` -----------------------------------------------------------------------------------------------
+
+struct MyStruct {
+  ...
+};
+```
+
+A collection of functions may be placed in a section called "Functions":
+
+```c++
+// Functions ------------------------------------------------------------------------------------------------
+
+void firstFunction() { ... }
+
+void secondFunction() { ... }
+```
+
+Section headings may appear at different levels. Do not use title case:
+
+```c++
+// A first-level section ------------------------------------------------------------------------------------
+// A second-level section ...................................................................................
+// A third-level section  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+```
+
+In some cases, where an additional "zero-level" section is needed, you may use a ruler like this:
+
+```c++
+// Part I: the general idea =================================================================================
+
+// A first-level section ------------------------------------------------------------------------------------
+
+// Part II: the implementation ==============================================================================
+
+// Another first-level section ------------------------------------------------------------------------------
+```
+
 ## Styling in Comments
 
 Some Markdown features such as `*...*` and <code>&grave;...&grave;</code> may be used in comments:

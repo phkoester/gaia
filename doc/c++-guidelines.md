@@ -28,14 +28,6 @@ void firstFunction() { ... }
 void secondFunction() { ... }
 ```
 
-Section headings may appear at different levels. Do not use title case:
-
-```c++
-// A first-level section ------------------------------------------------------------------------------------
-// A second-level section ...................................................................................
-// A third-level section  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-```
-
 ## Doc Comments
 
 For doc comments, [Doxygen](https://www.doxygen.nl) is in use.

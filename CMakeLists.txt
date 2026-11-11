@@ -40,7 +40,7 @@ elseif(WIN32)
 endif()
 
 if(NOT(GAIA_OS_LINUX) AND NOT(GAIA_OS_MACOS) AND NOT(GAIA_OS_WINDOWS))
-  GaiaFatalError("Unsupported OS: ${CMAKE_SYSTEM_NAME}")
+  GaiaFatalError("Unsupported OS ${CMAKE_SYSTEM_NAME}")
 endif()
 
 # Check C/C++ toolchain -------------------------------------------------------------------------------------

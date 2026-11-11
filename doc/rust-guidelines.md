@@ -84,15 +84,6 @@ mod tests {
 }
 ```
 
-Section headings may appear at different levels. Do not use title case:
-
-```rust
-// Tests (top-level, only for unit tests) ===================================================================
-// A first-level section ------------------------------------------------------------------------------------
-// A second-level section ...................................................................................
-// A third-level section  . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-```
-
 ## Doc Comments
 
 For doc comments, [Rustdoc](https://doc.rust-lang.org/rustdoc) is in use.

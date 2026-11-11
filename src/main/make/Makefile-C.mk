@@ -228,7 +228,7 @@ reconfigure:
 	@$(call print-target,$@)
 	@cmake --build --preset $(BUILD_PRESET) --target clean </dev/null
 	@cmake $(CMAKE_CONFIGURE_FLAGS) --fresh --preset $(CONFIGURE_PRESET) \
-	  -DFETCHCONTENT_FULLY_DISCONNECTED=ON </dev/null </dev/null
+	  -DFETCHCONTENT_FULLY_DISCONNECTED=ON </dev/null
 	@echo ">" compile_commands.json
 	@cat $(BUILD_DIR)/compile_commands.json | \
 	  gaia-filter-compile-commands --field file $(PROJECT_NAME)/src/ > compile_commands.json

@@ -28,7 +28,7 @@
 #   `arch`    | `arm`   | ARM
 #   `subarch` | `v7k`   | v7k
 #   `endian`  | `be`    | Big endian
-#   `vendor`  | `arm`   | ARM Ltd
+#   `vendor`  | `arm`   | ARM Ltd.
 #   `os`      | `linux` | Linux
 #   `libc`    | `gnu`   | GNU (glibc)
 #   `abi`     | `eabi`  | EABI (embedded ABI)
