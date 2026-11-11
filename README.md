@@ -85,12 +85,20 @@ call "C:\Program Files\Microsoft Visual Studio\18\Community\Common7\Tools\VsDevC
 C:\git-sdk-64\usr\bin\bash.exe -i -l
 ```
 
-**Tip:** In the Git for Windows SDK installation directory, rename the `.git` directory to something like
-`.git.renamed`. This will speed up the shell significantly.
-
 In Windows Terminal, duplicate the Developer Command Prompt, name the new profile "Git Bash Developer" and
 set the command line to `cmd.exe /k %USERPROFILE%\git-bash-dev.cmd`. Set the starting directory to
 `%USERPROFILE%`.
+
+**Tip:** In the Git for Windows SDK installation directory, rename the `.git` directory to something like
+`.git.renamed`. This will speed up the shell prompt significantly.
+
+**Tip:** If building and testing is slow, deactivate Smart App Control. Also, run these commands in an
+administrator PowerShell:
+
+```shell
+> Add-MpPreference -ExclusionPath "C:\git-sdk-64"
+> Add-MpPreference -ExclusionPath "C:\path\to\your\projects"
+```
 
 Open the "Git Bash Developer" profile in Windows Terminal and run these commands:
 
