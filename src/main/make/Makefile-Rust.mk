@@ -4,10 +4,14 @@
 # Parameters:
 #
 # - COVERAGE
-#     If set to 1, determine test coverage
+#     If set to 1, determine test coverage using `llvm-profdata` and `llvm-cov`
 # - GAIA_DIR
 # - GAIA_BUILD_TYPE
 #     The build type: `debug` or `release`
+# - LLVM_COV, LLVM_PROFDATA
+#     The LLVM coverage tools. Default to the tools of the `llvm-tools` Rustup component of the nightly
+#     toolchain, which match the toolchain's LLVM version; fall back to `llvm-cov` and `llvm-profdata` on
+#     the `PATH`
 #
 # Targets (parameters):
 #
@@ -35,7 +39,14 @@ endif
 TARGET_DIR := target/$(GAIA_BUILD_TYPE)
 
 COVERAGE_DIR := $(TARGET_DIR)/code-coverage
-TEST_BIN_DIR := $(TARGET_DIR)/deps
+DOCTEST_BIN_DIR := $(COVERAGE_DIR)/doctests
+PROFRAW_DIR := $(COVERAGE_DIR)/profraw
+PROFDATA_FILE := $(COVERAGE_DIR)/coverage.profdata
+
+# Source files to exclude from coverage reports: dependencies and the standard library
+COVERAGE_IGNORE_REGEX := [/\\](\.cargo|\.rustup|rustc)[/\\]
+
+COVERAGE_RUSTFLAGS := -C instrument-coverage -Z coverage-options=branch
 
 # Configure Cargo -------------------------------------------------------------------------------------------
 
@@ -43,6 +54,16 @@ CARGO_FLAGS :=
 ifeq ($(GAIA_BUILD_TYPE),release)
   CARGO_FLAGS += --release
 endif
+
+# Configure LLVM tools --------------------------------------------------------------------------------------
+
+# Recursively expanded, so `rustc` is only invoked if the tools are actually needed
+RUST_LLVM_BIN_DIR = $(dir $(shell rustc +nightly --print target-libdir))bin
+
+LLVM_COV ?= $(firstword \
+  $(wildcard $(RUST_LLVM_BIN_DIR)/llvm-cov $(RUST_LLVM_BIN_DIR)/llvm-cov.exe) llvm-cov)
+LLVM_PROFDATA ?= $(firstword \
+  $(wildcard $(RUST_LLVM_BIN_DIR)/llvm-profdata $(RUST_LLVM_BIN_DIR)/llvm-profdata.exe) llvm-profdata)
 
 # Targets ---------------------------------------------------------------------------------------------------
 
@@ -79,22 +100,52 @@ test:
 ifneq ($(COVERAGE),1)
 	@cargo test $(CARGO_FLAGS)
 else
-  ifndef GAIA_OS_WINDOWS
-	@rm -rf $(COVERAGE_DIR)
+	@# The raw profile format depends on the LLVM version, so the LLVM tools must match `rustc`'s LLVM
+	@rustc_llvm=$$(rustc +nightly -vV | sed -n 's/^LLVM version: \([0-9]*\).*/\1/p'); \
+	  for tool in $(LLVM_PROFDATA) $(LLVM_COV); do \
+	    tool_llvm=$$($$tool --version 2>/dev/null | sed -n 's/.*LLVM version \([0-9]*\).*/\1/p' | head -n 1); \
+	    if [ "$$tool_llvm" != "$$rustc_llvm" ]; then \
+	      echo "error: \`$$tool\` uses LLVM $${tool_llvm:-?}, but \`rustc +nightly\` uses LLVM $$rustc_llvm." >&2; \
+	      echo "Install the matching tools with \`rustup +nightly component add llvm-tools\`, or set" >&2; \
+	      echo "\`LLVM_PROFDATA\` and \`LLVM_COV\` to LLVM $$rustc_llvm tools." >&2; \
+	      exit 1; \
+	    fi; \
+	  done
+	@rm -fr $(COVERAGE_DIR)
+	@mkdir -p $(PROFRAW_DIR)
+	@# Run instrumented tests. Each process writes its own `.profraw` file to `PROFRAW_DIR`; absolute
+	@# paths are required because documentation tests run in a different working directory.
+	@# Documentation-test executables are kept so that `llvm-cov` can read their coverage mappings
 	@CARGO_INCREMENTAL=0 \
-	  LLVM_PROFILE_FILE=cargo-test-%p-%m.profraw \
-	  RUSTDOCFLAGS="-C instrument-coverage -Z unstable-options --persist-doctests $(TEST_BIN_DIR)" \
-	  RUSTFLAGS="-C instrument-coverage" cargo +nightly test $(CARGO_FLAGS)
-	@grcov --binary-path $(TEST_BIN_DIR) -s . -t html --branch --ignore-not-existing \
-	  -o $(COVERAGE_DIR)/html .
-	@# Remove `.profraw` files
-	@rm -v $$(find -name "cargo-test-*.profraw")
-	@# Remove documentation-test executables
-	@rm -frv $(TEST_BIN_DIR)/src_*_rs_*
+	  LLVM_PROFILE_FILE="$(abspath $(PROFRAW_DIR))/cargo-test-%p-%m.profraw" \
+	  RUSTDOCFLAGS="$(COVERAGE_RUSTFLAGS) -Z unstable-options --persist-doctests $(abspath $(DOCTEST_BIN_DIR))" \
+	  RUSTFLAGS="$(COVERAGE_RUSTFLAGS)" \
+	  cargo +nightly test $(CARGO_FLAGS)
+	@# Merge raw profiles
+	@$(LLVM_PROFDATA) merge -sparse $(PROFRAW_DIR)/*.profraw -o $(PROFDATA_FILE)
+	@# Collect the instrumented executables: test executables as reported by Cargo (same flags, so
+	@# nothing is rebuilt) and documentation-test executables. Then create the HTML and the summary
+	@# report
+	@set -e; \
+	  objects=$$( \
+	    CARGO_INCREMENTAL=0 RUSTFLAGS="$(COVERAGE_RUSTFLAGS)" \
+	      cargo +nightly test $(CARGO_FLAGS) --no-run --message-format=json 2>/dev/null \
+	      | grep -o '"executable":"[^"]*"' | sed 's/^"executable":"//; s/"$$//; s/\\\\/\\/g'; \
+	    if [ -d $(DOCTEST_BIN_DIR) ]; then \
+	      find $(DOCTEST_BIN_DIR) -type f \( -name rust_out -o -name rust_out.exe \); \
+	    fi); \
+	  object_args=$$(for o in $$objects; do printf -- '-object %s ' "$$o"; done); \
+	  $(LLVM_COV) show $$object_args \
+	    -instr-profile=$(PROFDATA_FILE) \
+	    -ignore-filename-regex='$(COVERAGE_IGNORE_REGEX)' \
+	    -format=html -output-dir=$(COVERAGE_DIR)/html \
+	    -show-branches=count -show-line-counts-or-regions -show-instantiations=false; \
+	  $(LLVM_COV) report $$object_args \
+	    -instr-profile=$(PROFDATA_FILE) \
+	    -ignore-filename-regex='$(COVERAGE_IGNORE_REGEX)'
+	@# Remove raw profiles and documentation-test executables
+	@rm -fr $(PROFRAW_DIR) $(DOCTEST_BIN_DIR)
 	@echo Created $(COVERAGE_DIR)/html/index.html
-  else
-	$(error grcov is not available on Windows)
-  endif
 endif
 
 # Rust-specific targets -------------------------------------------------------------------------------------

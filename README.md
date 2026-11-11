@@ -31,8 +31,9 @@ Run these commands:
 $ sudo apt update
 $ sudo apt upgrade
 $ sudo apt dist-upgrade
+$ sudo apt install ccache cmake ninja-build
+$ sudo apt install doxygen graphviz
 $ sudo apt install python3 python3-json5 python3-semver python3-toml
-$ sudo apt install ccache
 ```
 
 ### macOS
@@ -48,13 +49,13 @@ $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/
 ```
 
 ```shell
-$ brew install bash # This installs a recent version
-$ brew install coreutils
-$ brew install findutils
+$ brew install bash bash-completion
+$ brew install ccache cmake ninja
+$ brew install coreutils findutils
+$ brew install doxygen graphviz
+$ brew install gcc
 $ brew install python3
 $ pip3 install --break-system-packages json5 semver toml
-$ brew install ccache
-$ brew install gcc # This installs a recent `gcc` and `g++`
 ```
 
 In your Ghostty configuration file, add
