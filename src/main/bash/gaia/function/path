@@ -79,7 +79,7 @@ path-remove() {
   eval "dirs=(\$$var)"
   local new_dirs=()
   local d; for d in "${dirs[@]}"; do
-    [[ $d != $dir ]] && new_dirs+=("$d")
+    [[ $d != "$dir" ]] && new_dirs+=("$d")
   done
   local new_path
   for d in "${new_dirs[@]}"; do

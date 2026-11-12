@@ -7,8 +7,23 @@
 [[ ! $GAIA_WSL ]] && return
 
 # Usage: wsl-env NAME
+#
+# Prints the value of the Windows environment variable NAME, which must hold a path, as a WSL path.
 wsl-env() {
-  wslpath $(cmd.exe /c echo %$1% 2>/dev/null) | tr -d '\r'
+  eval "$(cl-get-opts-fn $FUNCNAME "" "$@")"
+  eval $(cl-get-args-fn $FUNCNAME NAME)
+
+  # Strip the CR from `cmd.exe` before the value goes anywhere. Keep the value in one word, as it may contain
+  # spaces, as in `C:\Users\John Doe`
+  local val
+  val=$(cmd.exe /c echo "%$name%" 2>/dev/null | tr -d '\r')
+
+  # For an undefined variable, `cmd.exe` echoes `%NAME%` unchanged
+  if [[ ! $val || $val == "%$name%" ]]; then
+    shell-error-fn -r1 $FUNCNAME Windows environment variable not set: \`$name\`
+    return 1
+  fi
+  wslpath "$val"
 }
 
 # Usage: wsl-mount-google-drive
@@ -25,7 +40,7 @@ wsl-open() {
   eval "$(cl-get-opts-fn $FUNCNAME "" "$@")"
   eval $(cl-get-args-fn $FUNCNAME FILE)
 
-  explorer.exe $(wslpath -aw "$file")
+  explorer.exe "$(wslpath -aw "$file")"
 }
 
 # EOF

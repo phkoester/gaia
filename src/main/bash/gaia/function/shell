@@ -64,7 +64,7 @@ shell-print-stack-trace() {
     local file=${BASH_SOURCE[i + 1]}
 
     # Filter out first caller from this script
-    [[ $i == 0 && $file == $BASH_SOURCE ]] && continue
+    [[ $i == 0 && $file == "$BASH_SOURCE" ]] && continue
 
     # Print entry
     echo "  at ${FUNCNAME[i + 1]} ($file:${BASH_LINENO[i]})" >&2

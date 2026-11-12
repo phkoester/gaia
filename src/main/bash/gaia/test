@@ -162,12 +162,12 @@ RUN-ALL-TESTS() {
 
   local num_passed_tests=$(($num_tests - $num_failed_tests))
   if (( $num_passed_tests > 0 )); then
-    echo -e "$GRN[  PASSED  ]$OFF $(string-amount $num_passed_tests test tests)"
+    echo -e "$GRN[  PASSED  ]$OFF $(string-amount $num_passed_tests test tests)."
   fi
   if (( $num_failed_tests > 0 )); then
-    echo -e "$RED[  FAILED  ]$OFF $(string-amount $num_failed_tests test tests)"
+    echo -e "$RED[  FAILED  ]$OFF $(string-amount $num_failed_tests test tests)."
     echo
-    echo "$num_failed_tests FAILED $(string-amount $num_failed_tests TEST TESTS)"
+    echo "$num_failed_tests FAILED $(string-amount -n $num_failed_tests TEST TESTS)"
     exit 1
   fi
   exit 0

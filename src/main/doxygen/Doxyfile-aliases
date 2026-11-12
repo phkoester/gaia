@@ -123,12 +123,12 @@ ALIASES += type_base="The base type."
 ALIASES += op_eq{1}="Equality operator for \1.^^^^ \
 @param lhs the left-hand side \
 @param rhs the right-hand side \
-@return whether @p lhs equals @p rhs"
+@return if @p lhs equals @p rhs"
 
 ALIASES += op_ne{1}="Inequality operator for \1.^^^^ \
 @param lhs the left-hand side \
 @param rhs the right-hand side \
-@return whether @p lhs does not equal @p rhs"
+@return if @p lhs does not equal @p rhs"
 
 ALIASES += op_cmp{1}="Three-way-comparison operator for \1.^^^^ \
 @param lhs the left-hand side \

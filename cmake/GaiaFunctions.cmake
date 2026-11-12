@@ -132,9 +132,25 @@ endfunction()
 if(WIN32) # `GAIA_OS_WINDOWS` isn’t available yet
 
 # GaiaWindowsUnixPath(in out)
+#
+# Converts the Windows path `in` into a Unix path using `cygpath -u`. Fails if `cygpath` cannot be run,
+# fails, or prints nothing.
 function(GaiaWindowsUnixPath in out)
-  execute_process(COMMAND cygpath -u "${in}" OUTPUT_VARIABLE localOut)
-  string(STRIP ${localOut} localOut)
+  execute_process(
+    COMMAND cygpath -u "${in}"
+    OUTPUT_VARIABLE localOut
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_VARIABLE error
+    ERROR_STRIP_TRAILING_WHITESPACE
+    RESULT_VARIABLE result
+  )
+  # `result` is the exit status, or an error message if `cygpath` cannot be run at all
+  if(NOT result EQUAL 0)
+    GaiaFatalError("Cannot convert `${in}` with `cygpath`: ${result}: ${error}")
+  endif()
+  if(localOut STREQUAL "")
+    GaiaFatalError("Cannot convert `${in}` with `cygpath`: empty output")
+  endif()
   set(${out} "${localOut}" PARENT_SCOPE)
 endfunction()
 

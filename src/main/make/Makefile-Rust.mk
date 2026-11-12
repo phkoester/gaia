@@ -10,12 +10,12 @@
 #     The build type: `debug` or `release`
 # - LLVM_COV, LLVM_PROFDATA
 #     The LLVM coverage tools. Default to the tools of the `llvm-tools` Rustup component of the nightly
-#     toolchain, which match the toolchain's LLVM version; fall back to `llvm-cov` and `llvm-profdata` on
+#     toolchain, which match the toolchain’s LLVM version; fall back to `llvm-cov` and `llvm-profdata` on
 #     the `PATH`
 #
 # Targets (parameters):
 #
-# - bench (GAIA_BUILD_TYPE)
+# - bench
 # - build (GAIA_BUILD_TYPE)
 # - check (GAIA_BUILD_TYPE)
 # - clean
@@ -100,7 +100,7 @@ test:
 ifneq ($(COVERAGE),1)
 	@cargo test $(CARGO_FLAGS)
 else
-	@# The raw profile format depends on the LLVM version, so the LLVM tools must match `rustc`'s LLVM
+	@# The raw profile format depends on the LLVM version, so the LLVM tools must match `rustc`’s LLVM
 	@rustc_llvm=$$(rustc +nightly -vV | sed -n 's/^LLVM version: \([0-9]*\).*/\1/p'); \
 	  for tool in $(LLVM_PROFDATA) $(LLVM_COV); do \
 	    tool_llvm=$$($$tool --version 2>/dev/null | sed -n 's/.*LLVM version \([0-9]*\).*/\1/p' | head -n 1); \

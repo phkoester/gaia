@@ -13,6 +13,12 @@ TEST-string-amount() {
   EXPECT-EQ "$(string-amount 1 test tests)" "1 test"
 
   EXPECT-EQ "$(string-amount 2 test tests)" "2 tests"
+
+  EXPECT-EQ "$(string-amount -n 0 test tests)" "tests"
+
+  EXPECT-EQ "$(string-amount -n 1 test tests)" "test"
+
+  EXPECT-EQ "$(string-amount -n 2 test tests)" "tests"
 }
 
 TEST-string-begins-with() {

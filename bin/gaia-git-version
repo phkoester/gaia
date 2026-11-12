@@ -11,8 +11,9 @@ tag_version=
 commit_hash=
 commit_date=
 
-if [[ -d .git ]]; then
-  tag_version=$(git tag --list 'v*' --sort=v:refname | tail -1)
+if [[ -e .git ]]; then
+  # The highest version tag in the history of `HEAD`. A tag on a later commit doesn’t describe this checkout
+  tag_version=$(git tag --list 'v*' --merged HEAD --sort=v:refname | tail -1)
   commit_hash=$(git rev-parse HEAD)
   commit_date=$(git show -s --format=%cd --date=format:'%Y-%m-%d' HEAD)
 fi
