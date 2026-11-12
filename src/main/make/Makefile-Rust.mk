@@ -87,7 +87,7 @@ clean:
 
 doc:
 	@$(call print-target,$@)
-	RUSTDOCFLAGS="--cfg docsrs --html-in-header $(KATEX_HTML)" \
+	@RUSTDOCFLAGS="--cfg docsrs --html-in-header $(KATEX_HTML)" \
 	  cargo +nightly doc $(CARGO_FLAGS) --all-features --no-deps
 
 # @todo Run specific target using the TARGET parameter

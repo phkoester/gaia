@@ -15,7 +15,7 @@ ifndef GAIA_DIR
 endif
 include $(GAIA_DIR)/src/main/make/Makefile-bash.mk
 
-# Test: bash ------------------------------------------------------------------------------------------------
+# Test: Bash ------------------------------------------------------------------------------------------------
 
 FILE := test/bash/gaia/test-cl.sh
 include src/main/make/test-script.mk
