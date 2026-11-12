@@ -7,9 +7,25 @@ source "$GAIA_DIR/src/main/bash/gaia/init" || exit 2
 
 set -e
 
-ssh-init
+# Functions -------------------------------------------------------------------------------------------------
 
-export LC_ALL=en_US.UTF-8
+# Usage: has-diff [ARG]...
+#
+# Succeeds if `git diff --quiet ARG...` finds differences, fails if it finds none, and exits if `git diff`
+# itself fails.
+has-diff() {
+  local status=0
+  git diff --quiet "$@" || status=$?
+  case $status in
+    0) return 1 ;;
+    1) return 0 ;;
+    *) shell-error -e2 \`git diff --quiet $@\` failed with exit status $status ;;
+  esac
+}
+
+# Main ------------------------------------------------------------------------------------------------------
+
+ssh-init
 
 if [[ $1 == "" ]]; then
   exec git status
@@ -23,13 +39,16 @@ elif [[ $1 == acp ]]; then
   if [[ ! $m ]]; then
     m="(No commit message.)"
   fi
-  if git status | grep -Eq "(Untracked files:|Changes not staged for commit:)"; then
+  # Add if there are unstaged changes to tracked files or untracked files that are not ignored
+  untracked=$(git ls-files --others --exclude-standard)
+  if has-diff || [[ $untracked ]]; then
     echo Adding ...
     git add .
   else
     echo Nothing to add
   fi
-  if git status | grep -q "Changes to be committed:"; then
+  # Commit if the index differs from `HEAD`. Without commits yet, the index is compared to the empty tree
+  if has-diff --cached; then
     echo Committing ...
     git commit -m"$m"
   else
