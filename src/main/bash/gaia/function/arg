@@ -10,9 +10,16 @@ arg-count() {
 }
 
 # Usage: arg-sort [-u] [ARG]...
+#
+# Prints the arguments sorted, one per line. An argument may contain spaces, but not line breaks.
+#
+# Options:
+#
+#   -u  print each argument only once
 arg-sort() {
   eval "$(cl-get-opts-fn $FUNCNAME u "$@")"
-  echo "$@" | tr ' ' '\n' | sort ${u+-u} | tr '\n' ' '
+  (($# == 0)) && return
+  printf '%s\n' "$@" | sort ${u+-u}
 }
 
 # EOF

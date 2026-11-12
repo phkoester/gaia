@@ -53,7 +53,10 @@ elif [[ $OSTYPE == linux-gnu ]]; then
     return 2
   fi
 
-  if lsb_release -a | grep -q Ubuntu; then
+  # Read the distribution ID from `/etc/os-release` rather than calling `lsb_release`, which may be missing
+  # and prints "No LSB modules are available." to stderr. Source the file in a subshell so that its variables
+  # don’t leak into the shell
+  if [[ -r /etc/os-release ]] && (source /etc/os-release && [[ $ID == ubuntu ]]); then
     export GAIA_UBUNTU=1
   fi
 

@@ -14,7 +14,7 @@ Usage:
 
 Arguments:
   INPUT_FILE  `compile_commands.json` file
-  PATTERN     Regular expression pattern to match against the `file` field
+  PATTERN     Regular-expression pattern to match against the `file` field
 """
 
 import argparse
@@ -33,8 +33,15 @@ def compile_defines(input_file, pattern):
     if not regex.search(entry['file']):
       continue
     args = entry.get('arguments') or shlex.split(entry['command'])
-    for i, arg in enumerate(args):
-      define = args[i + 1] if arg == '-D' else arg[2:] if arg.startswith('-D') else None
+    it = iter(args)
+    for arg in it:
+      if arg == '-D':
+        # The definition is the next argument. A trailing `-D` without one is ignored
+        define = next(it, None)
+      elif arg.startswith('-D'):
+        define = arg[2:]
+      else:
+        continue
       if define:
         defines[define.partition('=')[0]] = define
 

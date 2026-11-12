@@ -65,7 +65,7 @@ CMAKE_DEPS := CMakeLists.txt $(shell find src -name CMakeLists.txt) $(wildcard c
 CHECK_FILES :=
 ifeq ($(filter $(MAKECMDGOALS),check),check)
   ifneq ($(PATTERN),)
-    CHECK_FILES := $(shell find src -name "*.c" -o -name "*.cc" | rg '$(PATTERN)')
+    CHECK_FILES := $(shell find src -name "*.c" -o -name "*.cc" | grep '$(PATTERN)')
     ifeq ($(CHECK_FILES),)
       $(error Found no source files for pattern `$(PATTERN)`)
     endif

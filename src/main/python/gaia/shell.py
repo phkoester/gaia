@@ -23,27 +23,6 @@ _inv_name = os.path.basename(sys.argv[0]) # Invocation name
 
 # Local functions -------------------------------------------------------------------------------------------
 
-def _get_shebang(file: str) -> list[str]:
-  """
-  Looks for the file `file` in `PATH` and tries to read its shebang line.
-
-  Upon success, returns a command line as a string list of the form `["awk", "-f", "file"]`. Otherwise,
-  returns `None`.
-  """
-
-  file = gaia.path.find(env.get("PATH"), file)
-  if not file:
-    return None
-
-  with open(file, encoding="utf-8", mode="r") as f:
-    line = f.readline().strip()
-    if match := re.match(r"^#!(.+)", line):
-      cl = match.group(1).split()
-      cl.append(file)
-      return cl
-
-  return None
-
 def _on_sigint(signal, frame) -> NoReturn:
   """
   `SIGINT` handler.
@@ -89,15 +68,7 @@ def run(*cl, input=None, timeout=None, check=False, **kwargs) -> subprocess.Comp
 
   gaia.log.debug(f"{cl=}")
 
-# try:
   return subprocess.run(*cl, input=input, timeout=timeout, check=check, **kwargs)
-# except OSError:
-#   # Execution failed. We look for a shebang
-#   if new_cl := _get_shebang(file):
-#     new_cl.extend(cl[0][1:]) # Add all but the first argument to the new command line
-#     # We got a new command line: recursive call
-#     return run(new_cl, input=input, timeout=timeout, check=check, **kwargs)
-#   raise
 
 def warn(msg: str) -> None:
   """

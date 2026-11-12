@@ -95,6 +95,9 @@ run:
 	@$(call print-target,$@)
 	@cargo run $(CARGO_FLAGS)
 
+# The coverage recipe needs Bash for arrays, which keep paths with spaces intact
+test: SHELL := bash
+
 test:
 	@$(call print-target,$@)
 ifneq ($(COVERAGE),1)
@@ -125,7 +128,7 @@ else
 	@$(LLVM_PROFDATA) merge -sparse $(PROFRAW_DIR)/*.profraw -o $(PROFDATA_FILE)
 	@# Collect the instrumented executables: test executables as reported by Cargo (same flags, so
 	@# nothing is rebuilt) and documentation-test executables. Then create the HTML and the summary
-	@# report
+	@# report. The executables are read one per line into an array, so paths with spaces stay intact
 	@set -e; \
 	  objects=$$( \
 	    CARGO_INCREMENTAL=0 RUSTFLAGS="$(COVERAGE_RUSTFLAGS)" \
@@ -134,13 +137,16 @@ else
 	    if [ -d $(DOCTEST_BIN_DIR) ]; then \
 	      find $(DOCTEST_BIN_DIR) -type f \( -name rust_out -o -name rust_out.exe \); \
 	    fi); \
-	  object_args=$$(for o in $$objects; do printf -- '-object %s ' "$$o"; done); \
-	  $(LLVM_COV) show $$object_args \
+	  object_args=(); \
+	  while IFS= read -r o; do \
+	    if [[ $$o ]]; then object_args+=(-object "$$o"); fi; \
+	  done <<< "$$objects"; \
+	  $(LLVM_COV) show "$${object_args[@]}" \
 	    -instr-profile=$(PROFDATA_FILE) \
 	    -ignore-filename-regex='$(COVERAGE_IGNORE_REGEX)' \
 	    -format=html -output-dir=$(COVERAGE_DIR)/html \
 	    -show-branches=count -show-line-counts-or-regions -show-instantiations=false; \
-	  $(LLVM_COV) report $$object_args \
+	  $(LLVM_COV) report "$${object_args[@]}" \
 	    -instr-profile=$(PROFDATA_FILE) \
 	    -ignore-filename-regex='$(COVERAGE_IGNORE_REGEX)'
 	@# Remove raw profiles and documentation-test executables
