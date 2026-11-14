@@ -218,6 +218,7 @@ ifdef GAIA_OS_WINDOWS
 else
 	@rm -frv build
 endif
+	@rm -rfv $(shell find -name __pycache__ -type d)
 
 configure: compile_commands.json
 
