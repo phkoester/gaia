@@ -213,8 +213,11 @@ check:
 
 clean:
 	@$(call print-target,$@)
+ifdef GAIA_OS_WINDOWS
+	@cmd //c "if exist build rmdir /q /s build"
+else
 	@rm -frv build
-	@rm -frv $(shell find -name __pycache__ -type d)
+endif
 
 configure: compile_commands.json
 
