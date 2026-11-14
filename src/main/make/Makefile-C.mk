@@ -193,13 +193,13 @@ ifneq ($(wildcard $(BUILD_DIR)/src/bench/),)
 	@$(call print-target,$@)
 	@ctest $(CTEST_FLAGS) \
 	  --preset $(TEST_PRESET) \
-	  --test-dir $(BUILD_DIR)/src/bench $(if $(PATTERN),-R '$(PATTERN)',) -V
+	  --test-dir $(BUILD_DIR)/src/bench $(if $(PATTERN),-R '$(PATTERN)') -V
 endif
 
 build: configure
 	@$(call print-target,$@)
 	@cmake $(CMAKE_FLAGS) --build --preset $(BUILD_PRESET) \
-	  $(if $(TARGET),--target $(TARGET),) $(CMAKE_TRAILING_FLAGS) </dev/null
+	  $(if $(TARGET),--target $(TARGET)) $(CMAKE_TRAILING_FLAGS) </dev/null
 
 check:
 	@$(call print-target,$@)
@@ -214,10 +214,9 @@ check:
 clean:
 	@$(call print-target,$@)
 ifdef GAIA_OS_WINDOWS
-	@cmd //c "if exist build rmdir /q /s build"
-else
-	@rm -frv build
+	@echo Removing \`build\`, this may take a while ...
 endif
+	@cmake -E rm -rf build
 	@rm -rfv $(shell find -name __pycache__ -type d)
 
 configure: compile_commands.json
@@ -230,9 +229,14 @@ rebuild: reconfigure build
 .PHONY: reconfigure
 reconfigure:
 	@$(call print-target,$@)
-	@cmake --build --preset $(BUILD_PRESET) --target clean </dev/null
-	@cmake $(CMAKE_CONFIGURE_FLAGS) --fresh --preset $(CONFIGURE_PRESET) \
-	  -DFETCHCONTENT_FULLY_DISCONNECTED=ON </dev/null
+	@$(if $(wildcard $(BUILD_DIR)/CMakeFiles/TargetDirectories.txt),\
+	  cmake --build --preset $(BUILD_PRESET) --target clean </dev/null)
+	@# Like `--fresh`, but keep `FetchContent`’s stamps so populated dependencies are not downloaded
+	@# again
+	@cmake -E rm -rf $(BUILD_DIR)/CMakeCache.txt \
+	  $(filter-out %/fc-stamp %/fc-tmp,$(wildcard $(BUILD_DIR)/CMakeFiles/*))
+	@cmake $(CMAKE_CONFIGURE_FLAGS) --preset $(CONFIGURE_PRESET) \
+	  -DFETCHCONTENT_UPDATES_DISCONNECTED=ON </dev/null
 	@echo ">" compile_commands.json
 	@cat $(BUILD_DIR)/compile_commands.json | \
 	  gaia-filter-compile-commands --field file $(PROJECT_NAME)/src/ > compile_commands.json
@@ -249,7 +253,7 @@ test:
 	@$(call print-target,$@)
 	@ctest $(CTEST_FLAGS) \
 	  --preset $(TEST_PRESET) \
-	  --test-dir $(BUILD_DIR)/src/test $(if $(PATTERN),-R '$(PATTERN)',)
+	  --test-dir $(BUILD_DIR)/src/test $(if $(PATTERN),-R '$(PATTERN)')
 
 # `compile_commands.json` ...................................................................................
 
