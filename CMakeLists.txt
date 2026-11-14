@@ -4,7 +4,7 @@
 
 cmake_minimum_required(VERSION 4.2)
 
-include(${CMAKE_CURRENT_LIST_DIR}/cmake/GaiaFunctions.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/cmake/gaia-functions.cmake)
 
 # Project ---------------------------------------------------------------------------------------------------
 

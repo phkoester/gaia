@@ -1,5 +1,5 @@
 #
-# GaiaFunctions.cmake
+# gaia-functions.cmake
 #
 # Helper functions for Gaia.
 #
