@@ -28,6 +28,14 @@ void firstFunction() { ... }
 void secondFunction() { ... }
 ```
 
+Tests are organized like this:
+
+```c++
+// `TEST` ===================================================================================================
+
+// Functions ------------------------------------------------------------------------------------------------
+```
+
 ## Doc Comments
 
 For doc comments, [Doxygen](https://www.doxygen.nl) is in use.
