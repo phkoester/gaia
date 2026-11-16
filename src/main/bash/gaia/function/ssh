@@ -11,7 +11,7 @@ ssh-init() {
 
   if [[ $n == 0 ]]; then
     # Start new agent, provide some output
-    echo Starting new \`ssh-agent\` ...
+    echo starting new \`ssh-agent\` ...
     ssh-agent > ~/.ssh-init
     source ~/.ssh-init
     ssh-add
@@ -19,7 +19,7 @@ ssh-init() {
     # Silently reuse existing agent
     source ~/.ssh-init >/dev/null || return 1
   else
-    shell-error-fn -r1 $FUNCNAME Found no suitable \`ssh-agent\`: $pids
+    shell-error-fn -r1 $FUNCNAME found no suitable \`ssh-agent\`: $pids
     return 1
   fi
 }

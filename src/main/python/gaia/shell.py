@@ -83,6 +83,6 @@ signal.signal(signal.SIGINT, _on_sigint)
 
 _encoding = locale.getpreferredencoding()
 if _encoding not in ["UTF-8", "utf-8"]:
-  error(f"Preferred encoding must be `UTF-8` or `utf-8`, but the actual value is `{_encoding}`", 2)
+  error(f"preferred encoding must be `UTF-8` or `utf-8`, but the actual value is `{_encoding}`", 2)
 
 # EOF

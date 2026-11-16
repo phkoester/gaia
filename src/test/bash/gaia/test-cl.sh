@@ -68,7 +68,7 @@ func-helper__() {
   # Before parsing the command line, take arguments OPT_STRING and ARG_NAMES
 
   if (($# < 2)); then
-    shell-error-fn -r2 $FUNCNAME Usage: func-helper OPT_STRING ARG_NAMES \[ARG\]...
+    shell-error-fn -r2 $FUNCNAME usage: func-helper OPT_STRING ARG_NAMES \[ARG\]...
     GAIA_NO_SHELL_PRINT_STACK_TRACE=
     return 2
   fi
@@ -181,20 +181,20 @@ print-opts-fn__() {
 # Tests -----------------------------------------------------------------------------------------------------
 
 TEST-script() {
-  EXPECT-MATCH "$(script__)" Usage:
+  EXPECT-MATCH "$(script__)" usage:
 
-  EXPECT-MATCH "$(script__ "")" Usage:
+  EXPECT-MATCH "$(script__ "")" usage:
 
-  EXPECT-NO-MATCH "$(script__ "" "")" Usage:
+  EXPECT-NO-MATCH "$(script__ "" "")" usage:
 }
 
 TEST-cl-get-opts() {
   script__ "" "" -q >/dev/null
-  EXPECT-MATCH "$OUTPUT" "error: Invalid option: \`-q\`"
+  EXPECT-MATCH "$OUTPUT" "error: invalid option: \`-q\`"
   EXPECT-EQ $STATUS 2
 
   script__ vf: "" -q >/dev/null
-  EXPECT-MATCH "$OUTPUT" "error: Invalid option: \`-q\`"
+  EXPECT-MATCH "$OUTPUT" "error: invalid option: \`-q\`"
   EXPECT-EQ $STATUS 2
 
   script__ vf: "" -v -fname "a b" c >/dev/null
@@ -202,7 +202,7 @@ TEST-cl-get-opts() {
   EXPECT-EQ $STATUS 0
 
   script__ vf: "" -f >/dev/null
-  EXPECT-MATCH "$OUTPUT" "error: Option \`-f\` requires an argument"
+  EXPECT-MATCH "$OUTPUT" "error: option \`-f\` requires an argument"
   EXPECT-EQ $STATUS 2
 }
 
@@ -212,25 +212,25 @@ TEST-cl-get-args() {
   EXPECT-EQ $STATUS 0
 
   script__ "" A >/dev/null
-  EXPECT-MATCH "$OUTPUT" "error: Missing argument: \`A\`"
+  EXPECT-MATCH "$OUTPUT" "error: missing argument: \`A\`"
   EXPECT-EQ $STATUS 2
 }
 
 TEST-func() {
-  EXPECT-MATCH "$(func__)" Usage:
+  EXPECT-MATCH "$(func__)" usage:
 
-  EXPECT-MATCH "$(func__ "")" Usage:
+  EXPECT-MATCH "$(func__ "")" usage:
 
-  EXPECT-NO-MATCH "$(func__ "" "")" Usage:
+  EXPECT-NO-MATCH "$(func__ "" "")" usage:
 }
 
 TEST-cl-get-opts-fn() {
   func__ "" "" -q >/dev/null
-  EXPECT-MATCH "$OUTPUT" "error: In function \`func-helper__\`: Invalid option: \`-q\`"
+  EXPECT-MATCH "$OUTPUT" "error: in function \`func-helper__\`: invalid option: \`-q\`"
   EXPECT-EQ $STATUS 2
 
   func__ vf: "" -q >/dev/null
-  EXPECT-MATCH "$OUTPUT" "error: In function \`func-helper__\`: Invalid option: \`-q\`"
+  EXPECT-MATCH "$OUTPUT" "error: in function \`func-helper__\`: invalid option: \`-q\`"
   EXPECT-EQ $STATUS 2
 
   func__ vf: "" -v -fname "a b" c >/dev/null
@@ -238,7 +238,7 @@ TEST-cl-get-opts-fn() {
   EXPECT-EQ $STATUS 0
 
   func__ vf: "" -f >/dev/null
-  EXPECT-MATCH "$OUTPUT" "error: In function \`func-helper__\`: Option \`-f\` requires an argument"
+  EXPECT-MATCH "$OUTPUT" "error: in function \`func-helper__\`: option \`-f\` requires an argument"
   EXPECT-EQ $STATUS 2
 }
 
@@ -248,7 +248,7 @@ TEST-cl-get-args-fn() {
   EXPECT-EQ $STATUS 0
 
   func__ "" A >/dev/null
-  EXPECT-MATCH "$OUTPUT" "error: In function \`func-helper__\`: Missing argument: \`A\`"
+  EXPECT-MATCH "$OUTPUT" "error: in function \`func-helper__\`: missing argument: \`A\`"
   EXPECT-EQ $STATUS 2
 }
 
@@ -412,11 +412,11 @@ TEST-args-double-dash() {
 
   # `--` is not an argument, so `A` is missing
   script__ "" A -- >/dev/null
-  EXPECT-MATCH "$OUTPUT" "error: Missing argument: \`A\`"
+  EXPECT-MATCH "$OUTPUT" "error: missing argument: \`A\`"
   EXPECT-EQ $STATUS 2
 
   func__ "" A -- >/dev/null
-  EXPECT-MATCH "$OUTPUT" "error: In function \`func-helper__\`: Missing argument: \`A\`"
+  EXPECT-MATCH "$OUTPUT" "error: in function \`func-helper__\`: missing argument: \`A\`"
   EXPECT-EQ $STATUS 2
 }
 
@@ -435,11 +435,11 @@ TEST-opts-invalid-option-characters() {
   local option
   for option in q ';' '$' "'" '"' '`' '&' '*' '(' '|' '<'; do
     script__ m: "" "-$option" >/dev/null
-    EXPECT-CONTAINS "$OUTPUT" "error: Invalid option: \`-$option\`"
+    EXPECT-CONTAINS "$OUTPUT" "error: invalid option: \`-$option\`"
     EXPECT-EQ $STATUS 2
 
     func__ m: "" "-$option" >/dev/null
-    EXPECT-CONTAINS "$OUTPUT" "error: In function \`func-helper__\`: Invalid option: \`-$option\`"
+    EXPECT-CONTAINS "$OUTPUT" "error: in function \`func-helper__\`: invalid option: \`-$option\`"
     EXPECT-EQ $STATUS 2
   done
 }
@@ -449,11 +449,11 @@ TEST-opts-stop-at-first-invalid-option() {
 
   output=$(cl-get-opts m: -x -y)
   EXPECT-EQ $? 2
-  EXPECT-SAME "$output" 'shell-error -e2 Invalid option: \`-x\`'
+  EXPECT-SAME "$output" 'shell-error -e2 invalid option: \`-x\`'
 
   output=$(cl-get-opts-fn my-func m: -x -y)
   EXPECT-EQ $? 2
-  EXPECT-SAME "$output" 'shell-error-fn -r2 "my-func" Invalid option: \`-x\`; return 2'
+  EXPECT-SAME "$output" 'shell-error-fn -r2 "my-func" invalid option: \`-x\`; return 2'
 }
 
 # Main ------------------------------------------------------------------------------------------------------

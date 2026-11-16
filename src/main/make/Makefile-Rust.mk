@@ -151,7 +151,7 @@ else
 	    -ignore-filename-regex='$(COVERAGE_IGNORE_REGEX)'
 	@# Remove raw profiles and documentation-test executables
 	@rm -fr $(PROFRAW_DIR) $(DOCTEST_BIN_DIR)
-	@echo Created $(COVERAGE_DIR)/html/index.html
+	@echo created $(COVERAGE_DIR)/html/index.html
 endif
 
 # Rust-specific targets -------------------------------------------------------------------------------------

@@ -57,7 +57,7 @@ def find_root_dir() -> str:
     if test_root_dir(dir):
       return dir
 
-  error("Cannot find root directory", stack_trace=False)
+  error("cannot find root directory", stack_trace=False)
 
 def get_gaia_project_json(prj: str) -> dict[str, any]:
   dir = get_project_dir(prj)
@@ -166,11 +166,11 @@ def resolve(prj: str) -> list[str]:
   def resolve0(prj: str, path: list[str]) -> None:
     if prj in path:
       cycle = path[path.index(prj):] + [prj]
-      error(f"Cyclic dependency: {' -> '.join(cycle)}", stack_trace=False)
+      error(f"cyclic dependency: {' -> '.join(cycle)}", stack_trace=False)
     path.append(prj)
     for dep in projects[prj]:
       if dep not in projects:
-        error(f"Project `{prj}` depends on unknown project `{dep}`", stack_trace=False)
+        error(f"project `{prj}` depends on unknown project `{dep}`", stack_trace=False)
       resolve0(dep, path) # Recursive call
     path.pop()
     if prj not in ret:
@@ -208,7 +208,7 @@ gaia.log.debug(f"{cl=}")
 # Find root dir
 root_dir = find_root_dir()
 gaia.log.debug(f"{root_dir=}")
-gaia.shell.note(f"Using project root directory: {root_dir}")
+gaia.shell.note(f"using project root directory: {root_dir}")
 
 # Collect projects and their dependencies from `gaia-project.json`
 projects = {}

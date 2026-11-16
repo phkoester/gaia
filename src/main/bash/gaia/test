@@ -16,7 +16,7 @@ source "$GAIA_DIR/src/main/bash/gaia/init" || return 2
 EXPECT-CONTAINS() {
   if [[ $1 != *"$2"* ]]; then
     TEST_FAILED=1
-    shell-error -r1 Expected \`"$1"\` to contain \`"$2"\`
+    shell-error -r1 expected \`"$1"\` to contain \`"$2"\`
   fi
 }
 
@@ -24,7 +24,7 @@ EXPECT-CONTAINS() {
 EXPECT-EQ() {
   if [[ $1 != $2 ]]; then
     TEST_FAILED=1
-    shell-error -r1 Expected \`$1\` to be equal to \`$2\`
+    shell-error -r1 expected \`$1\` to be equal to \`$2\`
   fi
 }
 
@@ -33,7 +33,7 @@ EXPECT-FAILURE() {
   "$@"
   if [[ $? == 0 ]]; then
     TEST_FAILED=1
-    shell-error -r1 Expected to fail: \`$@\`
+    shell-error -r1 expected to fail: \`$@\`
   fi
 }
 
@@ -45,7 +45,7 @@ EXPECT-MATCH() {
   for pattern in "$@"; do
     if [[ ! $str =~ $pattern ]]; then
       TEST_FAILED=1
-      shell-error -r1 Expected \`$str\` to match pattern \`$pattern\`
+      shell-error -r1 expected \`$str\` to match pattern \`$pattern\`
       break
     fi
   done
@@ -55,7 +55,7 @@ EXPECT-MATCH() {
 EXPECT-NE() {
   if [[ $1 == $2 ]]; then
     TEST_FAILED=1
-    shell-error -r1 Expected \`$1\` not to be equal to \`$2\`
+    shell-error -r1 expected \`$1\` not to be equal to \`$2\`
   fi
 }
 
@@ -67,7 +67,7 @@ EXPECT-NO-MATCH() {
   for pattern in "$@"; do
     if [[ $str =~ $pattern ]]; then
       TEST_FAILED=1
-      shell-error -r1 Expected \`$str\` not to match pattern \`$pattern\`
+      shell-error -r1 expected \`$str\` not to match pattern \`$pattern\`
       break
     fi
   done
@@ -79,7 +79,7 @@ EXPECT-NO-MATCH() {
 EXPECT-SAME() {
   if [[ $1 != "$2" ]]; then
     TEST_FAILED=1
-    shell-error -r1 Expected \`"$1"\` to be the same as \`"$2"\`
+    shell-error -r1 expected \`"$1"\` to be the same as \`"$2"\`
   fi
 }
 
@@ -88,7 +88,7 @@ EXPECT-SUCCESS() {
   "$@"
   if [[ $? != 0 ]]; then
     TEST_FAILED=1
-    shell-error -r1 Expected to succeed: \`$@\`
+    shell-error -r1 expected to succeed: \`$@\`
   fi
 }
 

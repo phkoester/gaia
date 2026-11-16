@@ -32,14 +32,14 @@ def filter_compile_commands(pattern, field='file', invert=False):
   try:
     data = json.load(sys.stdin.buffer)
   except json.JSONDecodeError as e:
-    print(f"error: Invalid JSON on stdin: {e}", file=sys.stderr)
+    print(f"error: invalid JSON on stdin: {e}", file=sys.stderr)
     return 1
   except Exception as e:
-    print(f"error: Cannot read stdin: {e}", file=sys.stderr)
+    print(f"error: cannot read stdin: {e}", file=sys.stderr)
     return 1
 
   if not isinstance(data, list):
-    print(f"error: Expected JSON array, got {type(data).__name__}", file=sys.stderr)
+    print(f"error: expected JSON array, got {type(data).__name__}", file=sys.stderr)
     return 1
 
   # Compile regex pattern
@@ -47,7 +47,7 @@ def filter_compile_commands(pattern, field='file', invert=False):
   try:
     regex = re.compile(pattern)
   except re.error as e:
-    print(f"error: Invalid regular expression `{pattern}`: {e}", file=sys.stderr)
+    print(f"error: invalid regular expression `{pattern}`: {e}", file=sys.stderr)
     return 1
 
   # Filter entries
@@ -57,7 +57,7 @@ def filter_compile_commands(pattern, field='file', invert=False):
 
   for entry in data:
     if not isinstance(entry, dict):
-      print(f"warning: Skipping nondict entry: {entry}", file=sys.stderr)
+      print(f"warning: skipping nondict entry: {entry}", file=sys.stderr)
       continue
 
     match_found = False
@@ -89,7 +89,7 @@ def filter_compile_commands(pattern, field='file', invert=False):
   try:
     json.dump(filtered_data, sys.stdout, indent=2)
   except Exception as e:
-    print(f"error: Cannot write stdout: {e}", file=sys.stderr)
+    print(f"error: cannot write stdout: {e}", file=sys.stderr)
     return 1
 
   # kept_count = len(filtered_data)

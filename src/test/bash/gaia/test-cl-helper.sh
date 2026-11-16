@@ -12,7 +12,7 @@ source "$GAIA_DIR/src/main/bash/gaia/test"
 # Before parsing the command line, take arguments OPT_STRING and ARG_NAMES
 
 if (($# < 2)); then
-  shell-error -e2 Usage: test-cl-helper.sh OPT_STRING ARG_NAMES \[ARG\]...
+  shell-error -e2 usage: test-cl-helper.sh OPT_STRING ARG_NAMES \[ARG\]...
 fi
 
 OPT_STRING=$1

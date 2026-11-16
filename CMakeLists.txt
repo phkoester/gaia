@@ -25,7 +25,7 @@ GaiaDetectPython()
 
 if(WIN32)
   if(NOT DEFINED ENV{DevEnvDir})
-    GaiaFatalError("Missing Developer Command Prompt from Microsoft Visual Studio")
+    GaiaFatalError("missing Developer Command Prompt from Microsoft Visual Studio")
   endif()
 endif()
 
@@ -40,7 +40,7 @@ elseif(WIN32)
 endif()
 
 if(NOT(GAIA_OS_LINUX) AND NOT(GAIA_OS_MACOS) AND NOT(GAIA_OS_WINDOWS))
-  GaiaFatalError("Unsupported OS ${CMAKE_SYSTEM_NAME}")
+  GaiaFatalError("unsupported OS ${CMAKE_SYSTEM_NAME}")
 endif()
 
 # Check C/C++ toolchain -------------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
 endif()
 
 if(NOT(GAIA_C_COMPILER_GNU) AND NOT(GAIA_C_COMPILER_LLVM) AND NOT(GAIA_C_COMPILER_MSVC))
-  GaiaFatalError("Unsupported C compiler ${CMAKE_C_COMPILER_ID}")
+  GaiaFatalError("unsupported C compiler ${CMAKE_C_COMPILER_ID}")
 endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
@@ -70,7 +70,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 endif()
 
 if(NOT(GAIA_CXX_COMPILER_GNU) AND NOT(GAIA_CXX_COMPILER_LLVM) AND NOT(GAIA_CXX_COMPILER_MSVC))
-  GaiaFatalError("Unsupported C++ compiler ${CMAKE_CXX_COMPILER_ID}")
+  GaiaFatalError("unsupported C++ compiler ${CMAKE_CXX_COMPILER_ID}")
 endif()
 
 # General settings ------------------------------------------------------------------------------------------

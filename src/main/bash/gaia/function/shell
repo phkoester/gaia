@@ -35,7 +35,7 @@ shell-error-fn() {
   eval "$(cl-get-opts-fn $FUNCNAME "e:nr:" "$@")"
   eval $(cl-get-args-fn $FUNCNAME FUNC_NAME)
 
-  echo $(basename -- $0): error: In function \`$func_name\`: $@ >&2
+  echo $(basename -- $0): error: in function \`$func_name\`: $@ >&2
   [[ ! $n ]] && shell-print-stack-trace
 
   if [[ $e ]]; then

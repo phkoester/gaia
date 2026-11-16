@@ -67,7 +67,7 @@ ifeq ($(filter $(MAKECMDGOALS),check),check)
   ifneq ($(PATTERN),)
     CHECK_FILES := $(shell find src -name "*.c" -o -name "*.cc" | grep '$(PATTERN)')
     ifeq ($(CHECK_FILES),)
-      $(error Found no source files for pattern `$(PATTERN)`)
+      $(error found no source files for pattern `$(PATTERN)`)
     endif
   endif
 endif
@@ -84,7 +84,7 @@ ifeq ($(filter $(MAKECMDGOALS),run),run)
   endif
   RUN_EXECUTABLE := $(shell find $(BUILD_DIR)/src -executable -name '$(TARGET)$(EXECUTABLE_SUFFIX)' -type f)
   ifeq ($(RUN_EXECUTABLE),)
-    $(error Found no executable for target `$(TARGET)`)
+    $(error found no executable for target `$(TARGET)`)
   endif
 endif
 
@@ -209,12 +209,12 @@ check:
 	  -p. \
 	  $(CHECK_FILES) \
 	  >$(CHECK_REPORT_FILE) 2>&1; \
-	  status=$$?; echo Report written to $(CHECK_REPORT_FILE); exit $$status
+	  status=$$?; echo report written to $(CHECK_REPORT_FILE); exit $$status
 
 clean:
 	@$(call print-target,$@)
 ifdef GAIA_OS_WINDOWS
-	@echo Removing \`build\`, this may take a while ...
+	@echo removing \`build\`, this may take a while ...
 endif
 	@cmake -E rm -rf build
 	@rm -rfv $(shell find -name __pycache__ -type d)
@@ -279,7 +279,7 @@ ifneq ($(wildcard src/main/Doxyfile),)
 	  -e "warning: Incomplete input: scope for class" \
 	  -e "warning: documented symbol 'T std::experimental::.*' was not declared or defined" || \
 	  true; }
-	@echo Created $(BUILD_DIR)/src/main/doc/html/index.html
+	@echo created $(BUILD_DIR)/src/main/doc/html/index.html
 endif
 
 doc-test: $(if $(wildcard src/test/Doxyfile),compile_commands.json)
@@ -291,7 +291,7 @@ ifneq ($(wildcard src/test/Doxyfile),)
 	  -e "warning: Incomplete input: scope for class" \
 	  -e "warning: documented symbol 'T std::experimental::.*' was not declared or defined" || \
 	  true; }
-	@echo Created $(BUILD_DIR)/src/test/doc/html/index.html
+	@echo created $(BUILD_DIR)/src/test/doc/html/index.html
 endif
 
 list-targets: configure

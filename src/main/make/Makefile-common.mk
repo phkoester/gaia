@@ -33,11 +33,11 @@ ifndef GAIA_DIR
 endif
 
 ifeq ($(filter $(GAIA_CXX_TOOLCHAIN),gnu llvm msvc),)
-  $(error `GAIA_CXX_TOOLCHAIN`: Invalid value `$(GAIA_CXX_TOOLCHAIN)`; expected `gnu`, `llvm`, or `msvc`)
+  $(error `GAIA_CXX_TOOLCHAIN`: invalid value `$(GAIA_CXX_TOOLCHAIN)`; expected `gnu`, `llvm`, or `msvc`)
 endif
 
 ifeq ($(filter $(GAIA_BUILD_TYPE),debug release),)
-  $(error `GAIA_BUILD_TYPE`: Invalid value `$(GAIA_BUILD_TYPE)`; expected `debug` or `release`)
+  $(error `GAIA_BUILD_TYPE`: invalid value `$(GAIA_BUILD_TYPE)`; expected `debug` or `release`)
 endif
 
 # Constants -------------------------------------------------------------------------------------------------

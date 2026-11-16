@@ -44,8 +44,8 @@ pieces of code, names and values of environment variables, or command-line tools
 don’t impose too much noise, these backticks may even surface in the user interface:
 
 ```shell
-echo Loading file \`$file\` ...
-echo error: Invalid option \`-$opt\` >&2
+echo loading file \`$file\` ...
+echo error: invalid option \`-$opt\` >&2
 ```
 
 Some basic Markdown features:

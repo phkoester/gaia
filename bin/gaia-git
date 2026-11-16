@@ -32,7 +32,7 @@ if [[ $1 == "" ]]; then
 elif [[ $1 == acp ]]; then
   # `acp` = add, commit, push
 
-  [[ ! -e .git ]] && shell-error There is no Git repository in this directory
+  [[ ! -e .git ]] && shell-error there is no Git repository in this directory
 
   shift
   eval "$(cl-get-opts m: "$@")"
@@ -42,26 +42,26 @@ elif [[ $1 == acp ]]; then
   # Add if there are unstaged changes to tracked files or untracked files that are not ignored
   untracked=$(git ls-files --others --exclude-standard)
   if has-diff || [[ $untracked ]]; then
-    echo Adding ...
+    echo adding ...
     git add .
   else
-    echo Nothing to add
+    echo nothing to add
   fi
   # Commit if the index differs from `HEAD`. Without commits yet, the index is compared to the empty tree
   if has-diff --cached; then
-    echo Committing ...
+    echo committing ...
     git commit -m"$m"
   else
-    echo Nothing to commit
+    echo nothing to commit
   fi
   # Count the commits the upstream of the current branch doesn’t have yet. This fails if there is no upstream
   if ! ahead=$(git rev-list --count '@{upstream}..HEAD' 2>/dev/null); then
-    shell-error The current branch has no upstream
+    shell-error the current branch has no upstream
   elif ((ahead > 0)); then
-    echo Pushing ...
+    echo pushing ...
     exec git push
   else
-    echo Nothing to push
+    echo nothing to push
   fi
 else
   exec git "$@"
