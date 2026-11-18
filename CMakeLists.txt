@@ -21,11 +21,11 @@ project(gaia VERSION 1.2.5)
 # Prerequisites ---------------------------------------------------------------------------------------------
 
 find_package(Python3 3.10 REQUIRED COMPONENTS Interpreter)
-GaiaDetectPython()
+gaiaDetectPython()
 
 if(WIN32)
   if(NOT DEFINED ENV{DevEnvDir})
-    GaiaFatalError("missing Developer Command Prompt from Microsoft Visual Studio")
+    gaiaFatalError("missing Developer Command Prompt from Microsoft Visual Studio")
   endif()
 endif()
 
@@ -40,7 +40,7 @@ elseif(WIN32)
 endif()
 
 if(NOT(GAIA_OS_LINUX) AND NOT(GAIA_OS_MACOS) AND NOT(GAIA_OS_WINDOWS))
-  GaiaFatalError("unsupported OS ${CMAKE_SYSTEM_NAME}")
+  gaiaFatalError("unsupported OS ${CMAKE_SYSTEM_NAME}")
 endif()
 
 # Check C/C++ toolchain -------------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
 endif()
 
 if(NOT(GAIA_C_COMPILER_GNU) AND NOT(GAIA_C_COMPILER_LLVM) AND NOT(GAIA_C_COMPILER_MSVC))
-  GaiaFatalError("unsupported C compiler ${CMAKE_C_COMPILER_ID}")
+  gaiaFatalError("unsupported C compiler ${CMAKE_C_COMPILER_ID}")
 endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
@@ -70,7 +70,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 endif()
 
 if(NOT(GAIA_CXX_COMPILER_GNU) AND NOT(GAIA_CXX_COMPILER_LLVM) AND NOT(GAIA_CXX_COMPILER_MSVC))
-  GaiaFatalError("unsupported C++ compiler ${CMAKE_CXX_COMPILER_ID}")
+  gaiaFatalError("unsupported C++ compiler ${CMAKE_CXX_COMPILER_ID}")
 endif()
 
 # General settings ------------------------------------------------------------------------------------------
@@ -88,11 +88,11 @@ set(FETCHCONTENT_QUIET FALSE)
 
 # Configuration ---------------------------------------------------------------------------------------------
 
-GaiaAddVar(BUILD_SHARED_LIBS BOOL OFF "Build shared libraries")
-GaiaAddVar(BUILD_TESTING     BOOL ON  "Enable testing: benchmarks and tests")
+gaiaAddVar(BUILD_SHARED_LIBS BOOL OFF "Build shared libraries")
+gaiaAddVar(BUILD_TESTING     BOOL ON  "Enable testing: benchmarks and tests")
 
 if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
-  GaiaAddVar(CMAKE_BUILD_TYPE STRING Release "The build type (`Debug` or `Release`)")
+  gaiaAddVar(CMAKE_BUILD_TYPE STRING Release "The build type (`Debug` or `Release`)")
 endif()
 
 # EOF
