@@ -146,11 +146,9 @@ function(gaiaGenerateVersionHeader dir file namespace version)
 
   file(CONFIGURE
     OUTPUT ${dir}/${file}
-    CONTENT [=[/**
- * @file @fileName@
- *
- * This is a generated file. Do not edit.
- */
+    CONTENT [=[/// @file @fileName@
+///
+/// This is a generated file. Do not edit.
 
 #pragma once
 
