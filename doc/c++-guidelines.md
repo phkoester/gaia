@@ -45,14 +45,12 @@ Use the at sign (`@`) for Doxygen commands. This allows for easier scanning of C
 For each documented item, start with a short but descriptive sentence in a paragraph of its own:
 
 ```c++
-/**
- * Processes @p x in a state-of-the-art fashion.
- *
- * There is even more to say about this function. This goes in a new paragraph.
- *
- * @tparam T the value type
- * @param x the value to frobnicate
- */
+/// Processes @p x in a state-of-the-art fashion.
+///
+/// There is even more to say about this function. This goes in a new paragraph.
+///
+/// @tparam T the value type
+/// @param x the value to frobnicate
 template<typename T>
 void
 frobnicate(T x) {
@@ -64,24 +62,22 @@ When documenting a function, all template parameters, parameters, return values,
 need to be documented, in this order:
 
 ```c++
-/**
- * Checks if the component @p comp is visible.
- *
- * Additional documentation goes here.
- *
- * @tparam Component the component type
- * @param comp the component
- * @return if the component is visible
- * @throw #std::runtime_error if the component isn’t attached yet
- * @throw #mygui::InvalidThread if the current thread is not the GUI thread
- *
- * ## Examples
- *
- * ```
- * Component& comp = WindowManager::byId<Component>(42);
- * assert(visible(comp));
- * ```
- */
+/// Checks if the component @p comp is visible.
+///
+/// Additional documentation goes here.
+///
+/// @tparam Component the component type
+/// @param comp the component
+/// @return if the component is visible
+/// @throw #std::runtime_error if the component isn’t attached yet
+/// @throw #mygui::InvalidThread if the current thread is not the GUI thread
+///
+/// ## Examples
+///
+/// ```
+/// Component& comp = WindowManager::byId<Component>(42);
+/// assert(visible(comp));
+/// ```
 template<typename Component>
 bool
 visible(const Component& comp) { ... }
@@ -94,14 +90,10 @@ the `#` operator. This will raise an error if the reference cannot be resolved. 
 parentheses `()` can be omitted if there are no overloads:
 
 ```c++
-/**
- * Calls #b.
- */
+/// Calls #b.
 void a() { b(); }
 
-/**
- * Called by #a.
- */
+/// Called by #a.
 void b() {}
 ```
 
