@@ -163,8 +163,10 @@ constexpr std::string_view VERSION_NAME = "@version@"; ///< SemVer string.
 constexpr int VERSION_MAJOR = @major@; ///< Major.
 constexpr int VERSION_MINOR = @minor@; ///< Minor.
 constexpr int VERSION_PATCH = @patch@; ///< Patch.
+// NOLINTBEGIN(readability-redundant-string-init)
 constexpr std::string_view VERSION_PRERELEASE = "@prerelease@"; ///< Prerelease, or empty.
 constexpr std::string_view VERSION_BUILD_METADATA = "@buildMetadata@"; ///< Build metadata, or empty.
+// NOLINTEND(readability-redundant-string-init)
 
 /// Comparable version value (1,000,000 * major + 1,000 * minor + patch).
 constexpr int VERSION = @value@;
