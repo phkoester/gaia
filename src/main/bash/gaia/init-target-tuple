@@ -1,4 +1,3 @@
-#
 # init-target-tuple
 #
 # Selects the default target tuple for the current host tuple and sets Gaia environment variables
@@ -35,7 +34,6 @@
 #   `variant` | `hf`    | Hardware floating point
 #   `version` | `6.3.3` | Version 6.3.3
 #   `format`  | `macho` | Mach-O
-#
 
 # Select default target tuple -------------------------------------------------------------------------------
 

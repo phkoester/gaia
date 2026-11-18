@@ -1,8 +1,6 @@
-#
 # enum.py
 #
 # Enumerations.
-#
 
 import enum
 

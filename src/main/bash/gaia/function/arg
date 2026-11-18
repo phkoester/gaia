@@ -1,8 +1,6 @@
-#
 # arg
 #
 # Argument utilities.
-#
 
 # Usage: arg-count [ARG]...
 arg-count() {

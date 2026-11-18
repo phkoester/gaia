@@ -1,10 +1,8 @@
-#
 # test
 #
 # A tiny but cute unit-test framework for Bash scripts.
 #
 # To be included by a Bash test.
-#
 
 source "$GAIA_DIR/src/main/bash/gaia/init" || return 2
 

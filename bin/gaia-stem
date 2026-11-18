@@ -3,7 +3,6 @@
 # gaia-stem
 #
 # Usage: gaia-stem [PATH]...
-#
 
 for arg in "$@"; do
   name=$(basename "$arg")

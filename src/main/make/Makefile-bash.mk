@@ -1,4 +1,3 @@
-#
 # Makefile-bash.mk
 #
 # Parameters:
@@ -8,7 +7,6 @@
 # Targets:
 #
 # - clean
-#
 
 ifndef GAIA_DIR
   $(error `GAIA_DIR` not set)

@@ -1,8 +1,6 @@
-#
 # string
 #
 # String functions.
-#
 
 # Usage: string-amount [-n] N SINGULAR PLURAL
 #

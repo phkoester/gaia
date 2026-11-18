@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 #
 # test-shell.sh
-#
 
 source "$GAIA_DIR/src/main/bash/gaia/test"
 

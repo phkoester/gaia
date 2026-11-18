@@ -1,8 +1,6 @@
-#
 # wsl
 #
 # WSL functions.
-#
 
 [[ ! $GAIA_WSL ]] && return
 

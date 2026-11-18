@@ -1,8 +1,6 @@
-#
 # shell
 #
 # Shell functions.
-#
 
 # Usage: shell-error [-eN] [-n] [-rN] [ARG]...
 #

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 #
 # test-list.py
-#
 
 import gaia.list
 import unittest

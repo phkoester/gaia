@@ -1,8 +1,6 @@
-#
 # path
 #
 # Path functions.
-#
 
 # Usage: path-append [-n] [-q] VAR DIR
 #

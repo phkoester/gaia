@@ -1,8 +1,6 @@
-#
 # shell.py
 #
 # Shell utilities.
-#
 
 import gaia.log
 import gaia.path

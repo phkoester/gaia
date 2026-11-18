@@ -1,4 +1,3 @@
-#
 # Makefile-C.mk
 #
 # Parameters:
@@ -43,7 +42,6 @@
 # - reconfigure (GAIA_BUILD_TYPE)
 # - run (ARGS, DEFAULT_RUN_TARGET, GAIA_BUILD_TYPE, MEMCHECK, TARGET, VERBOSE)
 # - test (GAIA_BUILD_TYPE, PATTERN, VERBOSE)
-#
 
 ifndef GAIA_DIR
   $(error `GAIA_DIR` not set)

@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 #
 # gaia-git-version
-#
 
 source "$GAIA_DIR/src/main/bash/gaia/init" || exit 2
 

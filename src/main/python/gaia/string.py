@@ -1,8 +1,6 @@
-#
 # string.py
 #
 # String utilities.
-#
 
 def capitalize(str: str) -> str | None:
   """

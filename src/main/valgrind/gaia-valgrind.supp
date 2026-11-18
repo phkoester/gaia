@@ -1,6 +1,4 @@
-#
 # gaia-valgrind.supp
-#
 
 {
    libstdcxx_locale_still_reachable

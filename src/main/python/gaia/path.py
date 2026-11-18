@@ -1,8 +1,6 @@
-#
 # path.py
 #
 # Path utilities.
-#
 
 import gaia.string
 import os

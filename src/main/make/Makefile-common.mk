@@ -1,4 +1,3 @@
-#
 # Makefile-common.mk
 #
 # Parameters:
@@ -24,7 +23,6 @@
 # - update
 # - validate
 # - version
-#
 
 # Check prerequisites ---------------------------------------------------------------------------------------
 

@@ -1,8 +1,6 @@
-#
 # system
 #
 # System functions.
-#
 
 system-time-ms() {
   echo $(($(date +%s%N) / 1000000))

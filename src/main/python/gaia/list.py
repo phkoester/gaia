@@ -1,8 +1,6 @@
-#
 # list.py
 #
 # List utilities.
-#
 
 def dedup(list: list[any]) -> None:
   """

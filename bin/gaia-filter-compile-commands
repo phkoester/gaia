@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 #
 # gaia-filter-compile-commands
-#
 
 """
 Filter `compile_commands.json` by regex pattern.

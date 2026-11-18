@@ -1,4 +1,3 @@
-#
 # Makefile
 #
 # Parameters:
@@ -8,7 +7,6 @@
 # Targets:
 #
 # - test
-#
 
 ifndef GAIA_DIR
   $(error `GAIA_DIR` not set)

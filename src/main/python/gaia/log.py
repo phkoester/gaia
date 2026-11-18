@@ -1,11 +1,9 @@
-#
 # log.py
 #
 # Logging utilities.
 #
 # Logging may be enabled with the environment variable `GAIA_LOG`. Possible values are `none`, `error`,
 # `warn`, `info`, `debug`, and `trace`.
-#
 
 import gaia.enum
 import inspect

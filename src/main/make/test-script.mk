@@ -1,4 +1,3 @@
-#
 # test-script.mk
 #
 # To be included in a Makefile. Parameters:

@@ -1,8 +1,6 @@
-#
 # ssh
 #
 # SSH functions.
-#
 
 # Usage: ssh-init
 ssh-init() {

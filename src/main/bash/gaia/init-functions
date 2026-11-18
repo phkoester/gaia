@@ -1,8 +1,6 @@
-#
 # init-functions
 #
 # Gaia Bash function library.
-#
 
 [[ ! -d $dir__ ]] && return 1
 

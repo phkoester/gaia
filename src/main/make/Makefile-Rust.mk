@@ -1,4 +1,3 @@
-#
 # Makefile-Rust.mk
 #
 # Parameters:
@@ -22,7 +21,6 @@
 # - doc (GAIA_BUILD_TYPE)
 # - run (GAIA_BUILD_TYPE)
 # - test (COVERAGE, GAIA_BUILD_TYPE)
-#
 
 ifndef GAIA_DIR
   $(error `GAIA_DIR` not set)
