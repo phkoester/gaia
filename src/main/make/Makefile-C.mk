@@ -8,6 +8,8 @@
 #     Targets to make before configuring
 # - DEFAULT_RUN_TARGET
 #     The default target to run
+# - GAIA_BUILD_CONFIG
+#     Overrules GAIA_BUILD_TYPE. If set, uses a multi-configuration generator
 # - GAIA_BUILD_TYPE
 #     The build type: `debug` or `release`
 # - GAIA_CXX_TOOLCHAIN
@@ -32,16 +34,16 @@
 #
 # Targets (parameters):
 #
-# - bench (GAIA_BUILD_TYPE, PATTERN)
-# - build (GAIA_BUILD_TYPE, TARGET, VERBOSE)
-# - check (GAIA_BUILD_TYPE, PATTERN)
+# - bench (GAIA_BUILD_*, PATTERN)
+# - build (GAIA_BUILD_*, TARGET, VERBOSE)
+# - check (GAIA_BUILD_*)
 # - clean
-# - configure (GAIA_BUILD_TYPE)
-# - doc (GAIA_BUILD_TYPE, VERBOSE)
-# - rebuild (GAIA_BUILD_TYPE, TARGET, VERBOSE)
-# - reconfigure (GAIA_BUILD_TYPE)
-# - run (ARGS, DEFAULT_RUN_TARGET, GAIA_BUILD_TYPE, MEMCHECK, TARGET, VERBOSE)
-# - test (GAIA_BUILD_TYPE, PATTERN, VERBOSE)
+# - configure (GAIA_BUILD_*)
+# - doc (GAIA_BUILD_*, VERBOSE)
+# - rebuild (GAIA_BUILD_*, TARGET, VERBOSE)
+# - reconfigure (GAIA_BUILD_*)
+# - run (ARGS, DEFAULT_RUN_TARGET, GAIA_BUILD_*, MEMCHECK, TARGET, VERBOSE)
+# - test (GAIA_BUILD_*, PATTERN, VERBOSE)
 
 ifndef GAIA_DIR
   $(error `GAIA_DIR` not set)
@@ -50,9 +52,13 @@ include $(GAIA_DIR)/src/main/make/Makefile-common.mk
 
 # Constants -------------------------------------------------------------------------------------------------
 
-export BUILD_DIR := build/$(GAIA_BUILD_TYPE)
+ifdef GAIA_BUILD_CONFIG
+  export BUILD_DIR := build
+else
+  export BUILD_DIR := build-$(GAIA_BUILD_TYPE)
+endif
+
 EXECUTABLE_SUFFIX :=
-TEST_DIR := $(BUILD_DIR)/src/test
 
 ifdef GAIA_OS_WINDOWS
   EXECUTABLE_SUFFIX := .exe
@@ -60,16 +66,7 @@ endif
 
 CMAKE_DEPS := CMakeLists.txt $(shell find src -name CMakeLists.txt) $(wildcard cmake/*)
 
-CHECK_FILES :=
-ifeq ($(filter $(MAKECMDGOALS),check),check)
-  ifneq ($(PATTERN),)
-    CHECK_FILES := $(shell find src -name "*.c" -o -name "*.cc" | grep '$(PATTERN)')
-    ifeq ($(CHECK_FILES),)
-      $(error found no source files for pattern `$(PATTERN)`)
-    endif
-  endif
-endif
-CHECK_REPORT_FILE := $(BUILD_DIR)/check-report.txt
+CHECK_REPORT_FILE := $(BUILD_DIR)/check-report$(GAIA_BUILD_CONFIG:%=-%).txt
 
 RUN_EXECUTABLE :=
 ifeq ($(filter $(MAKECMDGOALS),run),run)
@@ -126,17 +123,10 @@ endif
 
 CMAKE_FLAGS :=
 
-ifdef GAIA_OS_LINUX
-  CONFIGURE_PRESET := linux-$(GAIA_BUILD_TYPE)
-  BUILD_PRESET := linux-$(GAIA_BUILD_TYPE)
-endif
-ifdef GAIA_OS_MACOS
-  CONFIGURE_PRESET := macos-$(GAIA_BUILD_TYPE)
-  BUILD_PRESET := macos-$(GAIA_BUILD_TYPE)
-endif
-ifdef GAIA_OS_WINDOWS
-  CONFIGURE_PRESET := windows-$(GAIA_BUILD_TYPE)
-  BUILD_PRESET := windows-$(GAIA_BUILD_TYPE)
+ifdef GAIA_BUILD_CONFIG
+  PRESET := config-$(GAIA_BUILD_CONFIG)
+else
+  PRESET := $(GAIA_BUILD_TYPE)
 endif
 
 # Configure CTest -------------------------------------------------------------------------------------------
@@ -146,15 +136,20 @@ ifeq ($(VERBOSE),1)
   CTEST_FLAGS += -V
 endif
 
-ifdef GAIA_OS_LINUX
-  TEST_PRESET := linux-$(GAIA_BUILD_TYPE)
+# `filter-compile-commands` ---------------------------------------------------------------------------------
+
+FILTER_COMPILE_COMMANDS_FLAGS := --field 'file:$(PROJECT_NAME)/src/'
+ifdef GAIA_BUILD_CONFIG
+  # A multi-config build lists each file once per configuration, told apart by `-DCMAKE_INTDIR=\"<CONFIG>\"`
+  FILTER_COMPILE_COMMANDS_FLAGS += --field 'command:-DCMAKE_INTDIR=\\"$(GAIA_BUILD_CONFIG)\\"'
 endif
-ifdef GAIA_OS_MACOS
-  TEST_PRESET := macos-$(GAIA_BUILD_TYPE)
-endif
-ifdef GAIA_OS_WINDOWS
-  TEST_PRESET := windows-$(GAIA_BUILD_TYPE)
-endif
+
+# Writes `compile_commands.json` from `$(BUILD_DIR)/compile_commands.json`
+define filter-compile-commands
+	@echo ">" compile_commands.json
+	@gaia-filter-compile-commands $(FILTER_COMPILE_COMMANDS_FLAGS) \
+	  <$(BUILD_DIR)/compile_commands.json >compile_commands.json
+endef
 
 # Configure memory checker ----------------------------------------------------------------------------------
 
@@ -190,13 +185,13 @@ bench:
 ifneq ($(wildcard $(BUILD_DIR)/src/bench/),)
 	@$(call print-target,$@)
 	@ctest $(CTEST_FLAGS) \
-	  --preset $(TEST_PRESET) \
+	  --preset $(PRESET) \
 	  --test-dir $(BUILD_DIR)/src/bench $(if $(PATTERN),-R '$(PATTERN)') -V
 endif
 
 build: configure
 	@$(call print-target,$@)
-	@cmake $(CMAKE_FLAGS) --build --preset $(BUILD_PRESET) \
+	@cmake $(CMAKE_FLAGS) --build --preset $(PRESET) \
 	  $(if $(TARGET),--target $(TARGET)) $(CMAKE_TRAILING_FLAGS) </dev/null
 
 check:
@@ -205,16 +200,15 @@ check:
 	  -config-file=$(GAIA_DIR)/src/main/clang-tidy/clang-tidy-config.yaml \
 	  -j$(GAIA_NPROC_3_4) \
 	  -p. \
-	  $(CHECK_FILES) \
 	  >$(CHECK_REPORT_FILE) 2>&1; \
 	  status=$$?; echo report written to $(CHECK_REPORT_FILE); exit $$status
 
 clean:
 	@$(call print-target,$@)
 ifdef GAIA_OS_WINDOWS
-	@echo removing \`build\`, this may take a while ...
+	@echo removing build directories, this may take a while ...
 endif
-	@cmake -E rm -rf build
+	@cmake -E rm -rf build build-*
 	@rm -rfv $(shell find -name __pycache__ -type d)
 
 configure: compile_commands.json
@@ -228,16 +222,15 @@ rebuild: reconfigure build
 reconfigure:
 	@$(call print-target,$@)
 	@$(if $(wildcard $(BUILD_DIR)/CMakeFiles/TargetDirectories.txt),\
-	  cmake --build --preset $(BUILD_PRESET) --target clean </dev/null)
+	  cmake --build --preset $(PRESET) --target clean </dev/null)
 	@# Like `--fresh`, but keep `FetchContent`’s stamps so populated dependencies are not downloaded
 	@# again
 	@cmake -E rm -rf $(BUILD_DIR)/CMakeCache.txt \
 	  $(filter-out %/fc-stamp %/fc-tmp,$(wildcard $(BUILD_DIR)/CMakeFiles/*))
-	@cmake $(CMAKE_CONFIGURE_FLAGS) --preset $(CONFIGURE_PRESET) \
+	@cmake $(CMAKE_CONFIGURE_FLAGS) --preset $(PRESET) \
 	  -DFETCHCONTENT_UPDATES_DISCONNECTED=ON </dev/null
-	@echo ">" compile_commands.json
-	@cat $(BUILD_DIR)/compile_commands.json | \
-	  gaia-filter-compile-commands --field file $(PROJECT_NAME)/src/ > compile_commands.json
+	@cmake -E touch $(BUILD_DIR)/compile_commands.json
+	$(filter-compile-commands)
 
 run:
 	@$(call print-target,$@)
@@ -250,18 +243,24 @@ endif
 test:
 	@$(call print-target,$@)
 	@ctest $(CTEST_FLAGS) \
-	  --preset $(TEST_PRESET) \
+	  --preset $(PRESET) \
 	  --test-dir $(BUILD_DIR)/src/test $(if $(PATTERN),-R '$(PATTERN)')
 
 # `compile_commands.json` ...................................................................................
 
 $(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS) $(CONFIGURE_DEPS)
 	@$(call print-target,configure)
-	@cmake $(CMAKE_CONFIGURE_FLAGS) --preset $(CONFIGURE_PRESET) </dev/null
+	@cmake $(CMAKE_CONFIGURE_FLAGS) --preset $(PRESET) </dev/null
+	@# CMake may leave the file alone if its contents are unchanged. Touch it, or it may stay older than
+	@# its prerequisites, and every `make` would configure again
+	@cmake -E touch $@
 
+# We make this a phony target so that it is made every time. If `GAIA_BUILD_CONFIG` changes, the target must
+# be remade from an older `$(BUILD_DIR)/compile_commands.json`. Being phony doesn’t keep it from depending on
+# `$(BUILD_DIR)/compile_commands.json`, so a missing or outdated build directory is configured first.
+.PHONY: compile_commands.json
 compile_commands.json: $(BUILD_DIR)/compile_commands.json
-	@echo ">" $@
-	@cat $< | gaia-filter-compile-commands --field file $(PROJECT_NAME)/src/ > $@
+	$(filter-compile-commands)
 
 # Auxiliary targets .........................................................................................
 
@@ -294,6 +293,6 @@ endif
 
 list-targets: configure
 	@$(call print-target,$@)
-	@cmake --build --preset $(BUILD_PRESET) --target help </dev/null
+	@cmake --build --preset $(PRESET) --target help </dev/null
 
 # EOF

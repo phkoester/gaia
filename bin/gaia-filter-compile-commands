@@ -3,21 +3,21 @@
 # gaia-filter-compile-commands
 
 """
-Filter `compile_commands.json` by regex pattern.
+Filter `compile_commands.json` by field patterns.
 
 This script reads a `compile_commands.json` document from stdin, splits it into blocks (one per compilation
-command), and writes the blocks matching a regular expression pattern to stdout.
+command), and writes the blocks whose fields match the given field patterns.
 
 Usage:
-  gaia-filter-compile-commands [OPTIONS] PATTERN <INPUT_FILE >OUTPUT_FILE
-
-Arguments:
-  PATTERN  Regular expression pattern to match against
+  gaia-filter-compile-commands [OPTIONS] --field NAME:PATTERN... <INPUT_FILE >OUTPUT_FILE
 
 Options:
-      --field FIELD  field to match against: `file` (default), `command`, `directory`, or `all`
-      --invert       invert the filter (keep nonmatching blocks)
-      --help         display this help and exit
+      --field NAME:PATTERN  match the field NAME against the regular expression PATTERN. NAME is `file`,
+                            `command`, `directory`, or `all`. PATTERN extends to the end of the value, so it
+                            may contain colons. May be given multiple times; a block matches if all
+                            fields match
+      --invert              invert the filter (keep the blocks that do not match)
+      --help                display this help and exit
 """
 
 import argparse
@@ -25,7 +25,30 @@ import json
 import re
 import sys
 
-def filter_compile_commands(pattern, field='file', invert=False):
+FIELDS = ('file', 'command', 'directory', 'all')
+
+def parse_field(value):
+  """Parses a `--field` value of the form `NAME:PATTERN` into a `(name, pattern)` tuple."""
+  name, sep, pattern = value.partition(':')
+  if not sep:
+    raise argparse.ArgumentTypeError(f"invalid value `{value}`: expected `NAME:PATTERN`")
+  if name not in FIELDS:
+    names = ', '.join(f'`{f}`' for f in FIELDS)
+    raise argparse.ArgumentTypeError(f"invalid field name `{name}`: expected one of {names}")
+  return name, pattern
+
+def match_field(entry, field, regex):
+  """Returns whether the field `field` of `entry` matches `regex`."""
+  if field == 'all':
+    # Match against all string fields
+    return any(isinstance(value, str) and regex.search(value) for value in entry.values())
+  if field not in entry:
+    return False
+  # Convert a nonstring value to a string for matching
+  value = entry[field]
+  return regex.search(value if isinstance(value, str) else str(value)) is not None
+
+def filter_compile_commands(fields, invert=False):
   # Read stdin. Use the binary stream so the input is decoded as JSON, independent of the locale.
 
   try:
@@ -41,13 +64,15 @@ def filter_compile_commands(pattern, field='file', invert=False):
     print(f"error: expected JSON array, got {type(data).__name__}", file=sys.stderr)
     return 1
 
-  # Compile regex pattern
+  # Compile regex patterns
 
-  try:
-    regex = re.compile(pattern)
-  except re.error as e:
-    print(f"error: invalid regular expression `{pattern}`: {e}", file=sys.stderr)
-    return 1
+  matchers = []
+  for field, pattern in fields:
+    try:
+      matchers.append((field, re.compile(pattern)))
+    except re.error as e:
+      print(f"error: invalid regular expression `{pattern}`: {e}", file=sys.stderr)
+      return 1
 
   # Filter entries
 
@@ -59,28 +84,11 @@ def filter_compile_commands(pattern, field='file', invert=False):
       print(f"warning: skipping nondict entry: {entry}", file=sys.stderr)
       continue
 
-    match_found = False
-
-    if field == 'all':
-      # Match against all string fields
-      for _, value in entry.items():
-        if isinstance(value, str) and regex.search(value):
-          match_found = True
-          break
-    elif field in entry:
-      # Match against specific field
-      value = entry[field]
-      if isinstance(value, str):
-        match_found = regex.search(value) is not None
-      else:
-        # Convert nonstring to string for matching
-        match_found = regex.search(str(value)) is not None
-    else:
-      # Field doesn’t exist in entry
-      match_found = False
+    # All fields must match
+    match_found = all(match_field(entry, field, regex) for field, regex in matchers)
 
     # Apply filter (with optional inversion)
-    if (match_found and not invert) or (not match_found and invert):
+    if match_found != invert:
       filtered_data.append(entry)
 
   # Write output
@@ -108,27 +116,21 @@ def main():
   )
   parser.add_argument(
     '--field',
-    choices=['file', 'command', 'directory', 'all'],
-    default='file',
-    help="field to match against (default: `file`)"
+    type=parse_field,
+    action='append',
+    required=True,
+    metavar='NAME:PATTERN',
+    help='field name and regular expression pattern to match its value against (repeatable; all must match)'
   )
   parser.add_argument(
     '--invert',
     action='store_true',
     help='invert the filter (keep nonmatching blocks)'
   )
-  parser.add_argument(
-    'pattern',
-    help='regular expression pattern to match against'
-  )
 
   args = parser.parse_args()
 
-  return filter_compile_commands(
-    args.pattern,
-    field=args.field,
-    invert=args.invert
-  )
+  return filter_compile_commands(args.field, invert=args.invert)
 
 if __name__ == '__main__':
   sys.exit(main())
