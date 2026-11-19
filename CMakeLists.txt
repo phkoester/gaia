@@ -6,14 +6,6 @@ include(${CMAKE_CURRENT_LIST_DIR}/cmake/gaia-functions.cmake)
 
 # Project ---------------------------------------------------------------------------------------------------
 
-# Is this the master project?
-if(NOT DEFINED GAIA_MASTER_PROJECT)
-  set(GAIA_MASTER_PROJECT OFF)
-  if(NOT DEFINED PROJECT_NAME)
-    set(GAIA_MASTER_PROJECT ON)
-  endif()
-endif()
-
 project(gaia VERSION 1.2.5)
 
 # Prerequisites ---------------------------------------------------------------------------------------------
