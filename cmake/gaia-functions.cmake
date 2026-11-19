@@ -140,11 +140,10 @@ function(gaiaGenerateVersionHeader dir file namespace version)
     gaiaFatalError("`${version}` is not a valid SemVer string")
   endif()
   math(EXPR value "${major} * 1000000 + ${minor} * 1000 + ${patch}")
-  cmake_path(GET file FILENAME fileName)
 
   file(CONFIGURE
     OUTPUT ${dir}/${file}
-    CONTENT [=[/// @file @fileName@
+    CONTENT [=[/// @file @file@
 ///
 /// This is a generated file. Do not edit.
 

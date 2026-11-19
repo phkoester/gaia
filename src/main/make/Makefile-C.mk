@@ -50,23 +50,35 @@ ifndef GAIA_DIR
 endif
 include $(GAIA_DIR)/src/main/make/Makefile-common.mk
 
-# Constants -------------------------------------------------------------------------------------------------
+# Single-config or multi-config build? ----------------------------------------------------------------------
 
 ifdef GAIA_BUILD_CONFIG
+  # Multi-config build
   export BUILD_DIR := build
+  PRESET := config-$(GAIA_BUILD_CONFIG)
 else
+  # Single-config build
   export BUILD_DIR := build-$(GAIA_BUILD_TYPE)
+  PRESET := $(GAIA_BUILD_TYPE)
 endif
 
-EXECUTABLE_SUFFIX :=
+# Export these variables so they are usable in Doxyfiles and elsewhere
+export BIN_DIR := $(BUILD_DIR)/bin$(GAIA_BUILD_CONFIG:%=/%)
+export BENCH_DIR := $(BUILD_DIR)/src/bench$(GAIA_BUILD_CONFIG:%=/%)
+export EXPERIMENTAL_DIR := $(BUILD_DIR)/src/experimental$(GAIA_BUILD_CONFIG:%=/%)
+export MAIN_DIR := $(BUILD_DIR)/src/main$(GAIA_BUILD_CONFIG:%=/%)
+export TEST_DIR := $(BUILD_DIR)/src/test$(GAIA_BUILD_CONFIG:%=/%)
 
+CHECK_REPORT_FILE := $(BUILD_DIR)/check-report$(GAIA_BUILD_CONFIG:%=-%).txt
+
+# Constants -------------------------------------------------------------------------------------------------
+
+EXECUTABLE_SUFFIX :=
 ifdef GAIA_OS_WINDOWS
   EXECUTABLE_SUFFIX := .exe
 endif
 
 CMAKE_DEPS := CMakeLists.txt $(shell find src -name CMakeLists.txt) $(wildcard cmake/*)
-
-CHECK_REPORT_FILE := $(BUILD_DIR)/check-report$(GAIA_BUILD_CONFIG:%=-%).txt
 
 RUN_EXECUTABLE :=
 ifeq ($(filter $(MAKECMDGOALS),run),run)
@@ -77,7 +89,9 @@ ifeq ($(filter $(MAKECMDGOALS),run),run)
       TARGET := $(DEFAULT_RUN_TARGET)
     endif
   endif
-  RUN_EXECUTABLE := $(shell find $(BUILD_DIR)/src -executable -name '$(TARGET)$(EXECUTABLE_SUFFIX)' -type f)
+  RUN_EXECUTABLE := $(shell find \
+    $(wildcard $(BIN_DIR) $(BENCH_DIR) $(EXPERIMENTAL_DIR) $(TEST_DIR)) \
+    -executable -name '$(TARGET)$(EXECUTABLE_SUFFIX)' -type f)
   ifeq ($(RUN_EXECUTABLE),)
     $(error found no executable for target `$(TARGET)`)
   endif
@@ -122,12 +136,6 @@ ifeq ($(VERBOSE),1)
 endif
 
 CMAKE_FLAGS :=
-
-ifdef GAIA_BUILD_CONFIG
-  PRESET := config-$(GAIA_BUILD_CONFIG)
-else
-  PRESET := $(GAIA_BUILD_TYPE)
-endif
 
 # Configure CTest -------------------------------------------------------------------------------------------
 
@@ -182,10 +190,9 @@ endif
 # Targets ---------------------------------------------------------------------------------------------------
 
 bench:
-ifneq ($(wildcard $(BUILD_DIR)/src/bench/),)
+ifneq ($(wildcard $(BENCH_DIR)/),)
 	@$(call print-target,$@)
-	@ctest $(CTEST_FLAGS) \
-	  --preset $(PRESET) \
+	@ctest $(CTEST_FLAGS) --preset $(PRESET) \
 	  --test-dir $(BUILD_DIR)/src/bench $(if $(PATTERN),-R '$(PATTERN)') -V
 endif
 
@@ -209,7 +216,7 @@ ifdef GAIA_OS_WINDOWS
 	@echo removing build directories, this may take a while ...
 endif
 	@cmake -E rm -rf build build-*
-	@rm -rfv $(shell find -name __pycache__ -type d)
+	@rm -rf $(shell find -name __pycache__ -type d)
 
 configure: compile_commands.json
 
@@ -242,8 +249,7 @@ endif
 
 test:
 	@$(call print-target,$@)
-	@ctest $(CTEST_FLAGS) \
-	  --preset $(PRESET) \
+	@ctest $(CTEST_FLAGS) --preset $(PRESET) \
 	  --test-dir $(BUILD_DIR)/src/test $(if $(PATTERN),-R '$(PATTERN)')
 
 # `compile_commands.json` ...................................................................................
@@ -276,7 +282,7 @@ ifneq ($(wildcard src/main/Doxyfile),)
 	  -e "warning: Incomplete input: scope for class" \
 	  -e "warning: documented symbol 'T std::experimental::.*' was not declared or defined" || \
 	  true; }
-	@echo created $(BUILD_DIR)/src/main/doc/html/index.html
+	@echo created $(MAIN_DIR)/doc/html/index.html
 endif
 
 doc-test: $(if $(wildcard src/test/Doxyfile),compile_commands.json)
@@ -288,7 +294,7 @@ ifneq ($(wildcard src/test/Doxyfile),)
 	  -e "warning: Incomplete input: scope for class" \
 	  -e "warning: documented symbol 'T std::experimental::.*' was not declared or defined" || \
 	  true; }
-	@echo created $(BUILD_DIR)/src/test/doc/html/index.html
+	@echo created $(TEST_DIR)/doc/html/index.html
 endif
 
 list-targets: configure
