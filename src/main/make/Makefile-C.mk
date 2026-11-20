@@ -55,11 +55,21 @@ include $(GAIA_DIR)/src/main/make/Makefile-common.mk
 ifdef GAIA_BUILD_CONFIG
   # Multi-config build
   export BUILD_DIR := build
-  PRESET := config-$(GAIA_BUILD_CONFIG)
+  CONFIGURE_PRESET := multi
+  BUILD_PRESET := multi-$(GAIA_BUILD_CONFIG)
+  TEST_PRESET := multi-$(GAIA_BUILD_CONFIG)
+
+  # Extract configurations from `CMakePresets.json`
+  CONFIGS := $(call print-configurations,.,$(CONFIGURE_PRESET))
+  ifeq ($(CONFIGS),)
+    $(error found no `CMAKE_CONFIGURATION_TYPES` for preset `$(CONFIGURE_PRESET)` in `CMakePresets.json`)
+  endif
 else
   # Single-config build
   export BUILD_DIR := build-$(GAIA_BUILD_TYPE)
-  PRESET := $(GAIA_BUILD_TYPE)
+  CONFIGURE_PRESET := $(GAIA_BUILD_TYPE)
+  BUILD_PRESET := $(GAIA_BUILD_TYPE)
+  TEST_PRESET := $(GAIA_BUILD_TYPE)
 endif
 
 # Export these variables so they are usable in Doxyfiles and elsewhere
@@ -80,7 +90,6 @@ endif
 
 CMAKE_DEPS := CMakeLists.txt $(shell find src -name CMakeLists.txt) $(wildcard cmake/*)
 
-RUN_EXECUTABLE :=
 ifeq ($(filter $(MAKECMDGOALS),run),run)
   ifeq ($(TARGET),)
     ifeq ($(DEFAULT_RUN_TARGET),)
@@ -89,13 +98,15 @@ ifeq ($(filter $(MAKECMDGOALS),run),run)
       TARGET := $(DEFAULT_RUN_TARGET)
     endif
   endif
-  RUN_EXECUTABLE := $(shell find \
-    $(wildcard $(BIN_DIR) $(BENCH_DIR) $(EXPERIMENTAL_DIR) $(TEST_DIR)) \
-    -executable -name '$(TARGET)$(EXECUTABLE_SUFFIX)' -type f)
-  ifeq ($(RUN_EXECUTABLE),)
-    $(error found no executable for target `$(TARGET)`)
-  endif
 endif
+
+# Recursively expanded, so the search runs when the `run` recipe is expanded, i.e., after the prerequisites
+# of `run` have been made. Before that, the executable and its directory may not exist yet. Without any
+# existing directory, `find` would search `.`, so it is not run then.
+RUN_DIRS = $(wildcard $(BIN_DIR) $(BENCH_DIR) $(EXPERIMENTAL_DIR) $(TEST_DIR))
+RUN_EXECUTABLE = $(or \
+  $(if $(RUN_DIRS),$(shell find $(RUN_DIRS) -executable -name '$(TARGET)$(EXECUTABLE_SUFFIX)' -type f)),\
+  $(error found no executable for target `$(TARGET)`))
 
 # Select C and C++ compilers --------------------------------------------------------------------------------
 
@@ -156,7 +167,7 @@ endif
 define filter-compile-commands
 	@echo ">" compile_commands.json
 	@gaia-filter-compile-commands $(FILTER_COMPILE_COMMANDS_FLAGS) \
-	  <$(BUILD_DIR)/compile_commands.json >compile_commands.json
+	   <$(BUILD_DIR)/compile_commands.json >compile_commands.json
 endef
 
 # Configure memory checker ----------------------------------------------------------------------------------
@@ -192,23 +203,23 @@ endif
 bench:
 ifneq ($(wildcard $(BENCH_DIR)/),)
 	@$(call print-target,$@)
-	@ctest $(CTEST_FLAGS) --preset $(PRESET) \
-	  --test-dir $(BUILD_DIR)/src/bench $(if $(PATTERN),-R '$(PATTERN)') -V
+	@ctest $(CTEST_FLAGS) --preset $(TEST_PRESET) \
+	   --test-dir $(BUILD_DIR)/src/bench $(if $(PATTERN),-R '$(PATTERN)') -V
 endif
 
 build: configure
 	@$(call print-target,$@)
-	@cmake $(CMAKE_FLAGS) --build --preset $(PRESET) \
-	  $(if $(TARGET),--target $(TARGET)) $(CMAKE_TRAILING_FLAGS) </dev/null
+	@cmake $(CMAKE_FLAGS) --build --preset $(BUILD_PRESET) \
+	   $(if $(TARGET),--target $(TARGET)) $(CMAKE_TRAILING_FLAGS) </dev/null
 
 check:
 	@$(call print-target,$@)
 	@run-clang-tidy \
-	  -config-file=$(GAIA_DIR)/src/main/clang-tidy/clang-tidy-config.yaml \
-	  -j$(GAIA_NPROC_3_4) \
-	  -p. \
-	  >$(CHECK_REPORT_FILE) 2>&1; \
-	  status=$$?; echo report written to $(CHECK_REPORT_FILE); exit $$status
+	   -config-file=$(GAIA_DIR)/src/main/clang-tidy/clang-tidy-config.yaml \
+	   -j$(GAIA_NPROC_3_4) \
+	   -p. \
+	   >$(CHECK_REPORT_FILE) 2>&1; \
+	   status=$$?; echo report written to $(CHECK_REPORT_FILE); exit $$status
 
 clean:
 	@$(call print-target,$@)
@@ -226,18 +237,27 @@ doc: doc-main doc-test
 rebuild: reconfigure build
 
 .PHONY: reconfigure
+ifeq ($(wildcard $(BUILD_DIR)/CMakeCache.txt),)
+reconfigure: configure
+else
 reconfigure:
 	@$(call print-target,$@)
-	@$(if $(wildcard $(BUILD_DIR)/CMakeFiles/TargetDirectories.txt),\
-	  cmake --build --preset $(PRESET) --target clean </dev/null)
+ifdef GAIA_BUILD_CONFIG
+	@for it in $(CONFIGS); do \
+	   cmake --build --preset multi-$$it --target clean </dev/null || exit; \
+	 done
+else
+	@cmake --build --preset $(BUILD_PRESET) --target clean </dev/null
+endif
 	@# Like `--fresh`, but keep `FetchContent`’s stamps so populated dependencies are not downloaded
 	@# again
 	@cmake -E rm -rf $(BUILD_DIR)/CMakeCache.txt \
-	  $(filter-out %/fc-stamp %/fc-tmp,$(wildcard $(BUILD_DIR)/CMakeFiles/*))
-	@cmake $(CMAKE_CONFIGURE_FLAGS) --preset $(PRESET) \
-	  -DFETCHCONTENT_UPDATES_DISCONNECTED=ON </dev/null
-	@cmake -E touch $(BUILD_DIR)/compile_commands.json
+	   $(filter-out %/fc-stamp %/fc-tmp,$(wildcard $(BUILD_DIR)/CMakeFiles/*))
+	@cmake $(CMAKE_CONFIGURE_FLAGS) --preset $(CONFIGURE_PRESET) \
+	   -DFETCHCONTENT_UPDATES_DISCONNECTED=ON </dev/null
+	@touch $(BUILD_DIR)/compile_commands.json
 	$(filter-compile-commands)
+endif
 
 run:
 	@$(call print-target,$@)
@@ -249,17 +269,17 @@ endif
 
 test:
 	@$(call print-target,$@)
-	@ctest $(CTEST_FLAGS) --preset $(PRESET) \
-	  --test-dir $(BUILD_DIR)/src/test $(if $(PATTERN),-R '$(PATTERN)')
+	@ctest $(CTEST_FLAGS) --preset $(TEST_PRESET) \
+	   --test-dir $(BUILD_DIR)/src/test $(if $(PATTERN),-R '$(PATTERN)')
 
 # `compile_commands.json` ...................................................................................
 
 $(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS) $(CONFIGURE_DEPS)
 	@$(call print-target,configure)
-	@cmake $(CMAKE_CONFIGURE_FLAGS) --preset $(PRESET) </dev/null
+	@cmake $(CMAKE_CONFIGURE_FLAGS) --preset $(CONFIGURE_PRESET) </dev/null
 	@# CMake may leave the file alone if its contents are unchanged. Touch it, or it may stay older than
 	@# its prerequisites, and every `make` would configure again
-	@cmake -E touch $@
+	@touch $@
 
 # We make this a phony target so that it is made every time. If `GAIA_BUILD_CONFIG` changes, the target must
 # be remade from an older `$(BUILD_DIR)/compile_commands.json`. Being phony doesn’t keep it from depending on
@@ -273,32 +293,39 @@ compile_commands.json: $(BUILD_DIR)/compile_commands.json
 # The Doxygen recipes need Bash for `pipefail`. Without it, the status of `doxygen` is lost in the pipeline
 doc-main doc-test: SHELL := bash
 
-doc-main: $(if $(wildcard src/main/Doxyfile),compile_commands.json)
-ifneq ($(wildcard src/main/Doxyfile),)
+.PHONY: doc-main
+ifeq ($(wildcard src/main/Doxyfile),)
+doc-main:
+else
+doc-main: compile_commands.json
 	@$(call print-target,$@)
 	@set -o pipefail; \
-	  DOXYGEN_PREDEFINED="$$(gaia-compile-defines compile_commands.json /src/main/)" \
-	  doxygen $(DOXYGEN_FLAGS) src/main/Doxyfile 2>&1 | { grep -v \
-	  -e "warning: Incomplete input: scope for class" \
-	  -e "warning: documented symbol 'T std::experimental::.*' was not declared or defined" || \
-	  true; }
+	   DOXYGEN_PREDEFINED="$$(gaia-compile-defines compile_commands.json /src/main/)" \
+	   doxygen $(DOXYGEN_FLAGS) src/main/Doxyfile 2>&1 | { grep -v \
+	   -e "warning: Incomplete input: scope for class" \
+	   -e "warning: documented symbol 'T std::experimental::.*' was not declared or defined" || \
+	   true; }
 	@echo created $(MAIN_DIR)/doc/html/index.html
 endif
 
-doc-test: $(if $(wildcard src/test/Doxyfile),compile_commands.json)
-ifneq ($(wildcard src/test/Doxyfile),)
+.PHONY: doc-test
+ifeq ($(wildcard src/test/Doxyfile),)
+doc-test:
+else
+doc-test: compile_commands.json
 	@$(call print-target,$@)
 	@set -o pipefail; \
-	  DOXYGEN_PREDEFINED="$$(gaia-compile-defines compile_commands.json /src/test/)" \
-	  doxygen $(DOXYGEN_FLAGS) src/test/Doxyfile 2>&1 | { grep -v \
-	  -e "warning: Incomplete input: scope for class" \
-	  -e "warning: documented symbol 'T std::experimental::.*' was not declared or defined" || \
-	  true; }
+	   DOXYGEN_PREDEFINED="$$(gaia-compile-defines compile_commands.json /src/test/)" \
+	   doxygen $(DOXYGEN_FLAGS) src/test/Doxyfile 2>&1 | { grep -v \
+	   -e "warning: Incomplete input: scope for class" \
+	   -e "warning: documented symbol 'T std::experimental::.*' was not declared or defined" || \
+	   true; }
 	@echo created $(TEST_DIR)/doc/html/index.html
 endif
 
+.PHONY: list-targets
 list-targets: configure
 	@$(call print-target,$@)
-	@cmake --build --preset $(PRESET) --target help </dev/null
+	@cmake --build --preset $(BUILD_PRESET) --target help </dev/null
 
 # EOF

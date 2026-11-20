@@ -77,6 +77,9 @@ $(info #)
 $(info ########################################)
 endef
 
+# $1: directory, $2: configure preset
+print-configurations = $(shell python3 -c 'import gaia; gaia.print_configurations("$1", "$2")')
+
 # $1: directory
 print-version = $(shell python3 -c 'import gaia; gaia.print_version("$1")')
 
@@ -111,8 +114,6 @@ bench: build
 build: configure
 
 check: build
-
-doc: build
 
 info:
 	@$(call print-target,$@)
