@@ -119,11 +119,11 @@ In your `~/.bashrc`, export these variables:
 
 | Environment Variable      | Required? | Description
 | :------------------------ | :-------- | :----------
-| `GAIA_BUILD_CONFIG`       | No        | If set, overrules `GAIA_BUILD_TYPE` in CMake projects. Values: `Debug`, `Release`, or a custom value
-| `GAIA_BUILD_TYPE`         | No        | Values: `debug`, `release` (default)
-| `GAIA_CXX_TOOLCHAIN`      | No        | Values: `gnu` (default on Linux), `llvm` (default on macOS), `msvc` (default on Windows)
-| `GAIA_DIR`                | Yes       | Example: `~/project/gaia`
-| `GAIA_PROJECT_DIR`        | No        | Fallback directory where `gaia-project` looks for projects
+| `GAIA_BUILD_CONFIG`       | no        | if set, overrules `GAIA_BUILD_TYPE` in CMake projects. Values: `Debug`, `Release`, or a custom value
+| `GAIA_BUILD_TYPE`         | no        | values: `debug`, `release` (default)
+| `GAIA_CXX_TOOLCHAIN`      | no        | values: `gnu` (default on Linux), `llvm` (default on macOS), `msvc` (default on Windows)
+| `GAIA_DIR`                | yes       | example: `~/project/gaia`
+| `GAIA_PROJECT_DIR`        | no        | fallback directory where `gaia-project` looks for projects
 
 After that, to initialize Gaia, place this line in your `~/.bashrc`:
 
