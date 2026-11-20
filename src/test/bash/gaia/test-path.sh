@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#
+
 # test-path.sh
 
 source "$GAIA_DIR/src/main/bash/gaia/test"

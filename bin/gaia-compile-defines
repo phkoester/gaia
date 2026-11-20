@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
-#
+
 # gaia-compile-defines
 
 """
 Print the preprocessor definitions used in `compile_commands.json`.
 
-This script collects the `-D` options of all compilation commands whose file matches a regular expression
-pattern, and prints them on one line, separated by spaces. The output can be used for Doxygen’s `PREDEFINED`.
+Collect the `-D` options of all compilation commands whose file matches a regular-expression pattern, and
+print them on one line, separated by spaces. The output can be used for Doxygen’s `PREDEFINED`.
 
 Usage:
   gaia-compile-defines INPUT_FILE PATTERN
 
 Arguments:
   INPUT_FILE  `compile_commands.json` file
-  PATTERN     Regular-expression pattern to match against the `file` field
+  PATTERN     regular-expression pattern to match against the `file` field
 """
 
 import argparse

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-#
+
 # test-string.py
 
 import gaia.string

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-#
+
 # test-cl-helper.sh
 #
 # Helper script for `test-cl.sh`.
