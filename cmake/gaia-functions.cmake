@@ -72,6 +72,7 @@ function(gaiaDetectPython)
   if(NOT DEFINED CACHE{Python3_EXECUTABLE})
     set(CACHE{Python3_EXECUTABLE} VALUE ${Python3_EXECUTABLE})
   endif()
+  # `gaiaDetectPython` is called early, so `GAIA_OS_WINDOWS` is not available yet
   if(NOT WIN32)
     set(CACHE{GAIA_PYTHON_NATIVE_WINDOWS} VALUE OFF)
     return()
