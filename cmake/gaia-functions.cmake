@@ -174,6 +174,19 @@ constexpr int VERSION = @value@;
   )
 endfunction()
 
+# gaiaIsMultiConfig(out)
+#
+# Sets `out` to `TRUE` if the generator is a multi-config generator (e.g., Ninja Multi-Config, Visual
+# Studio), and to `FALSE` otherwise.
+function(gaiaIsMultiConfig out)
+  get_property(localOut GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+  if(localOut)
+    set(${out} TRUE PARENT_SCOPE)
+  else()
+    set(${out} FALSE PARENT_SCOPE)
+  endif()
+endfunction()
+
 # gaiaPythonPath(in out)
 #
 # Converts `in` into a path that the configured Python 3 understands. Native Windows Python gets a Windows
