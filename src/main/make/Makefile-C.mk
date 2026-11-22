@@ -73,7 +73,7 @@ else
 endif
 
 # Export these variables so they are usable in Doxyfiles and elsewhere
-export BIN_DIR := $(BUILD_DIR)/bin$(GAIA_BUILD_CONFIG:%=/%)
+export BIN_DIR := $(BUILD_DIR)/src/bin$(GAIA_BUILD_CONFIG:%=/%)
 export BENCH_DIR := $(BUILD_DIR)/src/bench$(GAIA_BUILD_CONFIG:%=/%)
 export EXPERIMENTAL_DIR := $(BUILD_DIR)/src/experimental$(GAIA_BUILD_CONFIG:%=/%)
 export MAIN_DIR := $(BUILD_DIR)/src/main$(GAIA_BUILD_CONFIG:%=/%)
