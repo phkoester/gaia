@@ -249,7 +249,7 @@ ifdef GAIA_BUILD_CONFIG
 else
 	@cmake --build --preset $(BUILD_PRESET) --target clean </dev/null
 endif
-	@# Like `--fresh`, but keep `FetchContent`’s stamps so populated dependencies are not downloaded
+	@# Like `--fresh`, but keeps `FetchContent`’s stamps so populated dependencies are not downloaded
 	@# again
 	@cmake -E rm -rf $(BUILD_DIR)/CMakeCache.txt \
 	   $(filter-out %/fc-stamp %/fc-tmp,$(wildcard $(BUILD_DIR)/CMakeFiles/*))

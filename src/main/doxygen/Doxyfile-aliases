@@ -56,27 +56,27 @@ ALIASES += member_op_subscript="Subscript operator. \
 
 ALIASES += member_op_eq="Tests if this instance is equal to @p rhs. \
 @param rhs the right-hand side \
-@return if this instance is equal to @p rhs"
+@return whether this instance is equal to @p rhs"
 
 ALIASES += member_op_ne="Tests if this instance is not equal to @p rhs. \
 @param rhs the right-hand side \
-@return if this instance is not equal to @p rhs"
+@return whether this instance is not equal to @p rhs"
 
 ALIASES += member_op_lt="Tests if this instance is less than @p rhs. \
 @param rhs the right-hand side \
-@return if this instance is less than @p rhs"
+@return whether this instance is less than @p rhs"
 
 ALIASES += member_op_le="Tests if this instance is less than or equal to @p rhs. \
 @param rhs the right-hand side \
-@return if this instance is less than or equal to @p rhs"
+@return whether this instance is less than or equal to @p rhs"
 
 ALIASES += member_op_gt="Tests if this instance is greater than @p rhs. \
 @param rhs the right-hand side \
-@return if this instance is greater than @p rhs"
+@return whether this instance is greater than @p rhs"
 
 ALIASES += member_op_ge="Tests if this instance is greater than or equal to @p rhs. \
 @param rhs the right-hand side \
-@return if this instance is greater than or equal to @p rhs"
+@return whether this instance is greater than or equal to @p rhs"
 
 ALIASES += member_op_cmp_strong_ordering="Compares this instance with @p rhs and returns a value \
 of type #std::strong_ordering. \
@@ -121,12 +121,12 @@ ALIASES += type_base="The base type."
 ALIASES += op_eq{1}="Equality operator for \1.^^^^ \
 @param lhs the left-hand side \
 @param rhs the right-hand side \
-@return if @p lhs equals @p rhs"
+@return whether @p lhs equals @p rhs"
 
 ALIASES += op_ne{1}="Inequality operator for \1.^^^^ \
 @param lhs the left-hand side \
 @param rhs the right-hand side \
-@return if @p lhs does not equal @p rhs"
+@return whether @p lhs does not equal @p rhs"
 
 ALIASES += op_cmp{1}="Three-way-comparison operator for \1.^^^^ \
 @param lhs the left-hand side \

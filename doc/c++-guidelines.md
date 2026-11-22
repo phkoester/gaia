@@ -68,7 +68,7 @@ need to be documented, in this order:
 ///
 /// @tparam Component the component type
 /// @param comp the component
-/// @return if the component is visible
+/// @return whether the component is visible
 /// @throw #std::runtime_error if the component isn’t attached yet
 /// @throw #mygui::InvalidThread if the current thread is not the GUI thread
 ///
