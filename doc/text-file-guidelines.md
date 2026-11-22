@@ -11,12 +11,12 @@ and LF, `\r\n`), and possibly discard the CR.
 
 ## Line Wrapping
 
-The standard width for text files is 110, including line breaks, so the effective standard width is 109.
+The maximum line width for text files is 109, excluding line breaks.
 
 Text lines should generally not exceed the width of 109. If they do, they should be wrapped. Wrapping may
 be omitted if it is either not feasible, as in Markdown table cells, or if wrapping would make the file less
-readable. For instance, lengthy formatted messages are usually built and output in a single line of code
-without wrapping.
+readable. For instance, lengthy formatted messages may be built and output in a single line of code without
+wrapping.
 
 Where block indenting occurs in a text file, the standard indent is 2 spaces. This is also true for Python
 and Rust code, which commonly uses an indent of 4 spaces.
