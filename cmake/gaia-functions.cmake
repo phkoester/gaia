@@ -11,6 +11,12 @@ function(gaiaAddExecutable name)
   target_compile_features(${name} PRIVATE ${COMPILE_FEATURES})
   target_compile_options(${name} PRIVATE ${COMPILE_FLAGS})
   target_link_options(${name} PRIVATE ${LINK_FLAGS})
+  if(GAIA_OS_MACOS)
+    # An executable need not export symbols; `dyld` finds `main` via `LC_MAIN`. Otherwise, all weak
+    # definitions (inline functions and template instantiations, numerous in unoptimized builds) are
+    # exported, and `dyld` coalesces them on every launch, which can take many milliseconds
+    target_link_options(${name} PRIVATE "LINKER:-no_exported_symbols")
+  endif()
   target_sources(${name} PRIVATE ${ARGN})
   gaiaCopyRuntimeFiles(${name})
 endfunction()
