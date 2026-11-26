@@ -140,8 +140,8 @@ if shell-is-interactive && [[ $SHLVL == 1 && ! $GAIA_REINIT ]]; then
   echo \#
   echo \# This is Gaia $GAIA_VERSION
   echo \#
-  echo \# "Detected host          : $GAIA_HOST"
-  echo \# "Selected default target: $GAIA_TARGET"
+  echo \# "Detected host:  $GAIA_HOST"
+  echo \# "Default target: $GAIA_TARGET"
   echo \#
   echo $ruler__
   unset ruler__

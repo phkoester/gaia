@@ -117,11 +117,11 @@ check: build
 
 info:
 	@$(call print-target,$@)
-	@echo "Host               : $(GAIA_HOST)"
-	@echo "Target             : $(GAIA_TARGET)"
-	@echo "C++ toolchain      : $(GAIA_CXX_TOOLCHAIN)"
+	@echo "Host:                $(GAIA_HOST)"
+	@echo "Default target:      $(GAIA_TARGET)"
+	@echo "C++ toolchain:       $(GAIA_CXX_TOOLCHAIN)"
 	@echo "Build configuration: $(GAIA_BUILD_CONFIG)"
-	@echo "Build type         : $(GAIA_BUILD_TYPE)"
+	@echo "Build type:          $(GAIA_BUILD_TYPE)"
 	@echo
 	@echo Current Gaia settings:
 	@printenv | grep ^GAIA_ | grep -v ^GAIA_COLOR | sort | sed 's/^/  /'
