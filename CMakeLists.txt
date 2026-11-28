@@ -6,7 +6,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/cmake/gaia-functions.cmake)
 
 # Project ---------------------------------------------------------------------------------------------------
 
-project(gaia VERSION 1.2.6)
+project(gaia VERSION 1.2.7)
 
 # Prerequisites ---------------------------------------------------------------------------------------------
 
