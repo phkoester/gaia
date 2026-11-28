@@ -17,9 +17,9 @@
 # Commands:
 #
 # - (none)
-#     Runs `git status`
+#     runs `git status`
 # - acp [-m MESSAGE]
-#     Adds, commits, and pushes in one go, run from the top-level directory of a repository. Each step runs
+#     adds, commits, and pushes in one go, run from the top-level directory of a repository. Each step runs
 #     only if it has something to do, and otherwise says so:
 #     - Adds all changes with `git add .` if tracked files have unstaged changes or there are untracked
 #       files that aren’t ignored
@@ -28,13 +28,14 @@
 #     - Pushes with `git push` if the current branch is ahead of its upstream. Fails if there is no
 #       upstream
 # - add-tag
-#     Tags `HEAD` with `vVERSION` and pushes the tag, run from the top-level directory of a repository.
+#     tags `HEAD` with `v<VERSION>` and pushes the tag, run from the top-level directory of a repository.
 #     VERSION is the project version as reported by the Python function `gaia.print_version()`. Runs
-#     `git tag -a vVERSION -m "Add tag"` and `git push origin vVERSION`. Fails without tagging if anything
-#     is not pushed yet, that is, if there are unstaged or staged changes, untracked files that aren’t
-#     ignored, or commits the upstream of the current branch doesn’t have. Also fails if there is no upstream
+#     `git tag -a v<VERSION> -m "Add tag"` and `git push origin v<VERSION>`. Fails without tagging if
+#     anything is not pushed yet, that is, if there are unstaged or staged changes, untracked files that
+#     aren’t ignored, or commits the upstream of the current branch doesn’t have. Also fails if there is no
+#     upstream
 # - Anything else
-#     Passes all arguments to `git` unchanged
+#     passes all arguments to `git` unchanged
 
 source "$GAIA_DIR/src/main/bash/gaia/init" || exit 2
 
@@ -74,6 +75,7 @@ elif [[ $1 == acp ]]; then
   if [[ ! $m ]]; then
     m="(No commit message.)"
   fi
+
   # Add if there are unstaged changes to tracked files or untracked files that are not ignored
   untracked=$(git ls-files --others --exclude-standard)
   if has-diff || [[ $untracked ]]; then

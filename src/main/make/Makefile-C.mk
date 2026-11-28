@@ -40,8 +40,8 @@
 # - clean
 # - configure (GAIA_BUILD_*)
 # - doc (GAIA_BUILD_*, VERBOSE)
-# - list-build (GAIA_BUILD_*)
-# - list-run (GAIA_BUILD_*)
+# - list-targets (GAIA_BUILD_*)
+# - list-run-targets (GAIA_BUILD_*)
 # - rebuild (GAIA_BUILD_*, TARGET, VERBOSE)
 # - reconfigure (GAIA_BUILD_*)
 # - run (ARGS, DEFAULT_RUN_TARGET, GAIA_BUILD_*, MEMCHECK, TARGET, VERBOSE)
@@ -75,18 +75,18 @@ else
 endif
 
 # Export these variables so they are usable in Doxyfiles and elsewhere
-export BIN_DIR := $(BUILD_DIR)/src/bin$(GAIA_BUILD_CONFIG:%=/%)
 export BENCH_DIR := $(BUILD_DIR)/src/bench$(GAIA_BUILD_CONFIG:%=/%)
+export BIN_DIR := $(BUILD_DIR)/src/bin$(GAIA_BUILD_CONFIG:%=/%)
 export EXPERIMENTAL_DIR := $(BUILD_DIR)/src/experimental$(GAIA_BUILD_CONFIG:%=/%)
 export MAIN_DIR := $(BUILD_DIR)/src/main$(GAIA_BUILD_CONFIG:%=/%)
 export TEST_DIR := $(BUILD_DIR)/src/test$(GAIA_BUILD_CONFIG:%=/%)
 
 CHECK_REPORT_FILE := $(BUILD_DIR)/check-report$(GAIA_BUILD_CONFIG:%=-%).txt
 
-# Makes CMake write the File API's codemodel reply, which `list-build` reads
-CODEMODEL_QUERY := $(BUILD_DIR)/.cmake/api/v1/query/codemodel-v2
-
 # Constants -------------------------------------------------------------------------------------------------
+
+# Makes CMake write the File API's codemodel reply, which `list-targets` reads
+CODEMODEL_QUERY := $(BUILD_DIR)/.cmake/api/v1/query/codemodel-v2
 
 EXECUTABLE_SUFFIX :=
 ifdef GAIA_OS_WINDOWS
@@ -108,7 +108,7 @@ endif
 # Recursively expanded, so the search runs when the `run` recipe is expanded, i.e., after the prerequisites
 # of `run` have been made. Before that, the executable and its directory may not exist yet. Without any
 # existing directory, `find` would search `.`, so it is not run then.
-RUN_DIRS = $(wildcard $(BIN_DIR) $(BENCH_DIR) $(EXPERIMENTAL_DIR) $(TEST_DIR))
+RUN_DIRS = $(wildcard $(BENCH_DIR) $(BIN_DIR) $(EXPERIMENTAL_DIR) $(TEST_DIR))
 RUN_EXECUTABLE = $(or \
   $(if $(RUN_DIRS),$(shell find $(RUN_DIRS) -executable -name '$(TARGET)$(EXECUTABLE_SUFFIX)' -type f)),\
   $(error found no executable for target `$(TARGET)`))
@@ -251,34 +251,6 @@ test:
 	@ctest $(CTEST_FLAGS) --preset $(TEST_PRESET) \
 	   --test-dir $(BUILD_DIR)/src/test $(if $(PATTERN),-R '$(PATTERN)')
 
-# `rebuild`, `reconfigure` ..................................................................................
-
-.PHONY: rebuild
-rebuild: reconfigure build
-
-.PHONY: reconfigure
-ifeq ($(wildcard $(BUILD_DIR)/CMakeCache.txt),)
-reconfigure: configure
-else
-reconfigure: $(CODEMODEL_QUERY)
-	$(call print-target,$@)
-ifdef GAIA_BUILD_CONFIG
-	@for it in $(CONFIGS); do \
-	   cmake --build --preset multi-$$it --target clean </dev/null || exit; \
-	 done
-else
-	@cmake --build --preset $(BUILD_PRESET) --target clean </dev/null
-endif
-	@# Like `--fresh`, but keeps `FetchContent`’s stamps so populated dependencies are not downloaded
-	@# again
-	@cmake -E rm -rf $(BUILD_DIR)/CMakeCache.txt \
-	   $(filter-out %/fc-stamp %/fc-tmp,$(wildcard $(BUILD_DIR)/CMakeFiles/*))
-	@cmake $(CMAKE_CONFIGURE_FLAGS) --preset $(CONFIGURE_PRESET) \
-	   -DFETCHCONTENT_UPDATES_DISCONNECTED=ON </dev/null
-	@touch $(BUILD_DIR)/compile_commands.json
-	$(filter-compile-commands)
-endif
-
 # `compile_commands.json` ...................................................................................
 
 # `$(CODEMODEL_QUERY)` is a prerequisite, so a build directory configured without it is configured again
@@ -301,7 +273,7 @@ $(CODEMODEL_QUERY):
 	@mkdir -p $(@D)
 	@touch $@
 
-# Auxiliary targets .........................................................................................
+# `doc-main`, `doc-test` ....................................................................................
 
 # The Doxygen recipes need Bash for `pipefail`. Without it, the status of `doxygen` is lost in the pipeline
 doc-main doc-test: SHELL := bash
@@ -336,20 +308,50 @@ doc-test: compile_commands.json
 	@echo created $(TEST_DIR)/doc/html/index.html
 endif
 
+# `list-targets`, `list-run-targets` ........................................................................
+
 # Lists the targets of the top-level project, excluding those of dependencies. Each may be built with
 # `TARGET=<target> make build`
-.PHONY: list-build
-list-build: configure
+.PHONY: list-targets
+list-targets: configure
 	$(call print-target,$@)
 	@gaia-list-build-targets $(BUILD_DIR)
 
 # Lists the executable targets of the top-level project, excluding those of dependencies. Each may be run
 # with `TARGET=<target> make run`. The executable directories need not exist yet, so all are passed
-.PHONY: list-run
-list-run: configure
+.PHONY: list-run-targets
+list-run-targets: configure
 	$(call print-target,$@)
 	@gaia-list-build-targets \
-	   $(foreach it,$(BIN_DIR) $(BENCH_DIR) $(EXPERIMENTAL_DIR) $(TEST_DIR),--executable-dir $(it)) \
+	   $(foreach it,$(BENCH_DIR) $(BIN_DIR) $(EXPERIMENTAL_DIR) $(TEST_DIR),--executable-dir $(it)) \
 	   $(BUILD_DIR)
+
+# `rebuild`, `reconfigure` ..................................................................................
+
+.PHONY: rebuild
+rebuild: reconfigure build
+
+.PHONY: reconfigure
+ifeq ($(wildcard $(BUILD_DIR)/CMakeCache.txt),)
+reconfigure: configure
+else
+reconfigure: $(CODEMODEL_QUERY)
+	$(call print-target,$@)
+ifdef GAIA_BUILD_CONFIG
+	@for it in $(CONFIGS); do \
+	   cmake --build --preset multi-$$it --target clean </dev/null || exit; \
+	 done
+else
+	@cmake --build --preset $(BUILD_PRESET) --target clean </dev/null
+endif
+	@# Like `--fresh`, but keeps `FetchContent`’s stamps so populated dependencies are not downloaded
+	@# again
+	@cmake -E rm -rf $(BUILD_DIR)/CMakeCache.txt \
+	   $(filter-out %/fc-stamp %/fc-tmp,$(wildcard $(BUILD_DIR)/CMakeFiles/*))
+	@cmake $(CMAKE_CONFIGURE_FLAGS) --preset $(CONFIGURE_PRESET) \
+	   -DFETCHCONTENT_UPDATES_DISCONNECTED=ON </dev/null
+	@touch $(BUILD_DIR)/compile_commands.json
+	$(filter-compile-commands)
+endif
 
 # EOF
