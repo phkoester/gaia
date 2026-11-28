@@ -40,6 +40,8 @@
 # - clean
 # - configure (GAIA_BUILD_*)
 # - doc (GAIA_BUILD_*, VERBOSE)
+# - list-build (GAIA_BUILD_*)
+# - list-run (GAIA_BUILD_*)
 # - rebuild (GAIA_BUILD_*, TARGET, VERBOSE)
 # - reconfigure (GAIA_BUILD_*)
 # - run (ARGS, DEFAULT_RUN_TARGET, GAIA_BUILD_*, MEMCHECK, TARGET, VERBOSE)
@@ -80,6 +82,9 @@ export MAIN_DIR := $(BUILD_DIR)/src/main$(GAIA_BUILD_CONFIG:%=/%)
 export TEST_DIR := $(BUILD_DIR)/src/test$(GAIA_BUILD_CONFIG:%=/%)
 
 CHECK_REPORT_FILE := $(BUILD_DIR)/check-report$(GAIA_BUILD_CONFIG:%=-%).txt
+
+# Makes CMake write the File API's codemodel reply, which `list-build` reads
+CODEMODEL_QUERY := $(BUILD_DIR)/.cmake/api/v1/query/codemodel-v2
 
 # Constants -------------------------------------------------------------------------------------------------
 
@@ -202,18 +207,18 @@ endif
 
 bench:
 ifneq ($(wildcard $(BENCH_DIR)/),)
-	@$(call print-target,$@)
+	$(call print-target,$@)
 	@ctest $(CTEST_FLAGS) --preset $(TEST_PRESET) \
 	   --test-dir $(BUILD_DIR)/src/bench $(if $(PATTERN),-R '$(PATTERN)') -V
 endif
 
 build: configure
-	@$(call print-target,$@)
+	$(call print-target,$@)
 	@cmake $(CMAKE_FLAGS) --build --preset $(BUILD_PRESET) \
 	   $(if $(TARGET),--target $(TARGET)) $(CMAKE_TRAILING_FLAGS) </dev/null
 
 check:
-	@$(call print-target,$@)
+	$(call print-target,$@)
 	@run-clang-tidy \
 	   -config-file=$(GAIA_DIR)/src/main/clang-tidy/clang-tidy-config.yaml \
 	   -j$(GAIA_NPROC_3_4) \
@@ -222,7 +227,7 @@ check:
 	   status=$$?; echo report written to $(CHECK_REPORT_FILE); exit $$status
 
 clean:
-	@$(call print-target,$@)
+	$(call print-target,$@)
 ifdef GAIA_OS_WINDOWS
 	@echo removing build directories, this may take a while ...
 endif
@@ -233,6 +238,21 @@ configure: compile_commands.json
 
 doc: doc-main doc-test
 
+run:
+	$(call print-target,$@)
+ifneq ($(MEMCHECK),1)
+	$(RUN_EXECUTABLE) $(ARGS)
+else
+	ROCKET_EXIT=1 $(MEMCHECK_COMMAND) $(MEMCHECK_FLAGS) -- $(RUN_EXECUTABLE) $(ARGS)
+endif
+
+test:
+	$(call print-target,$@)
+	@ctest $(CTEST_FLAGS) --preset $(TEST_PRESET) \
+	   --test-dir $(BUILD_DIR)/src/test $(if $(PATTERN),-R '$(PATTERN)')
+
+# `rebuild`, `reconfigure` ..................................................................................
+
 .PHONY: rebuild
 rebuild: reconfigure build
 
@@ -240,8 +260,8 @@ rebuild: reconfigure build
 ifeq ($(wildcard $(BUILD_DIR)/CMakeCache.txt),)
 reconfigure: configure
 else
-reconfigure:
-	@$(call print-target,$@)
+reconfigure: $(CODEMODEL_QUERY)
+	$(call print-target,$@)
 ifdef GAIA_BUILD_CONFIG
 	@for it in $(CONFIGS); do \
 	   cmake --build --preset multi-$$it --target clean </dev/null || exit; \
@@ -259,23 +279,11 @@ endif
 	$(filter-compile-commands)
 endif
 
-run:
-	@$(call print-target,$@)
-ifneq ($(MEMCHECK),1)
-	$(RUN_EXECUTABLE) $(ARGS)
-else
-	ROCKET_EXIT=1 $(MEMCHECK_COMMAND) $(MEMCHECK_FLAGS) -- $(RUN_EXECUTABLE) $(ARGS)
-endif
-
-test:
-	@$(call print-target,$@)
-	@ctest $(CTEST_FLAGS) --preset $(TEST_PRESET) \
-	   --test-dir $(BUILD_DIR)/src/test $(if $(PATTERN),-R '$(PATTERN)')
-
 # `compile_commands.json` ...................................................................................
 
-$(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS) $(CONFIGURE_DEPS)
-	@$(call print-target,configure)
+# `$(CODEMODEL_QUERY)` is a prerequisite, so a build directory configured without it is configured again
+$(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS) $(CONFIGURE_DEPS) $(CODEMODEL_QUERY)
+	$(call print-target,configure)
 	@cmake $(CMAKE_CONFIGURE_FLAGS) --preset $(CONFIGURE_PRESET) </dev/null
 	@# CMake may leave the file alone if its contents are unchanged. Touch it, or it may stay older than
 	@# its prerequisites, and every `make` would configure again
@@ -288,6 +296,11 @@ $(BUILD_DIR)/compile_commands.json: $(GAIA_DEPS) $(CMAKE_DEPS) $(CONFIGURE_DEPS)
 compile_commands.json: $(BUILD_DIR)/compile_commands.json
 	$(filter-compile-commands)
 
+# CMake reads the query file when configuring, so it must exist beforehand
+$(CODEMODEL_QUERY):
+	@mkdir -p $(@D)
+	@touch $@
+
 # Auxiliary targets .........................................................................................
 
 # The Doxygen recipes need Bash for `pipefail`. Without it, the status of `doxygen` is lost in the pipeline
@@ -298,7 +311,7 @@ ifeq ($(wildcard src/main/Doxyfile),)
 doc-main:
 else
 doc-main: compile_commands.json
-	@$(call print-target,$@)
+	$(call print-target,$@)
 	@set -o pipefail; \
 	   DOXYGEN_PREDEFINED="$$(gaia-compile-defines compile_commands.json /src/main/)" \
 	   doxygen $(DOXYGEN_FLAGS) src/main/Doxyfile 2>&1 | { grep -v \
@@ -313,7 +326,7 @@ ifeq ($(wildcard src/test/Doxyfile),)
 doc-test:
 else
 doc-test: compile_commands.json
-	@$(call print-target,$@)
+	$(call print-target,$@)
 	@set -o pipefail; \
 	   DOXYGEN_PREDEFINED="$$(gaia-compile-defines compile_commands.json /src/test/)" \
 	   doxygen $(DOXYGEN_FLAGS) src/test/Doxyfile 2>&1 | { grep -v \
@@ -323,9 +336,20 @@ doc-test: compile_commands.json
 	@echo created $(TEST_DIR)/doc/html/index.html
 endif
 
-.PHONY: list-targets
-list-targets: configure
-	@$(call print-target,$@)
-	@cmake --build --preset $(BUILD_PRESET) --target help </dev/null
+# Lists the targets of the top-level project, excluding those of dependencies. Each may be built with
+# `TARGET=<target> make build`
+.PHONY: list-build
+list-build: configure
+	$(call print-target,$@)
+	@gaia-list-build-targets $(BUILD_DIR)
+
+# Lists the executable targets of the top-level project, excluding those of dependencies. Each may be run
+# with `TARGET=<target> make run`. The executable directories need not exist yet, so all are passed
+.PHONY: list-run
+list-run: configure
+	$(call print-target,$@)
+	@gaia-list-build-targets \
+	   $(foreach it,$(BIN_DIR) $(BENCH_DIR) $(EXPERIMENTAL_DIR) $(TEST_DIR),--executable-dir $(it)) \
+	   $(BUILD_DIR)
 
 # EOF

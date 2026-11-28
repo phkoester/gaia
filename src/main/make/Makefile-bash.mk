@@ -16,7 +16,7 @@ include $(GAIA_DIR)/src/main/make/Makefile-common.mk
 # Targets ---------------------------------------------------------------------------------------------------
 
 clean:
-	@$(call print-target,$@)
+	$(call print-target,$@)
 	@rm -rfv $(shell find -name __pycache__ -type d)
 
 # EOF

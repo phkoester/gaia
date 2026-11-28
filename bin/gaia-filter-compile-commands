@@ -2,62 +2,27 @@
 
 # gaia-filter-compile-commands
 
-"""
-Filter `compile_commands.json` by field patterns.
-
-This script reads a `compile_commands.json` document from stdin, splits it into blocks (one per compilation
-command), and writes the blocks whose fields match the given field patterns.
-
-Usage:
-  gaia-filter-compile-commands [OPTIONS] --field NAME:PATTERN... <INPUT_FILE >OUTPUT_FILE
-
-Options:
-      --field NAME:PATTERN  match the field NAME against the regular expression PATTERN. NAME is `file`,
-                            `command`, `directory`, or `all`. PATTERN extends to the end of the value, so it
-                            may contain colons. May be given multiple times; a block matches if all
-                            fields match
-      --invert              invert the filter (keep the blocks that do not match)
-      --help                display this help and exit
-"""
-
 import argparse
 import json
 import re
 import sys
 
+# Constants -------------------------------------------------------------------------------------------------
+
 FIELDS = ('file', 'command', 'directory', 'all')
 
-def parse_field(value):
-  """Parses a `--field` value of the form `NAME:PATTERN` into a `(name, pattern)` tuple."""
-  name, sep, pattern = value.partition(':')
-  if not sep:
-    raise argparse.ArgumentTypeError(f"invalid value `{value}`: expected `NAME:PATTERN`")
-  if name not in FIELDS:
-    names = ', '.join(f'`{f}`' for f in FIELDS)
-    raise argparse.ArgumentTypeError(f"invalid field name `{name}`: expected one of {names}")
-  return name, pattern
+# Functions -------------------------------------------------------------------------------------------------
 
-def match_field(entry, field, regex):
-  """Returns whether the field `field` of `entry` matches `regex`."""
-  if field == 'all':
-    # Match against all string fields
-    return any(isinstance(value, str) and regex.search(value) for value in entry.values())
-  if field not in entry:
-    return False
-  # Convert a nonstring value to a string for matching
-  value = entry[field]
-  return regex.search(value if isinstance(value, str) else str(value)) is not None
-
-def filter_compile_commands(fields, invert=False):
-  # Read stdin. Use the binary stream so the input is decoded as JSON, independent of the locale.
+def filter_compile_commands(fields):
+  # Read stdin. Use the binary stream so the input is decoded as JSON, independent of the locale
 
   try:
     data = json.load(sys.stdin.buffer)
-  except json.JSONDecodeError as e:
-    print(f"error: invalid JSON on stdin: {e}", file=sys.stderr)
+  except json.JSONDecodeError as ex:
+    print(f"error: invalid JSON on stdin: {ex}", file=sys.stderr)
     return 1
-  except Exception as e:
-    print(f"error: cannot read stdin: {e}", file=sys.stderr)
+  except Exception as ex:
+    print(f"error: cannot read stdin: {ex}", file=sys.stderr)
     return 1
 
   if not isinstance(data, list):
@@ -70,13 +35,12 @@ def filter_compile_commands(fields, invert=False):
   for field, pattern in fields:
     try:
       matchers.append((field, re.compile(pattern)))
-    except re.error as e:
-      print(f"error: invalid regular expression `{pattern}`: {e}", file=sys.stderr)
+    except re.error as ex:
+      print(f"error: invalid regular expression `{pattern}`: {ex}", file=sys.stderr)
       return 1
 
   # Filter entries
 
-  # original_count = len(data)
   filtered_data = []
 
   for entry in data:
@@ -85,34 +49,46 @@ def filter_compile_commands(fields, invert=False):
       continue
 
     # All fields must match
-    match_found = all(match_field(entry, field, regex) for field, regex in matchers)
-
-    # Apply filter (with optional inversion)
-    if match_found != invert:
+    if all(match_field(entry, field, regex) for field, regex in matchers):
       filtered_data.append(entry)
 
   # Write output
 
   try:
     json.dump(filtered_data, sys.stdout, indent=2)
-  except Exception as e:
-    print(f"error: cannot write stdout: {e}", file=sys.stderr)
+  except Exception as ex:
+    print(f"error: cannot write stdout: {ex}", file=sys.stderr)
     return 1
-
-  # kept_count = len(filtered_data)
-  # removed_count = original_count - kept_count
-
-  # print(f"Filtered {original_count} entries:")
-  # print(f"  Kept:    {kept_count}")
-  # print(f"  Removed: {removed_count}")
 
   return 0
 
+def match_field(entry, field, regex):
+  """Returns whether the field `field` of `entry` matches `regex`."""
+  if field == 'all':
+    # Match against all string fields
+    return any(isinstance(value, str) and regex.search(value) for value in entry.values())
+  if field not in entry:
+    return False
+  # Convert a nonstring value to a string for matching
+  value = entry[field]
+  return regex.search(value if isinstance(value, str) else str(value)) is not None
+
+def parse_field(value):
+  """Parses a `--field` value of the form `NAME:PATTERN` into a `(name, pattern)` tuple."""
+  name, sep, pattern = value.partition(':')
+  if not sep:
+    raise argparse.ArgumentTypeError(f"invalid value `{value}`: expected `NAME:PATTERN`")
+  if name not in FIELDS:
+    names = ', '.join(f'`{f}`' for f in FIELDS)
+    raise argparse.ArgumentTypeError(f"invalid field name `{name}`: expected one of {names}")
+  return name, pattern
+
+# `main` ----------------------------------------------------------------------------------------------------
+
 def main():
   parser = argparse.ArgumentParser(
-    description='Filter compile_commands.json by regex pattern',
-    formatter_class=argparse.RawDescriptionHelpFormatter,
-    epilog=__doc__
+    description='Filter `compile_commands.json` by regex patterns.',
+    formatter_class=argparse.RawDescriptionHelpFormatter
   )
   parser.add_argument(
     '--field',
@@ -122,15 +98,10 @@ def main():
     metavar='NAME:PATTERN',
     help='field name and regular expression pattern to match its value against (repeatable; all must match)'
   )
-  parser.add_argument(
-    '--invert',
-    action='store_true',
-    help='invert the filter (keep nonmatching blocks)'
-  )
 
   args = parser.parse_args()
 
-  return filter_compile_commands(args.field, invert=args.invert)
+  return filter_compile_commands(args.field)
 
 if __name__ == '__main__':
   sys.exit(main())

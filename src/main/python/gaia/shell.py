@@ -17,7 +17,7 @@ from typing import NoReturn
 
 # Local variables -------------------------------------------------------------------------------------------
 
-_inv_name = os.path.basename(sys.argv[0]) # Invocation name
+_invocation_name = os.path.basename(sys.argv[0]) # Invocation name
 
 # Local functions -------------------------------------------------------------------------------------------
 
@@ -38,18 +38,18 @@ def error(msg: str, exit_status: int = 1, stack_trace=True) -> None:
   Prints the error message `msg` to `sys.stderr` and exits if `exit_status` is not 0.
   """
 
-  sys.stderr.write(f"{_inv_name}: error: {msg}\n")
+  sys.stderr.write(f"{_invocation_name}: error: {msg}\n")
   if stack_trace:
     print_stack_trace()
   if exit_status != 0:
     sys.exit(exit_status)
 
-def note(msg: str) -> None:
+def info(msg: str) -> None:
   """
-  Prints the note message `msg` to `sys.stdout`.
+  Prints the information message `msg` to `sys.stdout`.
   """
 
-  sys.stdout.write(f"{_inv_name}: note: {msg}\n")
+  sys.stdout.write(f"{_invocation_name}: note: {msg}\n")
 
 def print_stack_trace() -> None:
   """
@@ -73,7 +73,7 @@ def warn(msg: str) -> None:
   Prints the warning message `msg` to `sys.stderr`.
   """
 
-  sys.stderr.write(f"{_inv_name}: warning: {msg}\n")
+  sys.stderr.write(f"{_invocation_name}: warning: {msg}\n")
 
 # Main ------------------------------------------------------------------------------------------------------
 

@@ -1,6 +1,34 @@
 #!/usr/bin/env bash
 
 # gaia-git
+#
+# A wrapper around Git with additional convenience commands for Gaia projects.
+#
+# Usage:
+#   gaia-git
+#   gaia-git acp [-m MESSAGE]
+#   gaia-git GIT_ARG...
+#
+# Before running any command, the script makes sure an `ssh-agent` is available, so Git can authenticate
+# over SSH without asking for the passphrase again. It reuses the agent recorded in `~/.ssh-init`, or, if
+# none is running, starts one and adds the default keys with `ssh-add`.
+#
+# Commands:
+#
+# - (none)
+#     Runs `git status`
+# - acp [-m MESSAGE]
+#     Adds, commits, and pushes in one go, run from the top-level directory of a repository. Each step runs
+#     only if it has something to do, and otherwise says so:
+#     - Adds all changes with `git add .` if tracked files have unstaged changes or there are untracked
+#       files that aren’t ignored
+#     - Commits with MESSAGE if the index differs from `HEAD`. The default message is
+#       `(No commit message.)`
+#     - Pushes with `git push` if the current branch is ahead of its upstream. Fails if there is no
+#       upstream
+# - Anything else
+#     Passes all arguments to `git` unchanged
+
 
 source "$GAIA_DIR/src/main/bash/gaia/init" || exit 2
 

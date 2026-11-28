@@ -9,6 +9,7 @@ import gaia.shell
 import io
 import json5
 import os
+import signal
 
 from gaia.shell import error
 from os import environ as env
@@ -207,7 +208,7 @@ gaia.log.debug(f"{cl=}")
 # Find root dir
 root_dir = find_root_dir()
 gaia.log.debug(f"{root_dir=}")
-gaia.shell.note(f"using project root directory: {root_dir}")
+gaia.shell.info(f"using project root directory: {root_dir}")
 
 # Collect projects and their dependencies from `gaia-project.json`
 projects = {}
@@ -231,6 +232,19 @@ for prj in prjs:
   print_section(prj, args)
   dir = get_project_dir(prj)
   os.chdir(dir)
-  gaia.shell.run(args, check=True)
+  try:
+    rc = gaia.shell.run(args).returncode
+  except FileNotFoundError:
+    error(f"command not found: `{args[0]}`", 127, stack_trace=False)
+  except PermissionError:
+    error(f"command not executable: `{args[0]}`", 126, stack_trace=False)
+  if rc < 0:
+    # Killed by a signal; exit like a shell would
+    error(
+      f"command killed by signal {signal.Signals(-rc).name} in project `{prj}`",
+      128 - rc,
+      stack_trace=False)
+  if rc != 0:
+    error(f"command failed in project `{prj}` with exit status {rc}", rc, stack_trace=False)
 
 # EOF

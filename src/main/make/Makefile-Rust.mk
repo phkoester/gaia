@@ -66,38 +66,38 @@ LLVM_PROFDATA ?= $(firstword \
 # Targets ---------------------------------------------------------------------------------------------------
 
 bench:
-	@$(call print-target,$@)
+	$(call print-target,$@)
 	@cargo +nightly bench
 
 # @todo Build specific target using the TARGET parameter
 build:
-	@$(call print-target,$@)
+	$(call print-target,$@)
 	@cargo build $(CARGO_FLAGS)
 
 check:
-	@$(call print-target,$@)
+	$(call print-target,$@)
 	@cargo +nightly clippy $(CARGO_FLAGS) --all-features --all-targets
 
 clean:
-	@$(call print-target,$@)
+	$(call print-target,$@)
 	@cargo clean
 	@rm -frv $(shell find -name __pycache__ -type d)
 
 doc:
-	@$(call print-target,$@)
+	$(call print-target,$@)
 	@RUSTDOCFLAGS="--cfg docsrs --html-in-header $(KATEX_HTML)" \
 	  cargo +nightly doc $(CARGO_FLAGS) --all-features --no-deps
 
 # @todo Run specific target using the TARGET parameter
 run:
-	@$(call print-target,$@)
+	$(call print-target,$@)
 	@cargo run $(CARGO_FLAGS)
 
 # The coverage recipe needs Bash for arrays, which keep paths with spaces intact
 test: SHELL := bash
 
 test:
-	@$(call print-target,$@)
+	$(call print-target,$@)
 ifneq ($(COVERAGE),1)
 	@cargo test $(CARGO_FLAGS)
 else
@@ -155,25 +155,25 @@ endif
 # Rust-specific targets -------------------------------------------------------------------------------------
 
 fmt-check:
-	@$(call print-target,$@)
+	$(call print-target,$@)
 	@cargo +nightly fmt --check
 
 miri-run:
-	@$(call print-target,$@)
+	$(call print-target,$@)
 	@cargo +nightly miri run
 
 miri-test:
-	@$(call print-target,$@)
+	$(call print-target,$@)
 	@cargo +nightly miri test
 
 # Find the minimum supported Rust version (MSRV)
 msrv:
-	@$(call print-target,$@)
+	$(call print-target,$@)
 	@cargo msrv find
 
 # Run documentation tests exclusively
 test-doc:
-	@$(call print-target,$@)
+	$(call print-target,$@)
 	@cargo test $(CARGO_FLAGS) --doc -- --show-output
 
 # EOF

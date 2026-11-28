@@ -1,0 +1,96 @@
+#!/usr/bin/env python3
+
+# gaia-list-build-targets
+
+import argparse
+import json
+import sys
+
+from pathlib import Path
+
+# Functions -------------------------------------------------------------------------------------------------
+
+def is_executable_in(build_dir, target, executable_dirs):
+  """Returns whether `target` is an executable target whose executable lies within any of `executable_dirs`"""
+  if target['type'] != 'EXECUTABLE':
+    return False
+  # On Windows, the executable has the suffix `.exe`
+  if target.get('nameOnDisk') not in (target['name'], target['name'] + '.exe'):
+    return False
+  for artifact in target.get('artifacts', []):
+    # A relative artifact path is relative to the build directory
+    path = (Path(build_dir) / artifact['path']).resolve()
+    if any(path.is_relative_to(it) for it in executable_dirs):
+      return True
+  return False
+
+def list_build_targets(build_dir, executable_dirs=None):
+  """
+  Returns the sorted names of the targets of the top-level project, or `None` if there is no reply. If
+  `executable_dirs` is given, returns only the executable targets whose executable lies within any of them.
+  """
+  if executable_dirs is not None:
+    executable_dirs = [Path(it).resolve() for it in executable_dirs]
+  reply_dir = Path(build_dir) / '.cmake' / 'api' / 'v1' / 'reply'
+  # Index file names contain a timestamp, so the last one in sort order is the latest
+  index_files = sorted(reply_dir.glob('index-*.json'))
+  if not index_files:
+    return None
+  index = read_json(index_files[-1])
+  codemodel_refs = [it for it in index['objects'] if it['kind'] == 'codemodel']
+  if not codemodel_refs:
+    return None
+  codemodel = read_json(reply_dir / codemodel_refs[0]['jsonFile'])
+
+  # A multi-config build has one configuration per build type. Unite their targets
+  names = set()
+  for configuration in codemodel['configurations']:
+    # The first project is the top-level project. Its `targetIndexes` lists the targets defined in its own
+    # directories, but not those of its subprojects
+    top_level_project = configuration['projects'][0]
+    targets = configuration['targets']
+    for i in top_level_project.get('targetIndexes', []):
+      if executable_dirs is not None:
+        target = read_json(reply_dir / targets[i]['jsonFile'])
+        if not is_executable_in(build_dir, target, executable_dirs):
+          continue
+      names.add(targets[i]['name'])
+  return sorted(names)
+
+def read_json(path):
+  with open(path, 'r', encoding='utf-8') as file:
+    return json.load(file)
+
+# `main` ----------------------------------------------------------------------------------------------------
+
+def main():
+  parser = argparse.ArgumentParser(
+    description='Print the build targets of the top-level CMake project.',
+    formatter_class=argparse.RawDescriptionHelpFormatter
+  )
+  parser.add_argument(
+    '--executable-dir',
+    action='append',
+    metavar='DIR',
+    help='print only executable targets whose executable lies within DIR (repeatable; any must match)'
+  )
+  parser.add_argument('build_dir', help='CMake build directory')
+  args = parser.parse_args()
+
+  try:
+    names = list_build_targets(args.build_dir, args.executable_dir)
+  except (OSError, ValueError, KeyError, IndexError) as ex:
+    print(f"error: cannot read the CMake File API reply in `{args.build_dir}`: {ex}", file=sys.stderr)
+    return 1
+  if names is None:
+    print(f"error: found no CMake File API codemodel reply in `{args.build_dir}`", file=sys.stderr)
+    return 1
+
+  for name in names:
+    print(name)
+  return 0
+
+if __name__ == '__main__':
+  sys.exit(main())
+
+# EOF

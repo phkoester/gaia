@@ -68,17 +68,18 @@ move-back = $(filter-out $1,$2) $1
 # $2: all items
 move-front = $1 $(filter-out $1,$2)
 
+# $1: directory
+# $2: configure preset
+print-configurations = $(shell python3 -c 'import gaia; gaia.print_configurations("$1", "$2")')
+
 # $1: target
 define print-target
-$(info ########################################)
-$(info #)
-$(info # $(PROJECT_NAME): $1)
-$(info #)
-$(info ########################################)
+	$(info ########################################)
+	$(info #)
+	$(info # $(PROJECT_NAME): $1)
+	$(info #)
+	$(info ########################################)
 endef
-
-# $1: directory, $2: configure preset
-print-configurations = $(shell python3 -c 'import gaia; gaia.print_configurations("$1", "$2")')
 
 # $1: directory
 print-version = $(shell python3 -c 'import gaia; gaia.print_version("$1")')
@@ -116,7 +117,7 @@ build: configure
 check: build
 
 info:
-	@$(call print-target,$@)
+	$(call print-target,$@)
 	@echo "Host:                $(GAIA_HOST)"
 	@echo "Default target:      $(GAIA_TARGET)"
 	@echo "C++ toolchain:       $(GAIA_CXX_TOOLCHAIN)"
@@ -132,10 +133,10 @@ test: build
 
 update:
 
-validate: build test check doc
+validate: test check doc
 
 version:
-	@$(call print-target,$@)
+	$(call print-target,$@)
 	@echo $(call print-version,.)
 	@gaia-git-version
 

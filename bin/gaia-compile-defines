@@ -2,25 +2,13 @@
 
 # gaia-compile-defines
 
-"""
-Print the preprocessor definitions used in `compile_commands.json`.
-
-Collect the `-D` options of all compilation commands whose file matches a regular-expression pattern, and
-print them on one line, separated by spaces. The output can be used for Doxygen’s `PREDEFINED`.
-
-Usage:
-  gaia-compile-defines INPUT_FILE PATTERN
-
-Arguments:
-  INPUT_FILE  `compile_commands.json` file
-  PATTERN     regular-expression pattern to match against the `file` field
-"""
-
 import argparse
 import json
 import re
 import shlex
 import sys
+
+# Functions -------------------------------------------------------------------------------------------------
 
 def compile_defines(input_file, pattern):
   regex = re.compile(pattern)
@@ -46,11 +34,12 @@ def compile_defines(input_file, pattern):
 
   return sorted(defines.values())
 
+# `main` ----------------------------------------------------------------------------------------------------
+
 def main():
   parser = argparse.ArgumentParser(
-    description='Print the preprocessor definitions used in `compile_commands.json`',
-    formatter_class=argparse.RawDescriptionHelpFormatter,
-    epilog=__doc__
+    description='Print the preprocessor definitions used in `compile_commands.json`.',
+    formatter_class=argparse.RawDescriptionHelpFormatter
   )
   parser.add_argument('input_file', help='`compile_commands.json` file')
   parser.add_argument('pattern', help='regular expression pattern to match against the `file` field')
