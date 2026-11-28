@@ -83,7 +83,7 @@ def parse_field(value):
     raise argparse.ArgumentTypeError(f"invalid field name `{name}`: expected one of {names}")
   return name, pattern
 
-# `main` ----------------------------------------------------------------------------------------------------
+# Main ------------------------------------------------------------------------------------------------------
 
 def main():
   parser = argparse.ArgumentParser(

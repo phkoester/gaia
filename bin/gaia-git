@@ -7,6 +7,7 @@
 # Usage:
 #   gaia-git
 #   gaia-git acp [-m MESSAGE]
+#   gaia-git add-tag
 #   gaia-git GIT_ARG...
 #
 # Before running any command, the script makes sure an `ssh-agent` is available, so Git can authenticate
@@ -26,9 +27,14 @@
 #       `(No commit message.)`
 #     - Pushes with `git push` if the current branch is ahead of its upstream. Fails if there is no
 #       upstream
+# - add-tag
+#     Tags `HEAD` with `vVERSION` and pushes the tag, run from the top-level directory of a repository.
+#     VERSION is the project version as reported by the Python function `gaia.print_version()`. Runs
+#     `git tag -a vVERSION -m "Add tag"` and `git push origin vVERSION`. Fails without tagging if anything
+#     is not pushed yet, that is, if there are unstaged or staged changes, untracked files that aren’t
+#     ignored, or commits the upstream of the current branch doesn’t have. Also fails if there is no upstream
 # - Anything else
 #     Passes all arguments to `git` unchanged
-
 
 source "$GAIA_DIR/src/main/bash/gaia/init" || exit 2
 
@@ -55,9 +61,11 @@ has-diff() {
 ssh-init
 
 if [[ $1 == "" ]]; then
+  # `git status` ............................................................................................
+
   exec git status
 elif [[ $1 == acp ]]; then
-  # `acp` = add, commit, push
+  # `acp` = add, commit, push ...............................................................................
 
   [[ ! -e .git ]] && shell-error there is no Git repository in this directory
 
@@ -90,7 +98,32 @@ elif [[ $1 == acp ]]; then
   else
     echo nothing to push
   fi
+elif [[ $1 == add-tag ]]; then
+  # `add-tag` ...............................................................................................
+
+  [[ ! -e .git ]] && shell-error there is no Git repository in this directory
+
+  (($# > 1)) && shell-error \`add-tag\` takes no arguments
+
+  # Refuse to tag anything that is not pushed yet
+  has-diff && shell-error there are unstaged changes
+  has-diff --cached && shell-error there are staged changes
+  [[ $(git ls-files --others --exclude-standard) ]] && shell-error there are untracked files
+  if ! ahead=$(git rev-list --count '@{upstream}..HEAD' 2>/dev/null); then
+    shell-error the current branch has no upstream
+  fi
+  ((ahead > 0)) && shell-error there are $ahead unpushed commits
+
+  version=$(python3 -c 'import gaia; gaia.print_version(".")')
+  [[ ! $version || $version == None ]] && shell-error no project version found in this directory
+  tag=v$version
+  echo tagging $tag ...
+  git tag -a "$tag" -m "Add tag"
+  echo pushing $tag ...
+  exec git push origin "$tag"
 else
+  # Fallback to regular Git commands ........................................................................
+
   exec git "$@"
 fi
 
